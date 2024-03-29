@@ -1,0 +1,61 @@
+'use client';
+
+import { login } from '@/lib/actions';
+import Button from '@/components/Button';
+import Input from '@/components/Input';
+import { useFormState } from 'react-dom';
+import { signIn } from 'next-auth/react';
+import { IStringKeyValueObject } from '@/interfaces';
+
+const formProps = [
+	{
+		title: 'Full name',
+		type: 'type',
+		name: 'username',
+		placeholder: 'Enter your full name',
+	},
+	{
+		title: 'Password',
+		type: 'password',
+		name: 'password',
+		placeholder: 'Enter your password',
+	},
+];
+
+const LoginForm = () => {
+	const handleLogin = async (preState: any, formData: FormData) => {
+    const { username, password } = Object.fromEntries(formData) as IStringKeyValueObject;
+    if(!username || !password) return { error: 'Please complete the form' };
+		const res = await login(username, password);
+		if (res.error) return res;
+		const credentialsValid = await signIn('credentials', {
+			username,
+			password,
+			callbackUrl: '/',
+		});
+		if (credentialsValid?.error) return { error: 'Invalid credentials' };
+		return { success: true };
+	};
+
+	const [state, formAction] = useFormState(handleLogin, undefined);
+  
+	return (
+		<form className="flex flex-col items-center gap-4 w-full" action={formAction}>
+			<h1 className="text-4xl font-mono mb-4 font-bold">Login</h1>
+			{formProps.map((item) => (
+				<Input
+					key={item.title}
+					title={item.title}
+					type={item.type}
+					name={item.name}
+					placeholder={item.placeholder}
+					className="bg-neutral-100 w-full"
+				/>
+			))}
+			<Button text="Login" className="w-full bg-violet-500" />
+			<p className="font-mono mt-[-10px] text-red-700 h-6">{state?.error || ' '}</p>
+		</form>
+	);
+};
+
+export default LoginForm;
