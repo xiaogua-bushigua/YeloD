@@ -8,7 +8,7 @@ const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
 			<Navigator />
 			<div className="flex-1 flex flex-col">
 				<Header />
-				<div className="overflow-y-scroll overflow-x-hidden font-mono flex-1 max-h-full max-w-full bg-gray-100 p-4">{children}</div>
+				<div className="overflow-hidden flex-1 max-h-full max-w-full bg-gray-100 p-4">{children}</div>
 			</div>
 		</div>
 	);

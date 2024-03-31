@@ -1,16 +1,24 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export interface IDatabaseInfo {
-	collections: string[];
-	dbStatus: {
+	collections: Array<{
 		name: string;
-		size: number;
+		options: {
+			count: number;
+			storageSize: number;
+		};
+	}>;
+	dbStats: {
+		db: string;
+		storageSize: number;
 	};
 }
 
 export interface IDb {
 	database: string[];
 	info: Array<IDatabaseInfo>;
+	databaseIndex: number;
+	collectionIndex: number;
 }
 
 const initialState: IDb = {
@@ -18,18 +26,20 @@ const initialState: IDb = {
 	info: [
 		{
 			collections: [],
-			dbStatus: {
-				name: '',
-				size: 0,
+			dbStats: {
+				db: '',
+				storageSize: 0,
 			},
 		},
 	],
+	databaseIndex: 0,
+	collectionIndex: 0,
 };
 
-export const fetchDatabaseInfo = createAsyncThunk('dbInfo', async (uris: string[]) => {  
+export const fetchDatabaseInfo = createAsyncThunk('dbInfo', async (uris: string[]) => {
 	const data = await fetch('/api/dbInfo', {
 		method: 'POST',
-		body: JSON.stringify({uris}),
+		body: JSON.stringify({ uris }),
 		headers: {
 			'Content-Type': 'application/json',
 		},
@@ -44,6 +54,10 @@ const dbSlice = createSlice({
 		saveDbLinks: (state, { payload }) => {
 			state.database = payload;
 		},
+		saveDataPath: (state, { payload }) => {
+			if (payload.databaseIndex) state.databaseIndex = payload.databaseIndex;
+			else state.collectionIndex = payload.collectionIndex;
+		},
 	},
 	extraReducers(builder) {
 		builder.addCase(fetchDatabaseInfo.fulfilled, (state, action) => {
@@ -55,4 +69,4 @@ const dbSlice = createSlice({
 const dbReducer = dbSlice.reducer;
 
 export default dbReducer;
-export const { saveDbLinks } = dbSlice.actions;
+export const { saveDbLinks, saveDataPath } = dbSlice.actions;

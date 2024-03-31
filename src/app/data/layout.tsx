@@ -6,18 +6,16 @@ export const metadata = {
 	description: '我是管理',
 };
 
-const bread_paths = [
-	{ name: 'databases', path: '/databases' },
-	{ name: 'collections', path: '/collections' },
-	{ name: 'documents', path: '/documents' },
-	{ name: 'document', path: '/document' },
-];
-
 const DataLayout = ({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) => {
+	const bread_paths = [
+		{ name: 'Databases', path: '/databases' },
+		{ name: 'Collections', path: '/collections' },
+		{ name: 'Documents', path: '/documents' },
+	];
 	return (
 		<LayoutWrapper>
 			<Bread breads={bread_paths} />

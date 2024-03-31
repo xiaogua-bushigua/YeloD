@@ -31,7 +31,7 @@ const Bread = ({ breads }: Props) => {
 						onClick={() => handleClick(bread.path)}
 						className={`font-mono cursor-pointer ${index === level ? 'text-violet-500' : 'text-slate-700'}`}
 					>
-						{bread.name.charAt(0).toUpperCase() + bread.name.slice(1)}
+						{bread.name}
 					</span>
 					{index < level && <Image src="/imgs/right.svg" alt="bread" width={16} height={16} />}
 				</span>

@@ -1,22 +1,34 @@
 'use client';
 
 import Link from 'next/link';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RootState } from '@/store/store';
 import { useSelector } from 'react-redux';
 import DatabaseCard from '@/components/DatabaseCard';
-import { useDispatch } from 'react-redux';
-import { fetchDatabaseInfo } from '@/store/reducers/dbSlice';
-import { ThunkDispatch } from '@reduxjs/toolkit';
+
+export interface ICardsInfo {
+	name: string;
+	size: number;
+	count: number;
+}
 
 const page = () => {
 	const { database } = useSelector((state: RootState) => state.db);
-  const dispatch: ThunkDispatch<RootState, any, any> = useDispatch();
-  useEffect(() => {
-    if (!(database.length === 1 && database[0] === '')) {
-      dispatch(fetchDatabaseInfo(database));
-    }
-  }, [database])
+	const { info } = useSelector((state: RootState) => state.db);
+	const [cardsInfo, setCardsInfo] = useState([] as Array<ICardsInfo>);
+	useEffect(() => {
+		setCardsInfo([]);
+		info.forEach((i) => {
+			setCardsInfo((prev) => [
+				...prev,
+				{
+					name: i.dbStats.db,
+					size: i.dbStats.storageSize,
+					count: i.collections.length,
+				},
+			]);
+		});
+	}, []);
 	return (
 		<div>
 			{database.length === 1 && database[0] === '' ? (
@@ -28,7 +40,11 @@ const page = () => {
 					and set them first.
 				</span>
 			) : (
-				database.map((db) => <DatabaseCard key={db} link={db} />)
+				<div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mt-4">
+					{cardsInfo.map((i, index) => (
+						<DatabaseCard key={i.name} info={i} index={index} content="collections" />
+					))}
+				</div>
 			)}
 		</div>
 	);

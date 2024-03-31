@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState, RefObject, useRef, forwardRef, Ref } from 'react';
+import React, { useEffect, useState, forwardRef, Ref } from 'react';
 
 interface Props {
 	title: string;

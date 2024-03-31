@@ -13,15 +13,16 @@ export const POST = async (req: NextRequest) => {
 				db.once('open', async () => {
 					try {
 						dbStats = await db.db.stats();
-            const cursor = db.db.listCollections();
-            for await (const collection of cursor) {
-              const options = await db.db.command({ collStats: collection.name });
-              collections.push({ name: collection.name, options });
-            }
+						const cursor = db.db.listCollections();
+						for await (const collection of cursor) {
+							const options = await db.db.command({ collStats: collection.name });
+							collections.push({ name: collection.name, options });
+						}
 						info.push({ dbStats, collections });
 						resolve(null);
 					} catch (error) {
 						reject(error);
+            return NextResponse.json({ error, status: 500 });
 					}
 				});
 			});
