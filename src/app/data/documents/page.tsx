@@ -1,6 +1,7 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+
+import { useEffect, useRef, useState } from 'react';
+import { useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
@@ -9,9 +10,9 @@ import 'prismjs/themes/prism.css';
 import { transferQuery } from '@/utils/transferQuery';
 
 const page = () => {
-	const { info, databaseIndex, collectionIndex, database } = useSelector((state: RootState) => state.db);
-	const { user } = useSelector((state: RootState) => state.auth);
-	const [path, setPath] = useState('' as string);
+	const { info, databaseIndex, collectionIndex, database } = useAppSelector((state: RootState) => state.db);
+	const { user } = useAppSelector((state: RootState) => state.auth);
+	const [path, setPath] = useState('');
 	const [code, setCode] = useState({ data: [] } as { data: any[] });
 	const childRef = useRef<HTMLInputElement | null>(null);
 
@@ -46,7 +47,7 @@ const page = () => {
 			query,
 		};
 		const username = user?.name || user?.username;
-		const res = await fetch('/api/dbQuery', {
+		await fetch('/api/dbQuery', {
 			method: 'PATCH',
 			body: JSON.stringify({ queryObj, username }),
 		});

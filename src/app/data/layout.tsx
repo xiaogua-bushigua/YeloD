@@ -3,7 +3,7 @@ import LayoutWrapper from '@/components/LayoutWrapper';
 
 export const metadata = {
 	title: 'Data',
-	description: '我是管理',
+	description: 'data page',
 };
 
 const DataLayout = ({

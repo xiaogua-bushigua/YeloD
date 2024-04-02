@@ -1,11 +1,13 @@
-import * as React from 'react';
-
-interface Props {
-	size: number;
-}
-
-const LoadingIcon = ({ size }: Props) => (
-	<svg xmlns="http://www.w3.org/2000/svg" xmlSpace="preserve" className='animate-spin' width={size} height={size} viewBox="0 0 26.349 26.35">
+// svg => jsx: https://react-svgr.com/playground/
+const LoadingIcon = ({ size }: { size: number }) => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		xmlSpace="preserve"
+		className="animate-spin"
+		width={size}
+		height={size}
+		viewBox="0 0 26.349 26.35"
+	>
 		<circle cx={13.792} cy={3.082} r={3.02} fill="#e53aff" />
 		<circle cx={13.792} cy={24.501} r={1.849} fill="#edb0f5" />
 		<circle cx={6.219} cy={6.218} r={2.774} fill="#e96bfc" />

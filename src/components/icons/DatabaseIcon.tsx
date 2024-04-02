@@ -1,5 +1,4 @@
 // svg => jsx: https://react-svgr.com/playground/
-import * as React from 'react';
 const DatabaseIcon = ({ fill }: { fill: string }) => (
 	<svg
 		xmlns="http://www.w3.org/2000/svg"

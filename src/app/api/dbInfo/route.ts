@@ -13,7 +13,6 @@ async function getCollectionsInfo(db: Db) {
 	return collections;
 }
 
-// 获取公共数据库信息
 export const POST = async (req: NextRequest) => {
 	const { uris } = await req.json();
 	try {
@@ -21,10 +20,11 @@ export const POST = async (req: NextRequest) => {
 		// 并行处理多个数据库连接
 		await Promise.all(
 			uris.map(async (uri: string) => {
-				const db = await dbConnectPublic(uri);
+				const { db, client } = await dbConnectPublic(uri);
 				const dbStats = await db.stats();
 				const collections = await getCollectionsInfo(db);
 				info.push({ dbStats, collections });
+        client.close();
 			})
 		);
 		return NextResponse.json({ info, status: 200 });

@@ -7,10 +7,8 @@ import { UserModel } from '@/lib/models';
 export const POST = async (req: NextRequest) => {
 	const { uri, collectionName, query } = await req.json();
 	try {
-		const db = await dbConnectPublic(uri);
+		const { db, client } = await dbConnectPublic(uri);
 		const collection = db.collection(collectionName);
-		console.log(query);
-
 		let data;
 		if (query.type === 'all') {
 			data = await collection.find().toArray();
@@ -20,6 +18,7 @@ export const POST = async (req: NextRequest) => {
 			if (query.limit) queryBuilder = queryBuilder.limit(query.limit);
 			data = await queryBuilder.toArray();
 		}
+    client.close()
 		return NextResponse.json({ data, status: 200 });
 	} catch (error) {
 		return NextResponse.json({ error, status: 500 });

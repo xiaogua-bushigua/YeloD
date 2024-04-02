@@ -5,10 +5,11 @@ import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 
+// 持久化状态管理配置
 const persistConfig = {
 	key: 'root',
 	storage: storage,
-	// blacklist: ['dbSlice'],
+	// blacklist: [''],
 };
 
 export const rootReducers = combineReducers({
@@ -22,11 +23,13 @@ export const store = configureStore({
 	reducer: persistedReducer,
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({
+			// 拦截 Redux 中的 action，以下 action types 将被忽略不进行序列化检查
 			serializableCheck: {
 				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
 			},
-		})
+		}),
 });
+
 export const persistor = persistStore(store);
 
 export type AppDispatch = typeof store.dispatch;

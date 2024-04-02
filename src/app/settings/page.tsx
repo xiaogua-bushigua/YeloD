@@ -2,23 +2,23 @@
 
 import LayoutWrapper from '@/components/LayoutWrapper';
 import Input from '@/components/Input';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import Button from '@/components/Button';
 import { saveDbLinks } from '@/store/reducers/dbSlice';
 
 export default function Settings() {
 	const childRef = useRef<HTMLInputElement[] | null[]>([]);
-	const { user } = useSelector((state: RootState) => state.auth);
-  const { database } = useSelector((state: RootState) => state.db);
-  const dispatch = useDispatch();
+	const { user } = useAppSelector((state: RootState) => state.auth);
+	const { database } = useAppSelector((state: RootState) => state.db);
+	const dispatch = useAppDispatch();
 	const [dbLinks, setDbLinks] = useState(database as string[]);
 
 	const handleAdd = () => {
 		setDbLinks((prev) => [...prev, '']);
 	};
-	const handleDel = (index: number) => {    
+	const handleDel = (index: number) => {
 		setDbLinks((prev) => {
 			const newLinks = [...prev];
 			newLinks.splice(index, 1);
@@ -26,9 +26,8 @@ export default function Settings() {
 		});
 	};
 	const handleSave = async () => {
-		const lks: string[] = childRef.current.filter(child => child).map((el) => el!.value);
-		setDbLinks(lks);
-    dispatch(saveDbLinks(lks));
+		const lks: string[] = childRef.current.filter((child) => child).map((el) => el!.value);
+		dispatch(saveDbLinks(lks));
 		await fetch('/api/dbLinks', {
 			method: 'PATCH',
 			body: JSON.stringify({ username: user.name || user.username, links: lks }),

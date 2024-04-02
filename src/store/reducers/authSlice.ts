@@ -10,6 +10,7 @@ const authSlice = createSlice({
 	name: 'auth',
 	initialState,
 	reducers: {
+    // 保存登录信息
 		setSessionState: (state, { payload }) => {
 			if(payload) state.user = payload;
 		},

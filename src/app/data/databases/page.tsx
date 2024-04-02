@@ -16,19 +16,16 @@ const page = () => {
 	const { database } = useSelector((state: RootState) => state.db);
 	const { info } = useSelector((state: RootState) => state.db);
 	const [cardsInfo, setCardsInfo] = useState([] as Array<ICardsInfo>);
+
 	useEffect(() => {
-		setCardsInfo([]);
-		info.forEach((i) => {
-			setCardsInfo((prev) => [
-				...prev,
-				{
-					name: i.dbStats.db,
-					size: i.dbStats.storageSize,
-					count: i.collections.length,
-				},
-			]);
-		});
-	}, []);
+		const newCardsInfo = info.map((i) => ({
+			name: i.dbStats.db,
+			size: i.dbStats.storageSize,
+			count: i.collections.length,
+		}));
+		setCardsInfo(newCardsInfo);
+	}, [info]);
+
 	return (
 		<div>
 			{database.length === 1 && database[0] === '' ? (

@@ -14,6 +14,7 @@ interface Props {
 const Bread = ({ breads }: Props) => {
 	const router = useRouter();
 	const pathname = usePathname();
+	// 当前路由导航级别
 	const [level, setLevel] = useState(0);
 
 	useEffect(() => {
@@ -23,6 +24,7 @@ const Bread = ({ breads }: Props) => {
 	const handleClick = (path: string) => {
 		router.push('/data' + path);
 	};
+
 	return (
 		<div className="flex gap-2 items-center">
 			{breads.slice(0, level + 1).map((bread, index) => (

@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import Button from './Button';
 import Image from 'next/image';
 import { setSessionState } from '@/store/reducers/authSlice';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '@/store/hooks';
 import LoadingIcon from './icons/LoadingIcon';
 
 const Header = () => {
@@ -15,7 +15,7 @@ const Header = () => {
 	const [hover, setHover] = useState(false);
 	const card = useRef<null | HTMLDivElement>(null);
 
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		setSessionData(session);

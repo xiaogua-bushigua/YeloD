@@ -1,16 +1,18 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useDispatch } from 'react-redux';
 import { RootState } from '@/store/store';
 import { saveDbLinks, fetchDatabaseInfo } from '@/store/reducers/dbSlice';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 
 export default function Data() {
 	const router = useRouter();
-	const { user } = useSelector((state: RootState) => state.auth);
-	const dispatch = useDispatch();
-  const dispatchAsync: ThunkDispatch<RootState, any, any> = useDispatch();
+	const { user } = useAppSelector((state: RootState) => state.auth);
+	const dispatch = useAppDispatch();
+	const dispatchAsync: ThunkDispatch<RootState, any, any> = useDispatch();
+
 	const getLinks = async () => {
 		const res = await fetch('/api/dbLinks', {
 			method: 'POST',
@@ -18,7 +20,7 @@ export default function Data() {
 		});
 		const { data } = await res.json();
 		dispatch(saveDbLinks(data));
-    dispatchAsync(fetchDatabaseInfo(data));
+		dispatchAsync(fetchDatabaseInfo(data));
 	};
 
 	useEffect(() => {

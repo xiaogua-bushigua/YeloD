@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+
 import { ICardsInfo } from '@/app/data/databases/page';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -16,6 +16,7 @@ const DatabaseCard = ({ info, content, index }: Props) => {
 	const router = useRouter();
 	const dispatch = useDispatch();
 	const handleClick = () => {
+    // 如果card内有collections或者documents的时候才允许点进去
 		if (info.count) {
 			if (content === 'collections') {
 				dispatch(

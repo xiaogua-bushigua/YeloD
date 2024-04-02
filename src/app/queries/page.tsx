@@ -1,10 +1,15 @@
 import LayoutWrapper from '@/components/LayoutWrapper';
+import { Button } from '@/components/ui/button';
 
 export const metadata = {
 	title: 'Queries',
-	description: '我是管理',
+	description: 'queries page',
 };
 
 export default function Queries() {
-	return <LayoutWrapper>queries</LayoutWrapper>;
+	return (
+		<LayoutWrapper>
+			<Button className='bg-red-500'>Click me</Button>
+		</LayoutWrapper>
+	);
 }

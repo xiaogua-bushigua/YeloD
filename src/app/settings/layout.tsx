@@ -1,6 +1,6 @@
 export const metadata = {
 	title: 'Settings',
-	description: '我是管理',
+	description: 'settings page',
 };
 
 const SettingsLayout = ({
