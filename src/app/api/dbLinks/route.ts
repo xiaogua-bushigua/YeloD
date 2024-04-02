@@ -2,6 +2,7 @@ import { UserModel } from '@/lib/models';
 import dbConnect from '@/lib/mongodb';
 import { NextResponse, NextRequest } from 'next/server';
 
+// 访问管理员数据库，获取对应用户的公共数据库链接
 export const POST = async (req: NextRequest) => {
 	try {
 		dbConnect();
@@ -15,6 +16,7 @@ export const POST = async (req: NextRequest) => {
 	}
 };
 
+// 更新用户保存的公共数据库链接
 export const PATCH = async (req: NextRequest) => {
 	try {
 		dbConnect();

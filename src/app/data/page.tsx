@@ -24,6 +24,6 @@ export default function Data() {
 	useEffect(() => {
 		getLinks();
 		router.push('/data/databases');
-	}, []);
+	}, [user]);
 	return <div></div>;
 }
