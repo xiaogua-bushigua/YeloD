@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import SessionWrapper from '@/components/SessionWrapper';
 import StoreProvider from '@/components/StoreProvider';
+import { Toaster } from '@/components/ui/toaster';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 		default: 'YeloD - Visualization',
 		template: 'YeloD - %s',
 	},
-	description: 'an application for visualize database',
+	description: 'an application for drawing database',
 	icons: '/imgs/logo.png',
 };
 
@@ -25,6 +26,7 @@ export default function RootLayout({
 			<body className={inter.className}>
 				<StoreProvider>
 					<SessionWrapper>{children}</SessionWrapper>
+					<Toaster />
 				</StoreProvider>
 			</body>
 		</html>

@@ -7,7 +7,9 @@ import Button from '@/components/Button';
 import Input from '@/components/Input';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
-import { transferQuery } from '@/utils/transferQuery';
+import { transferQuery } from '@/lib/transferQuery';
+import { Button as ButtonUI } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
 
 const page = () => {
 	const { info, databaseIndex, collectionIndex, database } = useAppSelector((state: RootState) => state.db);
@@ -15,6 +17,7 @@ const page = () => {
 	const [path, setPath] = useState('');
 	const [code, setCode] = useState({ data: [] } as { data: any[] });
 	const childRef = useRef<HTMLInputElement | null>(null);
+	const { toast } = useToast();
 
 	useEffect(() => {
 		const databaseName = info[databaseIndex].dbStats.db;
@@ -47,9 +50,14 @@ const page = () => {
 			query,
 		};
 		const username = user?.name || user?.username;
-		await fetch('/api/dbQuery', {
+		const res = await fetch('/api/dbQuery', {
 			method: 'PATCH',
 			body: JSON.stringify({ queryObj, username }),
+		});
+		const { status } = await res.json();
+		const description = status === 200 ? 'The query has been saved.' : 'Something went wrong. Please try again.';
+		toast({
+			description,
 		});
 	};
 
@@ -61,18 +69,24 @@ const page = () => {
 					<div className="flex w-4/5 items-center">
 						<Input
 							ref={childRef}
-							title="queries"
+							title="query"
 							name="queries"
 							type="type"
 							placeholder='such as: .find({ "age": { "$gt": 60 } }).sort({ "age": 1 }).limit(10)'
 							className="bg-neutral-50 w-full font-mono border border-violet-200"
 						/>
-						<Button onClick={handleSearch} text="search" className="w-1/6 ml-4 h-10 bg-violet-500" />
 						<Button
-							onClick={handleSaveQuery}
-							text="save"
-							className="w-1/6 ml-4 h-10 bg-pink-400 focus:ring focus:ring-pink-200 active:bg-pink-500"
+							onClick={handleSearch}
+							text="search"
+							className="w-1/6 ml-4 h-10 bg-violet-500 active:ring active:ring-violet-200 active:bg-violet-700"
 						/>
+						<ButtonUI
+							variant="outline"
+							onClick={handleSaveQuery}
+							className="font-mono w-1/6 ml-4 h-10 text-white hover:text-white bg-pink-400 hover:bg-pink-400 active:ring active:ring-pink-200 active:bg-pink-500"
+						>
+							Save
+						</ButtonUI>
 					</div>
 					<span className="font-mono text-slate-500">{code.data.length + ' documents'}</span>
 				</div>

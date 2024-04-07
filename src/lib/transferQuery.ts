@@ -1,9 +1,11 @@
+// 目前无法解决sort，limit谁在前谁在后的问题
+
 export const transferQuery = (query: string | undefined) => {
-  if(!query) {
-    return {
-      type: 'all'
-    }
-  }
+	if (!query) {
+		return {
+			type: 'all',
+		};
+	}
 
 	// 使用正则表达式来提取需要的部分
 	const findPattern = /\.find\((.*?)\)/;
@@ -20,8 +22,8 @@ export const transferQuery = (query: string | undefined) => {
 		find: findMatch ? JSON.parse(findMatch[1]) : undefined,
 		sort: sortMatch ? JSON.parse(sortMatch[1]) : undefined,
 		limit: limitMatch ? parseInt(limitMatch[1]) : undefined,
-    type: 'filtered'
+		type: 'filtered',
 	};
-  
-  return result;
+
+	return result;
 };

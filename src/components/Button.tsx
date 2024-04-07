@@ -12,7 +12,7 @@ const Button = ({ text, className, iconSize, src, onClick }: Props) => {
 	return (
 		<button
 			onClick={onClick}
-			className={`min-w-8 flex gap-2 items-center justify-center rounded-md py-3 text-white active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300 ${className}`}
+			className={`min-w-8 flex gap-2 items-center justify-center rounded-md py-3 text-white ${className}`}
 		>
 			{src && (
 				<Image

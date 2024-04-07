@@ -24,7 +24,7 @@ export const POST = async (req: NextRequest) => {
 				const dbStats = await db.stats();
 				const collections = await getCollectionsInfo(db);
 				info.push({ dbStats, collections });
-        client.close();
+				client.close();
 			})
 		);
 		return NextResponse.json({ info, status: 200 });

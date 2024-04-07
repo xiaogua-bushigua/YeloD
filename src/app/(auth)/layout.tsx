@@ -12,7 +12,7 @@ export default function AuthLayout({
 				{children}
 				<footer className="flex flex-col items-center pb-2 bg-neutral-50 w-full">
 					<Logo size={36} />
-					<p className="text-slate-500 font-mono">For database visualization.</p>
+					<p className="text-slate-500 font-mono">Draw the database.</p>
 				</footer>
 			</div>
 			<div className="h-screen flex items-center bg-violet-500 w-[40%] lg:w-1/2">

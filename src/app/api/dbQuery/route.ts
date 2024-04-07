@@ -3,6 +3,17 @@ import dbConnectPublic from '@/lib/mongodb_public';
 import dbConnect from '@/lib/mongodb';
 import { UserModel } from '@/lib/models';
 
+export const GET = async (req: NextRequest) => {
+	try {
+		dbConnect();
+    const username = req.nextUrl.searchParams.get('username');
+		const queries = await UserModel.findOne({ username }, { queries: 1 });
+		return NextResponse.json({ queries, status: 200 });
+	} catch (error) {
+		return NextResponse.json({ error, status: 500 });
+	}
+};
+
 // 获取查询语句对应的文档合集
 export const POST = async (req: NextRequest) => {
 	const { uri, collectionName, query } = await req.json();
@@ -18,7 +29,7 @@ export const POST = async (req: NextRequest) => {
 			if (query.limit) queryBuilder = queryBuilder.limit(query.limit);
 			data = await queryBuilder.toArray();
 		}
-    client.close()
+		client.close();
 		return NextResponse.json({ data, status: 200 });
 	} catch (error) {
 		return NextResponse.json({ error, status: 500 });
@@ -34,8 +45,8 @@ export const PATCH = async (req: NextRequest) => {
 		queries = [...queries, queryObj];
 		await UserModel.updateOne({ username }, { $set: { queries } });
 		return NextResponse.json({ status: 200 });
-	} catch (err) {
-		console.log(err);
-		throw new Error('Failed to fetch the user!');
+	} catch (error) {
+		console.log(error);
+		throw error;
 	}
 };
