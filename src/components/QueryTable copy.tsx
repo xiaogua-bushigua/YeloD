@@ -10,7 +10,17 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 import { useToast } from '@/components/ui/use-toast';
-import Dialog from './Dialog';
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface Itags {
 	_id: string;
@@ -77,7 +87,6 @@ const QueryTable = () => {
 		const { status } = await res.json();
 		const description = status === 200 ? 'The tag has been saved.' : 'Something went wrong. Please try again.';
 		toast({
-			title: 'Success',
 			description,
 		});
 	};
@@ -185,15 +194,31 @@ const QueryTable = () => {
 								>
 									Save
 								</span>
-								<Dialog
-									content="This action cannot be undone. This will permanently delete this query
-												and its tag."
-									action={() => handleDelete(index)}
-								>
-									<span className="ml-4 cursor-pointer font-mono font-bold text-pink-400 hover:text-pink-600">
-										Delete
-									</span>
-								</Dialog>
+								<AlertDialog>
+									<AlertDialogTrigger>
+										<span className="ml-4 cursor-pointer font-mono font-bold text-pink-400 hover:text-pink-600">
+											Delete
+										</span>
+									</AlertDialogTrigger>
+									<AlertDialogContent>
+										<AlertDialogHeader>
+											<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+											<AlertDialogDescription>
+												This action cannot be undone. This will permanently delete this query
+												and its tag.
+											</AlertDialogDescription>
+										</AlertDialogHeader>
+										<AlertDialogFooter>
+											<AlertDialogCancel>Cancel</AlertDialogCancel>
+											<AlertDialogAction
+												className="text-slate-50 bg-violet-700 hover:bg-violet-500"
+												onClick={() => handleDelete(index)}
+											>
+												Continue
+											</AlertDialogAction>
+										</AlertDialogFooter>
+									</AlertDialogContent>
+								</AlertDialog>
 							</div>
 						</TableCell>
 					</TableRow>

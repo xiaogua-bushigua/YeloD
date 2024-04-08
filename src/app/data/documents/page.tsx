@@ -57,6 +57,7 @@ const page = () => {
 		const { status } = await res.json();
 		const description = status === 200 ? 'The query has been saved.' : 'Something went wrong. Please try again.';
 		toast({
+			title: 'Success',
 			description,
 		});
 	};
@@ -91,7 +92,7 @@ const page = () => {
 					<span className="font-mono text-slate-500">{code.data.length + ' documents'}</span>
 				</div>
 			</div>
-			<pre className="shadow-md border-2 border-t-slate-200 border-indigo-50">
+			<pre className="shadow-md border-2 border-t-slate-200 border-indigo-50 rounded-lg h-[calc(100vh-220px)]">
 				<code className="language-js">{JSON.stringify(code, null, 2)}</code>
 			</pre>
 		</div>

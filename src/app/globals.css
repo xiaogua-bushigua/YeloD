@@ -78,6 +78,7 @@
 
 *::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 *::-webkit-scrollbar-track {
@@ -92,8 +93,5 @@
 }
 
 .language-js {
-  height: calc(100vh - 190px);
-  height: calc(100vh - 220px);
-  border-radius: 1rem;
   font-size: 14px !important;
 }

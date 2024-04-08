@@ -24,6 +24,8 @@ const userSchema = new Schema<IUser>({
 			uri: { type: String, required: true },
 			collectionName: { type: String, required: true },
 			query: { type: String, required: true },
+			field: { type: String },
+			tag: { type: String },
 		},
 	],
 });

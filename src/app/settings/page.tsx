@@ -38,6 +38,7 @@ export default function Settings() {
 		const { status } = await res.json();
 		const description = status === 200 ? 'Links has been saved.' : 'Something went wrong. Please try again.';
 		toast({
+			title: 'Success',
 			description,
 		});
 	};

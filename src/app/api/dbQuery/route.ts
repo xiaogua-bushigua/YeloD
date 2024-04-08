@@ -6,7 +6,7 @@ import { UserModel } from '@/lib/models';
 export const GET = async (req: NextRequest) => {
 	try {
 		dbConnect();
-    const username = req.nextUrl.searchParams.get('username');
+		const username = req.nextUrl.searchParams.get('username');
 		const queries = await UserModel.findOne({ username }, { queries: 1 });
 		return NextResponse.json({ queries, status: 200 });
 	} catch (error) {
@@ -40,9 +40,11 @@ export const POST = async (req: NextRequest) => {
 export const PATCH = async (req: NextRequest) => {
 	try {
 		dbConnect();
-		const { queryObj, username } = await req.json();
+		let { queryObj, username } = await req.json();
+    queryObj.field = ''
+    queryObj.tag = ''
 		let { queries } = await UserModel.findOne({ username }, { queries: 1 });
-		queries = [...queries, queryObj];
+		queries = [...queries, queryObj];    
 		await UserModel.updateOne({ username }, { $set: { queries } });
 		return NextResponse.json({ status: 200 });
 	} catch (error) {
