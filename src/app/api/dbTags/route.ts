@@ -23,15 +23,13 @@ export const PATCH = async (req: NextRequest) => {
 };
 
 export const DELETE = async (req: NextRequest) => {
-  const { rows, username } = await req.json();
-  try {
-    await dbConnect();
-    console.log(rows);
-    
-    await UserModel.updateOne({ username }, { $set: { queries: rows } });
-    return NextResponse.json({ status: 200 });
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-}
+	const { rows, username } = await req.json();
+	try {
+		await dbConnect();
+		await UserModel.updateOne({ username }, { $set: { queries: rows } });
+		return NextResponse.json({ status: 200 });
+	} catch (error) {
+		console.log(error);
+		throw error;
+	}
+};

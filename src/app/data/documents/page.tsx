@@ -3,12 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
-import Button from '@/components/Button';
 import Input from '@/components/Input';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 import { transferQuery } from '@/lib/transferQuery';
-import { Button as ButtonUI } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 
 const page = () => {
@@ -77,22 +76,24 @@ const page = () => {
 							className="bg-neutral-50 w-full font-mono border border-violet-200"
 						/>
 						<Button
+							variant="outline"
 							onClick={handleSearch}
-							text="search"
-							className="w-1/6 ml-4 h-10 bg-violet-500 active:ring active:ring-violet-200 active:bg-violet-700"
-						/>
-						<ButtonUI
+							className="font-mono w-1/6 ml-4 h-10 text-white hover:text-white bg-violet-400 hover:bg-violet-500 active:ring active:ring-violet-200 active:bg-violet-500"
+						>
+							Search
+						</Button>
+						<Button
 							variant="outline"
 							onClick={handleSaveQuery}
-							className="font-mono w-1/6 ml-4 h-10 text-white hover:text-white bg-pink-400 hover:bg-pink-400 active:ring active:ring-pink-200 active:bg-pink-500"
+							className="font-mono w-1/6 ml-4 h-10 text-white hover:text-white bg-pink-400 hover:bg-pink-500 active:ring active:ring-pink-200 active:bg-pink-500"
 						>
 							Save
-						</ButtonUI>
+						</Button>
 					</div>
 					<span className="font-mono text-slate-500">{code.data.length + ' documents'}</span>
 				</div>
 			</div>
-			<pre className="shadow-md border-2 border-t-slate-200 border-indigo-50 rounded-lg h-[calc(100vh-220px)]">
+			<pre className="shadow-md border-2 border-t-slate-200 border-indigo-50 rounded-lg h-[calc(100vh-230px)]">
 				<code className="language-js">{JSON.stringify(code, null, 2)}</code>
 			</pre>
 		</div>
