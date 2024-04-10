@@ -172,7 +172,7 @@ const QueryTable = () => {
 									>
 										View
 									</PopoverTrigger>
-									<PopoverContent>
+									<PopoverContent className='flex flex-col gap-2'>
 										{tag && <span className="font-mono font-bold text-zinc-800">{tag}</span>}
 										<pre className="shadow-md border-2 border-t-slate-200 border-indigo-50 rounded-lg max-h-64">
 											<code className="language-js">{JSON.stringify(code, null, 2)}</code>

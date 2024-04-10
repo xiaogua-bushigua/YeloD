@@ -93,7 +93,7 @@ const page = () => {
 					<span className="font-mono text-slate-500">{code.data.length + ' documents'}</span>
 				</div>
 			</div>
-			<pre className="shadow-md border-2 border-t-slate-200 border-indigo-50 rounded-lg h-[calc(100vh-230px)]">
+			<pre className="shadow-md border-2 border-t-slate-200 border-indigo-50 rounded-lg h-[calc(100vh-214px)]">
 				<code className="language-js">{JSON.stringify(code, null, 2)}</code>
 			</pre>
 		</div>
