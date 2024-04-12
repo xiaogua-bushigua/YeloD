@@ -11,17 +11,23 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { changeChartName, changeChartType } from '@/store/reducers/chartSlice';
+import { useAppDispatch } from '@/store/hooks';
 
-const ChartOperations = () => {
-	const [chartName, setChartName] = useState('');
+interface Props {
+	chartName: string;
+	chartType: string;
+}
+
+const ChartOperations = ({ chartName, chartType }: Props) => {
+	const dispatch = useAppDispatch();
 	const router = useRouter();
 	const handleChartTypeSelectChange = (value: string) => {
-		console.log(value);
+		dispatch(changeChartType(value));
 	};
 	const handleChartNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setChartName(e.target.value);
+		dispatch(changeChartName(e.target.value));
 	};
 	return (
 		<div className="flex w-full justify-between">
@@ -50,7 +56,7 @@ const ChartOperations = () => {
 					value={chartName}
 					onChange={(e) => handleChartNameChange(e)}
 				/>
-				<Select onValueChange={(value) => handleChartTypeSelectChange(value)}>
+				<Select value={chartType} onValueChange={(value) => handleChartTypeSelectChange(value)}>
 					<SelectTrigger className="w-[240px] font-mono">
 						<SelectValue placeholder="Select a type" />
 					</SelectTrigger>

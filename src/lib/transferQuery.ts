@@ -1,6 +1,6 @@
 // 目前无法解决sort，limit谁在前谁在后的问题
 
-export const transferQuery = (query: string | undefined) => {
+export const transferQuery = (query: string | undefined):{type: string; find?: any; sort?: any; limit?: number} => {
 	if (!query) {
 		return {
 			type: 'all',

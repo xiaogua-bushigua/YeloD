@@ -69,6 +69,7 @@ const QueryTable = () => {
 			field: rows[index].field,
 			tag: rows[index].tag,
 			username: user.name || user.username,
+      index
 		};
 		const res = await fetch('/api/dbTags', {
 			method: 'PATCH',

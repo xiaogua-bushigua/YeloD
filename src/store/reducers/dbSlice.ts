@@ -51,18 +51,18 @@ const dbSlice = createSlice({
 	name: 'db',
 	initialState,
 	reducers: {
-    // 保存数据库链接
+		// 保存数据库链接
 		saveDbLinks: (state, { payload }) => {
 			state.database = payload;
 		},
-    // 保存数据库index，或者collection index
+		// 保存数据库index，或者collection index
 		saveDataPath: (state, { payload }) => {
 			if (payload.databaseIndex) state.databaseIndex = payload.databaseIndex;
 			else state.collectionIndex = payload.collectionIndex;
 		},
 	},
 	extraReducers(builder) {
-    // 保存数据库信息
+		// 保存数据库信息
 		builder.addCase(fetchDatabaseInfo.fulfilled, (state, action) => {
 			state.info = action.payload.info;
 		});

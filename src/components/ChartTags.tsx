@@ -11,9 +11,6 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 
-// public里存放折线图，柱状图，饼图的基本option.json文件
-// store里配置一个chart/options页面所需的state,包括：图表名，图表类型（默认折线），配置（默认折线的），x data，series data
-
 const ChartTags = () => {
 	const handleChartTypeSelectChange = (value: string) => {
 		console.log(value);
