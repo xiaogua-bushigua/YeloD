@@ -28,6 +28,7 @@ const QueryTable = () => {
 	const [code, setCode] = useState({} as any);
 	const [tag, setTag] = useState('');
 	const { toast } = useToast();
+  const [warningRow, setWarningRow] = useState([] as number[]);
 
 	const fetchData = async () => {
 		const res = await fetch(`/api/dbQuery?username=${user.name || user.username}`, {
@@ -69,18 +70,31 @@ const QueryTable = () => {
 			field: rows[index].field,
 			tag: rows[index].tag,
 			username: user.name || user.username,
-      index
+			index,
 		};
 		const res = await fetch('/api/dbTags', {
 			method: 'PATCH',
 			body: JSON.stringify(queryBody),
 		});
-		const { status } = await res.json();
-		const description = status === 200 ? 'The tag has been saved.' : 'Something went wrong. Please try again.';
-		toast({
-			title: 'Success',
-			description,
-		});
+		const { status, data } = await res.json();
+		if (status === 200) {
+      setWarningRow([])
+			toast({
+				title: 'Success',
+				description: 'The tag has been saved.',
+			});
+		} else if (status === 202) {
+      setWarningRow(data)
+			toast({
+				title: 'Error',
+				description: 'The tag has existed!',
+			});
+		} else {
+			toast({
+				title: 'Error',
+				description: 'Something went wrong. Please try again.',
+			});
+		}
 	};
 	const handleDelete = async (index: number) => {
 		setRows(() => {
@@ -108,7 +122,6 @@ const QueryTable = () => {
 			return newRows;
 		});
 	};
-
 	const handleInputChange = (index: number, type: string, e: React.ChangeEvent<HTMLInputElement>) => {
 		const newRows = [...rows];
 		if (type === 'field') newRows[index].field = e.target.value;
@@ -159,7 +172,7 @@ const QueryTable = () => {
 							<Input
 								type="text"
 								placeholder=""
-								className="focus:outline-none active:outline-none"
+								className={`${warningRow.includes(index) ? 'border-red-700' : ''} focus:outline-none active:outline-none`}
 								value={row.tag || ''}
 								onChange={(e) => handleInputChange(index, 'tag', e)}
 							/>
@@ -173,7 +186,7 @@ const QueryTable = () => {
 									>
 										View
 									</PopoverTrigger>
-									<PopoverContent className='flex flex-col gap-2'>
+									<PopoverContent className="flex flex-col gap-2">
 										{tag && <span className="font-mono font-bold text-zinc-800">{tag}</span>}
 										<pre className="shadow-md border-2 border-t-slate-200 border-indigo-50 rounded-lg max-h-64">
 											<code className="language-js">{JSON.stringify(code, null, 2)}</code>

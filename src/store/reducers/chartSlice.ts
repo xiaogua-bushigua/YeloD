@@ -11,7 +11,10 @@ interface IinitialState {
 	seriesData: Array<string[] | number[]>;
 	tags: Array<{
 		tag: string;
-		data: number[] | string[];
+		field: string;
+		query: string;
+		uri: string;
+		collectionName: string;
 	}>;
 }
 
@@ -21,20 +24,11 @@ const initialState: IinitialState = {
 	option: lineBasicOption,
 	xData: lineBasicOption.xAxis.data,
 	seriesData: [lineBasicOption.series[0].data],
-	tags: [
-		{
-			tag: 'default-xData',
-			data: lineBasicOption.xAxis.data,
-		},
-		{
-			tag: 'default-seriesData',
-			data: lineBasicOption.series[0].data,
-		},
-	],
+	tags: [],
 };
 
 export const fetchTagsInfo = createAsyncThunk('dbTags', async (username: string) => {
-	const res = await fetch(`/api/dbTags?username=${username}`, {
+	const res = await fetch(`/api/dbQuery?username=${username}`, {
 		method: 'GET',
 	});
 	return res.json();
@@ -50,16 +44,7 @@ const chartSlice = createSlice({
 			state.option = lineBasicOption;
 			state.xData = lineBasicOption.xAxis.data;
 			state.seriesData = [lineBasicOption.series[0].data];
-			state.tags = [
-				{
-					tag: 'default-xData',
-					data: lineBasicOption.xAxis.data,
-				},
-				{
-					tag: 'default-seriesData',
-					data: lineBasicOption.series[0].data,
-				},
-			];
+			state.tags = [];
 		},
 		changeChartType(state, action) {
 			state.chartType = action.payload;
@@ -67,10 +52,19 @@ const chartSlice = createSlice({
 		changeChartName(state, action) {
 			state.chartName = action.payload;
 		},
+		setXData(state, action) {
+			state.xData = action.payload;
+			state.option.xAxis.data = state.xData;
+		},
+		setSeries(state, action) {
+			const index = action.payload.index;
+			state.seriesData[index] = action.payload.data;
+			state.option.series[index].data = state.seriesData[index];
+		},
 	},
 	extraReducers(builder) {
 		builder.addCase(fetchTagsInfo.fulfilled, (state, action) => {
-			state.tags = action.payload.data;
+			state.tags = action.payload.queries.queries;
 		});
 	},
 });
@@ -78,4 +72,4 @@ const chartSlice = createSlice({
 const chartReducer = chartSlice.reducer;
 
 export default chartReducer;
-export const { changeChartType, changeChartName, resetChart } = chartSlice.actions;
+export const { changeChartType, changeChartName, resetChart, setXData, setSeries } = chartSlice.actions;

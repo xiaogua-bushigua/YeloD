@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
 	Select,
 	SelectContent,
@@ -10,48 +10,56 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
+import { useAppSelector } from '@/store/hooks';
+import { RootState } from '@/store/store';
+import { setXData, setSeries } from '@/store/reducers/chartSlice';
+import { useAppDispatch } from '@/store/hooks';
 
 const ChartTags = () => {
-	const handleChartTypeSelectChange = (value: string) => {
-		console.log(value);
+	const { tags } = useAppSelector((state: RootState) => state.chart);
+	const dispatch = useAppDispatch();
+	const handleChartTypeSelectChange = async (value: string, type: string) => {
+		const query = tags.filter((tag) => tag.tag === value)[0];
+		const res = await fetch('/api/dbTags', {
+			method: 'POST',
+			body: JSON.stringify(query),
+		});
+		const { data } = await res.json();
+		if (type === 'xData') {
+			dispatch(setXData(data));
+		} else {
+			dispatch(setSeries({ data, index: 0 }));
+		}
 	};
 	return (
 		<div className="flex flex-col gap-2 px-4">
-			<Select onValueChange={(value) => handleChartTypeSelectChange(value)}>
+			<Select onValueChange={(value) => handleChartTypeSelectChange(value, 'xData')}>
 				<SelectTrigger className="w-[180px] font-mono">
 					<SelectValue placeholder="Select x data" />
 				</SelectTrigger>
 				<SelectContent>
 					<SelectGroup>
 						<SelectLabel className="font-mono">data tags</SelectLabel>
-						<SelectItem className="font-mono" value="line">
-							Line
-						</SelectItem>
-						<SelectItem className="font-mono" value="bar">
-							Bar
-						</SelectItem>
-						<SelectItem className="font-mono" value="pie">
-							Pie
-						</SelectItem>
+						{tags.map((tag) => (
+							<SelectItem key={tag.tag + '_x'} className="font-mono" value={tag.tag}>
+								{tag.tag}
+							</SelectItem>
+						))}
 					</SelectGroup>
 				</SelectContent>
 			</Select>
-			<Select onValueChange={(value) => handleChartTypeSelectChange(value)}>
+			<Select onValueChange={(value) => handleChartTypeSelectChange(value, 'series')}>
 				<SelectTrigger className="w-[180px] font-mono">
 					<SelectValue placeholder="Select y series" />
 				</SelectTrigger>
 				<SelectContent>
 					<SelectGroup>
 						<SelectLabel className="font-mono">data tags</SelectLabel>
-						<SelectItem className="font-mono" value="line">
-							Line
-						</SelectItem>
-						<SelectItem className="font-mono" value="bar">
-							Bar
-						</SelectItem>
-						<SelectItem className="font-mono" value="pie">
-							Pie
-						</SelectItem>
+						{tags.map((tag) => (
+							<SelectItem key={tag.tag + '_y'} className="font-mono" value={tag.tag}>
+								{tag.tag}
+							</SelectItem>
+						))}
 					</SelectGroup>
 				</SelectContent>
 			</Select>
