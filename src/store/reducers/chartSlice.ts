@@ -7,6 +7,7 @@ interface IinitialState {
 	chartName: string;
 	chartType: string;
 	option: any;
+  tempOption: string;
 	xData: string[] | number[];
 	seriesData: Array<string[] | number[]>;
 	tags: Array<{
@@ -22,6 +23,7 @@ const initialState: IinitialState = {
 	chartName: 'line-chart',
 	chartType: 'line',
 	option: lineBasicOption,
+  tempOption: '',
 	xData: lineBasicOption.xAxis.data,
 	seriesData: [lineBasicOption.series[0].data],
 	tags: [],
@@ -42,6 +44,7 @@ const chartSlice = createSlice({
 			state.chartName = 'line-chart';
 			state.chartType = 'line';
 			state.option = lineBasicOption;
+			state.tempOption = '';
 			state.xData = lineBasicOption.xAxis.data;
 			state.seriesData = [lineBasicOption.series[0].data];
 			state.tags = [];
@@ -61,6 +64,12 @@ const chartSlice = createSlice({
 			state.seriesData[index] = action.payload.data;
 			state.option.series[index].data = state.seriesData[index];
 		},
+    setTempOption(state, action) {
+      state.tempOption = action.payload;
+    },
+    setOption(state, action) {
+      state.option = action.payload;
+    }
 	},
 	extraReducers(builder) {
 		builder.addCase(fetchTagsInfo.fulfilled, (state, action) => {
@@ -72,4 +81,5 @@ const chartSlice = createSlice({
 const chartReducer = chartSlice.reducer;
 
 export default chartReducer;
-export const { changeChartType, changeChartName, resetChart, setXData, setSeries } = chartSlice.actions;
+export const { changeChartType, changeChartName, resetChart, setXData, setSeries, setTempOption, setOption } =
+	chartSlice.actions;

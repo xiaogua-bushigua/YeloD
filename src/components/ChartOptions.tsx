@@ -1,44 +1,60 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import SyntaxHighlighter from 'react-syntax-highlighter';
+import React, { useEffect, useRef } from 'react';
+import EditorJS from '@editorjs/editorjs';
+import editorjsCodeflask from '@calumk/editorjs-codeflask';
+import { setTempOption } from '@/store/reducers/chartSlice';
+import { useAppDispatch } from '@/store/hooks';
 
 const ChartOptions = ({ option }: { option: any }) => {
-  const [code, setCode] = useState(`
- const fib = (n) => {
-   if (n <= 1) {
-     return n;
-   }
-   return fib(n - 1) + fib(n - 2);
- };
-`);
-const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const ejInstance = useRef<any>(null);
+	const dispatch = useAppDispatch();
 
-	return (
-		<div
-			role="button"
-			tabIndex={0}
-			onKeyDown={() => textareaRef.current?.focus()}
-			onClick={() => textareaRef.current?.focus()}
-			className="relative w-full h-full flex"
-		>
-			<textarea
-				className="absolute inset-0 py-3 resize-none bg-transparent font-mono text-transparent caret-white outline-none"
-				value={code}
-				ref={textareaRef}
-				onChange={(e) => setCode(e.target.value)}
-			/>
-			<SyntaxHighlighter
-				language="javascript"
-				className="flex-1 shadow-md border-2 border-t-slate-200 border-indigo-50 rounded-lg h-full"
-				customStyle={{
-					paddingLeft: '0.75em',
-				}}
-			>
-				{code}
-			</SyntaxHighlighter>
-		</div>
-	);
+	const DEFAULT_INITIAL_DATA = {
+		time: new Date().getTime(),
+		blocks: [
+			{
+				type: 'code',
+				data: {
+					code: JSON.stringify(option, null, 2),
+					language: 'javascript',
+					showlinenumbers: true,
+				},
+			},
+		],
+	};
+
+	const initEditor = () => {
+		const editor = new EditorJS({
+			holder: 'editorjs',
+			tools: {
+				code: editorjsCodeflask,
+			},
+			autofocus: true,
+			data: DEFAULT_INITIAL_DATA,
+			onChange: async (api) => {
+				let content = await api.saver.save();
+				const code = content.blocks[0].data.code;
+				dispatch(setTempOption(code));
+			},
+		});
+		return editor;
+	};
+
+	useEffect(() => {
+		if (!ejInstance.current) {
+			const editor = initEditor();
+			ejInstance.current = editor;
+		}
+		return () => {
+			if (ejInstance.current?.destroy) {
+				ejInstance.current?.destroy();
+				ejInstance.current = null;
+			}
+		};
+	}, []);
+
+	return <div id="editorjs"></div>;
 };
 
 export default ChartOptions;
