@@ -4,6 +4,7 @@ import './globals.css';
 import SessionWrapper from '@/components/SessionWrapper';
 import StoreProvider from '@/components/StoreProvider';
 import { Toaster } from '@/components/ui/toaster';
+import LayoutWrapper from '@/components/LayoutWrapper';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,7 +26,9 @@ export default function RootLayout({
 		<html lang="en">
 			<body className={inter.className}>
 				<StoreProvider>
-					<SessionWrapper>{children}</SessionWrapper>
+					<SessionWrapper>
+						<LayoutWrapper>{children}</LayoutWrapper>
+					</SessionWrapper>
 					<Toaster />
 				</StoreProvider>
 			</body>

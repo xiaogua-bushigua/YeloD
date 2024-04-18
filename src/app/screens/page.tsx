@@ -1,4 +1,3 @@
-import LayoutWrapper from '@/components/LayoutWrapper';
 
 export const metadata = {
 	title: 'Screens',
@@ -6,5 +5,5 @@ export const metadata = {
 };
 
 export default function Screens() {
-	return <LayoutWrapper>screens</LayoutWrapper>;
+	return <div>screens</div>;
 }

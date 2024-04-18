@@ -1,4 +1,3 @@
-import LayoutWrapper from '@/components/LayoutWrapper';
 
 export const metadata = {
 	title: 'Charts',
@@ -10,7 +9,7 @@ const ChartsLayout = ({
 }: Readonly<{
 	children: React.ReactNode;
 }>) => {
-	return <LayoutWrapper>{children}</LayoutWrapper>;
+	return <>{children}</>;
 };
 
 export default ChartsLayout;

@@ -1,5 +1,4 @@
 import Bread from '@/components/Bread';
-import LayoutWrapper from '@/components/LayoutWrapper';
 
 export const metadata = {
 	title: 'Data',
@@ -17,10 +16,10 @@ const DataLayout = ({
 		{ name: 'Documents', path: '/documents' },
 	];
 	return (
-		<LayoutWrapper>
+		<>
 			<Bread breads={bread_paths} />
 			{children}
-		</LayoutWrapper>
+		</>
 	);
 };
 

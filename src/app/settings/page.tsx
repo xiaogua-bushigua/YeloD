@@ -1,6 +1,5 @@
 'use client';
 
-import LayoutWrapper from '@/components/LayoutWrapper';
 import Input from '@/components/Input';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
@@ -43,7 +42,7 @@ export default function Settings() {
 		});
 	};
 	return (
-		<LayoutWrapper>
+		<>
 			{dbLinks.map((db, index) => (
 				<div key={db + index} className="mb-4 flex w-full">
 					<Input
@@ -86,6 +85,6 @@ export default function Settings() {
 			>
 				Save
 			</ButtonUI>
-		</LayoutWrapper>
+		</>
 	);
 }

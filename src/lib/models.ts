@@ -1,5 +1,14 @@
 import { Schema, model, models } from 'mongoose';
 
+export interface ICharts {
+	chartName: string;
+	chartType: string;
+	option: any;
+	selectedTags: string[];
+	img: string;
+  _id: string;
+}
+
 interface IUser {
 	username: string;
 	password?: string;
@@ -12,6 +21,7 @@ interface IUser {
 		collectionName: string;
 		query: string;
 	}>;
+	charts: Array<ICharts>;
 }
 
 const userSchema = new Schema<IUser>({
@@ -26,6 +36,15 @@ const userSchema = new Schema<IUser>({
 			query: { type: String, required: true },
 			field: { type: String },
 			tag: { type: String },
+		},
+	],
+	charts: [
+		{
+			chartName: { type: String, required: true },
+			chartType: { type: String, required: true },
+			option: { type: Object, required: true },
+			selectedTags: { type: Array, required: true },
+			img: { type: String, required: true },
 		},
 	],
 });

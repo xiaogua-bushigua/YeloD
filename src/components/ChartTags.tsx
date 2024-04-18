@@ -12,11 +12,11 @@ import {
 } from '@/components/ui/select';
 import { useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
-import { setXData, setSeries } from '@/store/reducers/chartSlice';
+import { setXData, setSeries, setSelectedTags } from '@/store/reducers/chartSlice';
 import { useAppDispatch } from '@/store/hooks';
 
 const ChartTags = () => {
-	const { tags } = useAppSelector((state: RootState) => state.chart);
+	const { tags, selectedTags } = useAppSelector((state: RootState) => state.chart);
 	const dispatch = useAppDispatch();
 	const handleChartTypeSelectChange = async (value: string, type: string) => {
 		const query = tags.filter((tag) => tag.tag === value)[0];
@@ -27,13 +27,15 @@ const ChartTags = () => {
 		const { data } = await res.json();
 		if (type === 'xData') {
 			dispatch(setXData(data));
+			dispatch(setSelectedTags({ index: 0, name: value }));
 		} else {
 			dispatch(setSeries({ data, index: 0 }));
+			dispatch(setSelectedTags({ index: 1, name: value }));
 		}
 	};
 	return (
 		<div className="flex flex-col gap-2 px-4">
-			<Select onValueChange={(value) => handleChartTypeSelectChange(value, 'xData')}>
+			<Select value={selectedTags[0]} onValueChange={(value) => handleChartTypeSelectChange(value, 'xData')}>
 				<SelectTrigger className="w-[180px] font-mono">
 					<SelectValue placeholder="Select x data" />
 				</SelectTrigger>
@@ -48,7 +50,7 @@ const ChartTags = () => {
 					</SelectGroup>
 				</SelectContent>
 			</Select>
-			<Select onValueChange={(value) => handleChartTypeSelectChange(value, 'series')}>
+			<Select value={selectedTags[1]} onValueChange={(value) => handleChartTypeSelectChange(value, 'series')}>
 				<SelectTrigger className="w-[180px] font-mono">
 					<SelectValue placeholder="Select y series" />
 				</SelectTrigger>

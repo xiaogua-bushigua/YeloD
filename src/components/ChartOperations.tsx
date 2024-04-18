@@ -16,6 +16,7 @@ import { changeChartName, changeChartType, setOption } from '@/store/reducers/ch
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
 import { useToast } from '@/components/ui/use-toast';
+import PubSub from 'pubsub-js';
 
 interface Props {
 	chartName: string;
@@ -45,6 +46,9 @@ const ChartOperations = ({ chartName, chartType }: Props) => {
 			});
 		}
 	};
+	const handleClickSave = () => {
+		PubSub.publish('saveChartThumbnail');
+	};
 	return (
 		<div className="flex w-full justify-between">
 			<div className="flex w-48">
@@ -52,6 +56,7 @@ const ChartOperations = ({ chartName, chartType }: Props) => {
 					<img src="/imgs/right.svg" alt="left" className="rotate-180 w-6 select-none" />
 				</Button>
 				<Button
+					onClick={handleClickSave}
 					variant="outline"
 					className="font-mono w-1/3 ml-4 h-10 text-white hover:text-white bg-violet-400 hover:bg-violet-500 active:ring active:ring-violet-200 active:bg-violet-500"
 				>

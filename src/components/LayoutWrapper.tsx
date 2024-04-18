@@ -1,8 +1,18 @@
+'use client';
+
 import Header from '@/components/Header';
 import Navigator from '@/components/Navigator';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
+	const pathname = usePathname();
+	useEffect(() => {
+		console.log('layout wrapper');
+	}, []);
+	if (pathname === '/login') {
+		return children;
+	}
 	return (
 		<div className="w-screen h-screen flex">
 			<Navigator />

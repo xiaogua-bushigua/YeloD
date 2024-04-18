@@ -7,7 +7,7 @@ interface IinitialState {
 	chartName: string;
 	chartType: string;
 	option: any;
-  tempOption: string;
+	tempOption: string;
 	xData: string[] | number[];
 	seriesData: Array<string[] | number[]>;
 	tags: Array<{
@@ -17,16 +17,18 @@ interface IinitialState {
 		uri: string;
 		collectionName: string;
 	}>;
+	selectedTags: string[];
 }
 
 const initialState: IinitialState = {
 	chartName: 'line-chart',
 	chartType: 'line',
 	option: lineBasicOption,
-  tempOption: '',
+	tempOption: '',
 	xData: lineBasicOption.xAxis.data,
 	seriesData: [lineBasicOption.series[0].data],
 	tags: [],
+	selectedTags: [],
 };
 
 export const fetchTagsInfo = createAsyncThunk('dbTags', async (username: string) => {
@@ -48,6 +50,7 @@ const chartSlice = createSlice({
 			state.xData = lineBasicOption.xAxis.data;
 			state.seriesData = [lineBasicOption.series[0].data];
 			state.tags = [];
+			state.selectedTags = [];
 		},
 		changeChartType(state, action) {
 			state.chartType = action.payload;
@@ -64,12 +67,15 @@ const chartSlice = createSlice({
 			state.seriesData[index] = action.payload.data;
 			state.option.series[index].data = state.seriesData[index];
 		},
-    setTempOption(state, action) {
-      state.tempOption = action.payload;
-    },
-    setOption(state, action) {
-      state.option = action.payload;
-    }
+		setTempOption(state, action) {
+			state.tempOption = action.payload;
+		},
+		setOption(state, action) {
+			state.option = action.payload;
+		},
+		setSelectedTags(state, action) {
+			state.selectedTags[action.payload.index] = action.payload.name;
+		},
 	},
 	extraReducers(builder) {
 		builder.addCase(fetchTagsInfo.fulfilled, (state, action) => {
@@ -81,5 +87,13 @@ const chartSlice = createSlice({
 const chartReducer = chartSlice.reducer;
 
 export default chartReducer;
-export const { changeChartType, changeChartName, resetChart, setXData, setSeries, setTempOption, setOption } =
-	chartSlice.actions;
+export const {
+	changeChartType,
+	changeChartName,
+	resetChart,
+	setXData,
+	setSeries,
+	setTempOption,
+	setOption,
+	setSelectedTags,
+} = chartSlice.actions;
