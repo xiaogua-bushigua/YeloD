@@ -5,7 +5,7 @@ import AddIcon from '@/components/icons/AddIcon';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { resetChart } from '@/store/reducers/chartSlice';
+import { resetChart, initChart } from '@/store/reducers/chartSlice';
 import { RootState } from '@/store/store';
 import { ICharts } from '@/lib/models';
 
@@ -18,6 +18,10 @@ export default function Charts() {
 	const handleAddClick = () => {
 		dispatch(resetChart());
 		router.push('/charts/options');
+	};
+	const handleChartClick = (chart: ICharts) => {
+		dispatch(initChart(chart));
+		router.push('/charts/options?id=' + chart._id);
 	};
 	const fetchData = async () => {
 		const res = await fetch(`/api/chart?username=${user.name || user.username}`, {
@@ -32,7 +36,7 @@ export default function Charts() {
 	return (
 		<div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 px-8 py-6 gap-y-6">
 			{cards?.map((i) => (
-				<ChartCard key={i._id} title={i.chartName} cover={i.img} />
+				<ChartCard onClick={() => handleChartClick(i)} key={i._id} title={i.chartName} cover={i.img} />
 			))}
 			<div
 				onClick={handleAddClick}

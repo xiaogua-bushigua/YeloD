@@ -29,7 +29,7 @@ const page = () => {
 				</div>
 				<div className="w-1/2 bg-white rounded-lg shadow-md">
 					<div className="w-full h-3/4">
-						<ChartView option={option} />
+						<ChartView />
 					</div>
 					<ChartTags />
 				</div>

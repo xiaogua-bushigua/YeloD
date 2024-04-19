@@ -21,7 +21,7 @@ interface IinitialState {
 }
 
 const initialState: IinitialState = {
-	chartName: 'line-chart',
+	chartName: 'chart-name',
 	chartType: 'line',
 	option: lineBasicOption,
 	tempOption: '',
@@ -43,7 +43,7 @@ const chartSlice = createSlice({
 	initialState,
 	reducers: {
 		resetChart(state) {
-			state.chartName = 'line-chart';
+			state.chartName = 'chart-name';
 			state.chartType = 'line';
 			state.option = lineBasicOption;
 			state.tempOption = '';
@@ -52,8 +52,28 @@ const chartSlice = createSlice({
 			state.tags = [];
 			state.selectedTags = [];
 		},
+		initChart(state, action) {
+			state.chartName = action.payload.chartName;
+			state.chartType = action.payload.chartType;
+			state.option = action.payload.option;
+			state.selectedTags = action.payload.selectedTags;
+		},
 		changeChartType(state, action) {
 			state.chartType = action.payload;
+			switch (action.payload) {
+				case 'line':
+					state.option = lineBasicOption;
+					break;
+				case 'pie':
+					state.option = PieBasicOption;
+					break;
+				case 'bar':
+					state.option = BarBasicOption;
+					break;
+				default:
+					break;
+			}
+      state.selectedTags = []
 		},
 		changeChartName(state, action) {
 			state.chartName = action.payload;
@@ -96,4 +116,5 @@ export const {
 	setTempOption,
 	setOption,
 	setSelectedTags,
+	initChart,
 } = chartSlice.actions;

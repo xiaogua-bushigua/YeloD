@@ -8,12 +8,14 @@ import { useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
 import { useToast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
-const ChartView = ({ option }: { option: any }) => {
+const ChartView = () => {
 	const echartRef = useRef<EChartsReact>(null);
 	const { toast } = useToast();
 	const router = useRouter();
-	const { chartName, chartType, selectedTags } = useAppSelector((state: RootState) => state.chart);
+	const searchParams = useSearchParams();
+	const { chartName, chartType, selectedTags, option } = useAppSelector((state: RootState) => state.chart);
 	const { user } = useAppSelector((state: RootState) => state.auth);
 	useEffect(() => {
 		const token = PubSub.subscribe('saveChartThumbnail', async () => {
@@ -26,9 +28,10 @@ const ChartView = ({ option }: { option: any }) => {
 				selectedTags,
 				img: base64,
 			};
+			const id = searchParams.get('id');
 			const res = await fetch('/api/chart', {
 				method: 'PATCH',
-				body: JSON.stringify({ chartInfo, username: user.name || user.username }),
+				body: JSON.stringify({ chartInfo, username: user.name || user.username, id }),
 			});
 			const { status } = await res.json();
 			if (status === 200) {
@@ -48,6 +51,13 @@ const ChartView = ({ option }: { option: any }) => {
 			PubSub.unsubscribe(token);
 		};
 	}, [selectedTags, chartName, chartType, option]);
+
+	useEffect(() => {
+		const echartInstance = echartRef.current!.getEchartsInstance();
+		echartInstance.clear();
+		echartInstance.setOption(option);
+	}, [option]);
+
 	return <ReactECharts ref={echartRef} option={option} style={{ height: '100%', width: '100%' }} />;
 };
 

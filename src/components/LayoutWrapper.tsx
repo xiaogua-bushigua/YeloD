@@ -8,7 +8,6 @@ import { usePathname } from 'next/navigation';
 const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
 	const pathname = usePathname();
 	useEffect(() => {
-		console.log('layout wrapper');
 	}, []);
 	if (pathname === '/login') {
 		return children;

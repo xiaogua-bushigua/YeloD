@@ -9,8 +9,6 @@ import { useAppDispatch } from '@/store/hooks';
 const ChartOptions = ({ option }: { option: any }) => {
 	const ejInstance = useRef<any>(null);
 	const dispatch = useAppDispatch();
-  // const [forceRender, setForceRender] = useState(false);
-
 	const DEFAULT_INITIAL_DATA = {
 		time: new Date().getTime(),
 		blocks: [
@@ -24,7 +22,6 @@ const ChartOptions = ({ option }: { option: any }) => {
 			},
 		],
 	};
-
 	const initEditor = () => {
 		const editor = new EditorJS({
 			holder: 'editorjs',
@@ -51,11 +48,9 @@ const ChartOptions = ({ option }: { option: any }) => {
 			if (ejInstance.current?.destroy) {
 				ejInstance.current?.destroy();
 				ejInstance.current = null;
-				console.log('ejInstance destroyed');
 			}
-      // setForceRender((prev) => !prev);
 		};
-	}, []);
+	}, [option]);
 
 	return <div id="editorjs"></div>;
 };

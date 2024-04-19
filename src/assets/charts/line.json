@@ -9,6 +9,7 @@
   },
   "series": [
     {
+      "name": "temp",
       "data": [
         150,
         230,
