@@ -2,6 +2,7 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import dbReducer from './reducers/dbSlice';
 import authReducer from './reducers/authSlice';
 import chartReducer from './reducers/chartSlice';
+import screenReducer from './reducers/screenSlice';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
@@ -16,7 +17,8 @@ const persistConfig = {
 export const rootReducers = combineReducers({
 	db: dbReducer,
 	auth: authReducer,
-  chart: chartReducer,
+	chart: chartReducer,
+	screen: screenReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducers);

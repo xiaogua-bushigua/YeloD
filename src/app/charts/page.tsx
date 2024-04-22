@@ -34,7 +34,7 @@ export default function Charts() {
 		fetchData();
 	}, []);
 	return (
-		<div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 px-8 py-6 gap-y-6">
+		<div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 gap-y-8">
 			{cards?.map((i) => (
 				<ChartCard onClick={() => handleChartClick(i)} key={i._id} title={i.chartName} cover={i.img} />
 			))}
@@ -42,7 +42,7 @@ export default function Charts() {
 				onClick={handleAddClick}
 				onMouseEnter={() => setHover(true)}
 				onMouseLeave={() => setHover(false)}
-				className="w-48 h-48 flex items-center justify-center cursor-pointer bg-slate-50 p-12 rounded-lg border border-slate-200 hover:shadow-lg"
+				className="w-56 h-52 flex items-center justify-center cursor-pointer bg-slate-50 p-12 rounded-lg border border-slate-200 hover:shadow-lg"
 			>
 				<AddIcon fill={hover ? '#2b2b2b' : '#bababa'} />
 			</div>

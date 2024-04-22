@@ -73,7 +73,7 @@ const ChartOperations = ({ chartName, chartType }: Props) => {
 			<div className="flex w-1/2 gap-4 mt-1 items-center pl-2">
 				<Input
 					type="text"
-					placeholder="Give a name for your chart"
+					placeholder="Give a name for the chart"
 					className="focus:outline-none active:outline-none w-36"
 					value={chartName}
 					onChange={(e) => handleChartNameChange(e)}

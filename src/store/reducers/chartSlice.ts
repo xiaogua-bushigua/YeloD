@@ -73,7 +73,7 @@ const chartSlice = createSlice({
 				default:
 					break;
 			}
-      state.selectedTags = []
+			state.selectedTags = [];
 		},
 		changeChartName(state, action) {
 			state.chartName = action.payload;
