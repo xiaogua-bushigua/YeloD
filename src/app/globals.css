@@ -111,3 +111,7 @@
 .editorjs-codeFlask_LangDisplay {
   display: none !important;
 }
+
+.shadcn-drawer > :first-child {
+  display: none;
+}

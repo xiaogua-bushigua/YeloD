@@ -1,6 +1,5 @@
 'use client';
 
-import React, { useEffect } from 'react';
 import {
 	Select,
 	SelectContent,
@@ -20,6 +19,7 @@ const ChartTags = () => {
 	const dispatch = useAppDispatch();
 	const handleChartTypeSelectChange = async (value: string, type: string) => {
 		const query = tags.filter((tag) => tag.tag === value)[0];
+    const queryIndex = tags.findIndex((tag) => tag.tag === value);
 		const res = await fetch('/api/dbTags', {
 			method: 'POST',
 			body: JSON.stringify(query),
@@ -27,15 +27,15 @@ const ChartTags = () => {
 		const { data } = await res.json();
 		if (type === 'xData') {
 			dispatch(setXData(data));
-			dispatch(setSelectedTags({ index: 0, name: value }));
+			dispatch(setSelectedTags({ index: 0, tag: value, queryIndex }));
 		} else {
 			dispatch(setSeries({ data, index: 0 }));
-			dispatch(setSelectedTags({ index: 1, name: value }));
+			dispatch(setSelectedTags({ index: 1, tag: value, queryIndex }));
 		}
 	};
 	return (
 		<div className="flex flex-col gap-2 px-4">
-			<Select value={selectedTags[0]} onValueChange={(value) => handleChartTypeSelectChange(value, 'xData')}>
+			<Select value={selectedTags[0] ? selectedTags[0].tag : ''} onValueChange={(value) => handleChartTypeSelectChange(value, 'xData')}>
 				<SelectTrigger className="w-[180px] font-mono">
 					<SelectValue placeholder="Select x data" />
 				</SelectTrigger>
@@ -50,7 +50,7 @@ const ChartTags = () => {
 					</SelectGroup>
 				</SelectContent>
 			</Select>
-			<Select value={selectedTags[1]} onValueChange={(value) => handleChartTypeSelectChange(value, 'series')}>
+			<Select value={selectedTags[1] ? selectedTags[1].tag : ''} onValueChange={(value) => handleChartTypeSelectChange(value, 'series')}>
 				<SelectTrigger className="w-[180px] font-mono">
 					<SelectValue placeholder="Select y series" />
 				</SelectTrigger>

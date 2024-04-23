@@ -17,7 +17,10 @@ interface IinitialState {
 		uri: string;
 		collectionName: string;
 	}>;
-	selectedTags: string[];
+	selectedTags: Array<{
+		tag: string;
+		queryIndex: number;
+	}>;
 }
 
 const initialState: IinitialState = {
@@ -94,7 +97,10 @@ const chartSlice = createSlice({
 			state.option = action.payload;
 		},
 		setSelectedTags(state, action) {
-			state.selectedTags[action.payload.index] = action.payload.name;
+			state.selectedTags[action.payload.index] = {
+				tag: action.payload.tag,
+				queryIndex: action.payload.queryIndex,
+			};
 		},
 	},
 	extraReducers(builder) {

@@ -10,8 +10,6 @@ export const POST = async (req: NextRequest) => {
 		const { db, client } = await dbConnectPublic(uri);
 		const collection = db.collection(collectionName);
 		const ql = transferQuery(query);
-    console.log(ql);
-    
 		let array;
 		if (ql.type === 'all') {
 			array = await collection

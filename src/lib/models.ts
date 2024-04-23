@@ -4,7 +4,10 @@ export interface ICharts {
 	chartName: string;
 	chartType: string;
 	option: any;
-	selectedTags: string[];
+	selectedTags: Array<{
+    queryIndex: number;
+    tag: string;
+  }>;
 	img: string;
   _id: string;
 }
