@@ -1,7 +1,7 @@
 import ChartCheck from './ChartCheck';
 import { useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
 	Select,
 	SelectContent,
@@ -11,38 +11,35 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
 import { useAppDispatch } from '@/store/hooks';
-import { setBackground, initCharts } from '@/store/reducers/screenSlice';
+import { setBackground, initCharts, setTitle, setRatio } from '@/store/reducers/screenSlice';
+import { Input } from '@/components/ui/input';
 
 const DrawerContentUI = () => {
-  const dispatch = useAppDispatch();
+	const dispatch = useAppDispatch();
 	const { user } = useAppSelector((state: RootState) => state.auth);
-  const { background, charts } = useAppSelector((state: RootState) => state.screen);
+	const { background, charts, title, ratio } = useAppSelector((state: RootState) => state.screen);
 	const fetchData = async () => {
 		const res = await fetch(`/api/chart?username=${user.name || user.username}`, {
 			method: 'GET',
 		});
 		const { data } = await res.json();
-    dispatch(initCharts(data));
+		dispatch(initCharts(data));
 	};
-  const handleSaveClick = () => {
-
-  }
 	useEffect(() => {
 		fetchData();
 	}, []);
 	return (
 		<div className="w-full h-full flex">
-			<div className="w-60 border-r flex flex-col justify-between border-slate-300 p-4">
-				<div className="flex gap-4 items-center">
-					<span className="text-sm font-mono">Background</span>
+			<div className="w-64 border-r flex flex-col border-slate-300 p-4">
+				<div className="flex gap-2 items-center my-2">
+					<span className="text-sm font-mono inline-block w-[160px] text-end">Background</span>
 					<Select value={background} onValueChange={(value) => dispatch(setBackground(value))}>
-						<SelectTrigger className="pl-4">
-							<SelectValue className="pl-4" placeholder="Select background" />
+						<SelectTrigger className="pl-4 font-mono">
+							<SelectValue className="pl-4 font-mono" placeholder="Select background" />
 						</SelectTrigger>
 						<SelectContent>
-							<SelectGroup>
+							<SelectGroup className="font-mono">
 								<SelectLabel>Backgrounds</SelectLabel>
 								<SelectItem value="light">Light</SelectItem>
 								<SelectItem value="dark">Dark</SelectItem>
@@ -50,16 +47,31 @@ const DrawerContentUI = () => {
 						</SelectContent>
 					</Select>
 				</div>
-				<div className="flex gap-4 items-center mt-4 justify-between">
-					<span className="text-sm">12 charts selected</span>
-					<Button
-						variant="outline"
-						size="icon"
-						className="bg-violet-400 font-mono px-8 text-white hover:text-white hover:bg-violet-500 active:ring active:ring-violet-200 active:bg-violet-500"
-						onClick={handleSaveClick}
-					>
-						Save
-					</Button>
+				<div className="flex gap-2 items-center my-2">
+					<span className="text-sm font-mono w-[160px] text-end">Title</span>
+					<Input
+						type="text"
+						value={title}
+						onChange={(e) => dispatch(setTitle(e.target.value))}
+						placeholder="Type the title"
+						className="focus:outline-none active:outline-none"
+					/>
+				</div>
+				<div className="flex gap-2 items-center my-2">
+					<span className="text-sm font-mono inline-block w-[160px] text-end">Ratio</span>
+					<Select value={ratio} onValueChange={(value) => dispatch(setRatio(value))}>
+						<SelectTrigger className="pl-4 font-mono">
+							<SelectValue className="pl-4 font-mono" placeholder="Select a Ratio" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectGroup className="font-mono">
+								<SelectLabel>Ratios</SelectLabel>
+								<SelectItem value="1:1">1:1</SelectItem>
+								<SelectItem value="16:9">16:9</SelectItem>
+								<SelectItem value="144:90">144:90</SelectItem>
+							</SelectGroup>
+						</SelectContent>
+					</Select>
 				</div>
 			</div>
 			<div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 gap-y-8">

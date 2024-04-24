@@ -5,15 +5,18 @@ import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 import DrawerContentUI from './DrawerContentUI';
 import { useRouter } from 'next/navigation';
+import { useAppDispatch } from '@/store/hooks';
+import { setFullScreen } from '@/store/reducers/screenSlice';
 
-const ScreenOperations = ({ screenRef }: { screenRef: HTMLDivElement }) => {
+const ScreenOperations = () => {
 	const router = useRouter();
+	const dispatch = useAppDispatch();
 	const handleFullScreenClick = () => {
-		screenRef.requestFullscreen();
+		dispatch(setFullScreen(true));
 	};
 	return (
 		<div className="w-full flex items-center justify-between mt-1">
-			<div className='flex items-center'>
+			<div className="flex items-center">
 				<Button onClick={() => router.push('/screens')} variant="outline" size="icon">
 					<img src="/imgs/right.svg" alt="left" className="rotate-180 w-6 select-none" />
 				</Button>
