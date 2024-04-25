@@ -1,27 +1,17 @@
 'use client';
-import React, { useRef, useState, useEffect } from 'react';
-import { useAppSelector, useAppDispatch } from '@/store/hooks';
+import React, { useRef, useEffect } from 'react';
+import { useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
-import { Rnd } from 'react-rnd';
-import { setFullScreen } from '@/store/reducers/screenSlice';
 
-const style = {
-	display: 'flex',
-	alignItems: 'center',
-	justifyContent: 'center',
-	background: '#d43737',
-} as const;
+// codesandbox.io/p/sandbox/react-grid-layout-example-c1pcef?file=%2Fpackage.json
+//codesandbox.io/p/sandbox/react-grid-layout-from-typescript-forked-63jmw7?file=%2Fpackage.json%3A9%2C27
 
 const Screen = () => {
-  const dispatch = useAppDispatch();
 	const screenRef = useRef<HTMLDivElement>(null);
 	const wrapRef = useRef<HTMLDivElement>(null);
 	const { background, title, ratio, fullScreen } = useAppSelector((state: RootState) => state.screen);
-	const [size, setSize] = useState([200, 200]); // width, height
-	const [position, setPosition] = useState([0, 0]); // x, y
 
-	// 选择不同屏幕尺寸时，更新大屏背景尺寸
-	useEffect(() => {
+	const handleResizeScreen = () => {
 		const [w, h] = ratio.split(':').map(Number);
 		const [wrapWidth, wrapHeight] = [
 			wrapRef.current!.getBoundingClientRect().width,
@@ -34,41 +24,22 @@ const Screen = () => {
 			screenRef.current!.style.width = '100%';
 			screenRef.current!.style.height = wrapRef.current!.getBoundingClientRect().width * (h / w) + 'px';
 		}
+	};
+
+	// 选择不同屏幕尺寸时/视口大小改变时，更新大屏背景尺寸
+	useEffect(() => {
+		handleResizeScreen();
+		window.addEventListener('resize', handleResizeScreen);
+		return () => {
+			window.removeEventListener('resize', handleResizeScreen);
+		};
 	}, [ratio]);
 
-	// 全屏前后保持图表相对于大屏背景的寸尺和位置不变
-	useEffect(() => {
-		// 获取全屏前的 screenRef 宽高
-		const preFullScreenWidth = screenRef.current!.offsetWidth;
-		const preFullScreenHeight = screenRef.current!.offsetHeight;
-		// 执行全屏请求
-		const handleFullScreenChange = () => {
-			if (!document.fullscreenElement) {
-				// 在这里执行取消全屏后的操作
-				dispatch(setFullScreen(false));
-			}
-			// 监听全屏变化事件，以获取全屏后的 screenRef 宽高
-			const postFullScreenWidth = screenRef.current!.offsetWidth;
-			const postFullScreenHeight = screenRef.current!.offsetHeight;
-			// 计算宽高变化比例
-			const widthRatio = postFullScreenWidth / preFullScreenWidth;
-			const heightRatio = postFullScreenHeight / preFullScreenHeight;
-			// 根据变化比例更新 size 状态
-			setSize([size[0] * widthRatio, size[1] * heightRatio]);
-		};
-		if (fullScreen) {
-			document.addEventListener('fullscreenchange', handleFullScreenChange);
-			screenRef.current!.requestFullscreen();
-			return () => {
-				document.removeEventListener('fullscreenchange', handleFullScreenChange);
-			};
-		}
-	}, [fullScreen]);
 	return (
 		<div ref={wrapRef} className="w-full h-full box-border bg-white rounded-md flex items-center justify-center">
 			<div
 				ref={screenRef}
-				className={` bg-slate-50 border border-slate-300 bg-cover ${
+				className={`bg-slate-50 border border-slate-300 bg-cover ${
 					background === 'light' ? "bg-[url('/imgs/light.png')]" : "bg-[url('/imgs/dark.png')]"
 				}`}
 			>
@@ -81,26 +52,6 @@ const Screen = () => {
 						{title}
 					</p>
 				)}
-				<Rnd
-					style={style}
-					bounds="parent"
-					position={{
-						x: position[0],
-						y: position[1],
-					}}
-					size={{
-						width: size[0],
-						height: size[1],
-					}}
-					onDragStop={(e: any, d: any) => {
-						setPosition([d.x, d.y]);
-					}}
-					onResizeStop={(e: any, direction: any, ref: any, delta: any) => {
-						setSize([ref.offsetWidth, ref.offsetHeight]);
-					}}
-				>
-					Rnd
-				</Rnd>
 			</div>
 		</div>
 	);
