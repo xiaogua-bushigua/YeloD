@@ -112,6 +112,10 @@
   display: none !important;
 }
 
-.shadcn-drawer > :first-child {
+.shadcn-drawer> :first-child {
   display: none;
+}
+
+.is-dragging {
+  border: 1px solid red !important;
 }
