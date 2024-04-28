@@ -1,44 +1,19 @@
 'use client';
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { RootState } from '@/store/store';
 import { setFullScreen } from '@/store/reducers/screenSlice';
+import Image from 'next/image';
+import ScreenChart from './ScreenChart';
 
-const Screen = () => {
-	const screenRef = useRef<HTMLDivElement>(null);
-	const wrapRef = useRef<HTMLDivElement>(null);
+const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement> }) => {
 	const dispatch = useAppDispatch();
-	const { background, title, ratio, fullScreen } = useAppSelector((state: RootState) => state.screen);
-
-	const handleResizeScreen = () => {
-		const [w, h] = ratio.split(':').map(Number);
-		const [wrapWidth, wrapHeight] = [
-			wrapRef.current!.getBoundingClientRect().width,
-			wrapRef.current!.getBoundingClientRect().height,
-		];
-		if (wrapHeight < wrapWidth) {
-			screenRef.current!.style.height = '100%';
-			screenRef.current!.style.width = wrapRef.current!.getBoundingClientRect().height * (w / h) + 'px';
-		} else {
-			screenRef.current!.style.width = '100%';
-			screenRef.current!.style.height = wrapRef.current!.getBoundingClientRect().width * (h / w) + 'px';
-		}
-	};
-
-	// 选择不同屏幕尺寸时/视口大小改变时，更新大屏背景尺寸
-	useEffect(() => {
-		handleResizeScreen();
-		window.addEventListener('resize', handleResizeScreen);
-		return () => {
-			window.removeEventListener('resize', handleResizeScreen);
-		};
-	}, [ratio]);
+	const { fullScreen, charts, background } = useAppSelector((state: RootState) => state.screen);
 
 	const handleMouseOver = (title: HTMLElement, corner: HTMLElement, style: string) => {
 		title.style.display = style;
 		corner.style.display = style;
 	};
-
 	// 全屏前后保持图表相对于大屏背景的寸尺和位置不变
 	useEffect(() => {
 		const panes = document.querySelectorAll('.panes') as NodeListOf<HTMLElement>;
@@ -95,7 +70,6 @@ const Screen = () => {
 		}
 	}, [fullScreen]);
 
-	const panes = ['top-0 left-0 bg-slate-500', 'top-[90px] left-[90px] bg-red-500'];
 	useEffect(() => {
 		let z = 1;
 		const panes = document.querySelectorAll('.panes') as NodeListOf<HTMLElement>;
@@ -107,6 +81,11 @@ const Screen = () => {
 			pane.addEventListener('mousedown', () => {
 				z = z + 1;
 				pane.style.zIndex = z.toString();
+			});
+
+			pane.addEventListener('mouseenter', () => {
+				title.style.zIndex = (z + 1000).toString();
+				corner.style.zIndex = (z + 1000).toString();
 			});
 
 			title.addEventListener('mousedown', (event) => {
@@ -160,33 +139,26 @@ const Screen = () => {
 			});
 		});
 	}, []);
-
 	return (
-		<div ref={wrapRef} className="w-full h-full box-border bg-white rounded-md flex items-center justify-center">
-			<div
-				ref={screenRef}
-				className={`bg-slate-50 relative border border-slate-300 bg-cover ${
-					background === 'light' ? "bg-[url('/imgs/light.png')]" : "bg-[url('/imgs/dark.png')]"
-				}`}
-			>
-				{title && (
-					<p
-						className={`text-center font-mono font-bold text-3xl mt-4 ${
-							background === 'light' ? 'text-slate-700' : 'text-slate-50'
+		<>
+			{charts.map((chart) => (
+				<div
+					key={chart._id}
+					className={`panes absolute w-[300px] h-[240px] rounded-lg border-2 border-transparent`}
+				>
+					<div
+						className={`titles cursor-move w-full h-[30px] rounded-t-lg hidden absolute top-0 left-0 ${
+							background === 'light' ? 'bg-violet-600 opacity-20' : 'bg-slate-50 opacity-20'
 						}`}
-					>
-						{title}
-					</p>
-				)}
-				{panes.map((pane) => (
-					<div key={pane} className={`panes absolute w-[180px] h-[180px] ${pane}`}>
-						<div className="titles cursor-move w-full h-[40px] bg-white hidden absolute top-0 left-0"></div>
-						<div className="corners cursor-nwse-resize w-[20px] h-[20px] absolute bottom-0 right-0 bg-black hidden"></div>
+					></div>
+					<div className="corners cursor-nwse-resize w-[30px] h-[30px] absolute bottom-1 right-1 hidden">
+						<Image src={'/imgs/zoom.png'} width={40} height={40} alt="zoom" />
 					</div>
-				))}
-			</div>
-		</div>
+					<ScreenChart chart={chart} />
+				</div>
+			))}
+		</>
 	);
 };
 
-export default Screen;
+export default ScreenCharts;

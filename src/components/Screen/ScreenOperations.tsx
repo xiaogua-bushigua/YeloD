@@ -20,6 +20,14 @@ const ScreenOperations = () => {
 				<Button onClick={() => router.push('/screens')} variant="outline" size="icon">
 					<img src="/imgs/right.svg" alt="left" className="rotate-180 w-6 select-none" />
 				</Button>
+				<Button
+					variant="outline"
+					size="icon"
+					className="bg-violet-400 px-2 ml-4 w-16 text-white hover:text-white font-mono hover:bg-violet-500 active:ring active:ring-violet-200 active:bg-violet-500"
+					// onClick={handleFullScreenClick}
+				>
+					Save
+				</Button>
 				<Input
 					type="text"
 					placeholder="Give a name for the screen"
