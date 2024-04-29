@@ -1,8 +1,8 @@
 'use client';
 
-import ChartOperations from '@/components/ChartOperations';
-import ChartTags from '@/components/ChartTags';
-import ChartView from '@/components/ChartView';
+import ChartOperations from '@/components/Chart/ChartOperations';
+import ChartTags from '@/components/Chart/ChartTags';
+import ChartView from '@/components/Chart/ChartView';
 import { useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
 import { useEffect } from 'react';
@@ -11,13 +11,15 @@ import { ThunkDispatch } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
 
-const ChartOptions = dynamic(() => import('@/components/ChartOptions'), { ssr: false });
+// EditorJS不支持服务端渲染，这里使用客户端渲染
+const ChartOptions = dynamic(() => import('@/components/Chart/ChartOptions'), { ssr: false });
 
 const page = () => {
 	const { option, chartName, chartType } = useAppSelector((state: RootState) => state.chart);
 	const dispatchAsync: ThunkDispatch<RootState, any, any> = useDispatch();
 	const { user } = useAppSelector((state: RootState) => state.auth);
 	useEffect(() => {
+		// 获取所有的tag标签和该标签对应的查询信息
 		dispatchAsync(fetchTagsInfo(user.name || user.username));
 	}, []);
 	return (

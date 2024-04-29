@@ -1,4 +1,4 @@
-import LoadingIcon from './icons/LoadingIcon';
+import LoadingIcon from '../Icons/LoadingIcon';
 
 const Loading = ({ size }: { size: number }) => {
 	return (

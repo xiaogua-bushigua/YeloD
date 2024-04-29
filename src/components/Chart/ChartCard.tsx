@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import React from 'react';
 
 const ChartCard = ({ title, cover, onClick }: { title: string; cover: string; onClick: () => void }) => {
 	return (

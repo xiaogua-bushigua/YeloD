@@ -1,5 +1,5 @@
-import ExtraLoginForm from '@/components/ExtraLoginForm';
-import LoginForm from '@/components/LoginForm';
+import ExtraLoginForm from '@/components/Auth/ExtraLoginForm';
+import LoginForm from '@/components/Auth/LoginForm';
 import Link from 'next/link';
 
 const page = () => {

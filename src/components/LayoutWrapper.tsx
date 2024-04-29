@@ -1,7 +1,7 @@
 'use client';
 
-import Header from '@/components/Header';
-import Navigator from '@/components/Navigator';
+import Header from '@/components/Layout/Header';
+import Navigator from '@/components/Layout/Navigator';
 import React, { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 

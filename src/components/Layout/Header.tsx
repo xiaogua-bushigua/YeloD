@@ -3,11 +3,11 @@
 import { Session } from 'next-auth';
 import { useSession, signOut } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
-import Button from './Button';
+import Button from '../Button';
 import Image from 'next/image';
 import { setSessionState } from '@/store/reducers/authSlice';
 import { useAppDispatch } from '@/store/hooks';
-import LoadingIcon from './icons/LoadingIcon';
+import LoadingIcon from '../Icons/LoadingIcon';
 
 const Header = () => {
 	const { data: session } = useSession();

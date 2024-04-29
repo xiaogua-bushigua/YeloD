@@ -34,7 +34,7 @@ const Screen = () => {
 	}, [ratio]);
 
 	return (
-		<div ref={wrapRef} className="w-full h-full box-border bg-white rounded-md flex items-center justify-center">
+		<div ref={wrapRef} id="yeloD" className="w-full h-full box-border bg-white rounded-md flex items-center justify-center">
 			<div
 				ref={screenRef}
 				className={`bg-slate-50 relative border border-slate-300 bg-cover ${

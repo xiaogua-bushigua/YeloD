@@ -1,6 +1,6 @@
 'use client';
-import ScreenCard from '@/components/ChartCard';
-import AddIcon from '@/components/icons/AddIcon';
+import ScreenCard from '@/components/Chart/ChartCard';
+import AddIcon from '@/components/Icons/AddIcon';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 

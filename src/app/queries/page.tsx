@@ -1,4 +1,4 @@
-import QueryTable from '@/components/QueryTable';
+import QueryTable from '@/components/Query/QueryTable';
 
 export const metadata = {
 	title: 'Queries',

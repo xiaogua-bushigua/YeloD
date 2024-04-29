@@ -5,11 +5,11 @@ export interface ICharts {
 	chartType: string;
 	option: any;
 	selectedTags: Array<{
-    queryIndex: number;
-    tag: string;
-  }>;
+		queryIndex: number;
+		tag: string;
+	}>;
 	img: string;
-  _id: string;
+	_id: string;
 }
 
 interface IUser {

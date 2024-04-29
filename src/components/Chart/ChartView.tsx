@@ -12,11 +12,13 @@ import { useSearchParams } from 'next/navigation';
 
 const ChartView = () => {
 	const echartRef = useRef<EChartsReact>(null);
+	const { chartName, chartType, selectedTags, option } = useAppSelector((state: RootState) => state.chart);
+	const { user } = useAppSelector((state: RootState) => state.auth);
 	const { toast } = useToast();
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const { chartName, chartType, selectedTags, option } = useAppSelector((state: RootState) => state.chart);
-	const { user } = useAppSelector((state: RootState) => state.auth);
+
+	// 订阅点击保存按钮的指令
 	useEffect(() => {
 		const token = PubSub.subscribe('saveChartThumbnail', async () => {
 			const echartInstance = echartRef.current!.getEchartsInstance();
@@ -29,6 +31,7 @@ const ChartView = () => {
 				img: base64,
 			};
 			const id = searchParams.get('id');
+			// 根据id更新数据库中的图标信息
 			const res = await fetch('/api/chart', {
 				method: 'PATCH',
 				body: JSON.stringify({ chartInfo, username: user.name || user.username, id }),
@@ -50,6 +53,7 @@ const ChartView = () => {
 		return () => {
 			PubSub.unsubscribe(token);
 		};
+		// 下面的依赖都会影像图表的信息，因此都要监听
 	}, [selectedTags, chartName, chartType, option]);
 
 	useEffect(() => {

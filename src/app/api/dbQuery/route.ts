@@ -3,6 +3,7 @@ import dbConnectPublic from '@/lib/mongodb_public';
 import dbConnect from '@/lib/mongodb';
 import { UserModel } from '@/lib/models';
 
+// 获取所有的查询语句信息
 export const GET = async (req: NextRequest) => {
 	try {
 		dbConnect();

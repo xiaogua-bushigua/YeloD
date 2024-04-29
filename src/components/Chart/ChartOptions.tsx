@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import EditorJS from '@editorjs/editorjs';
 import editorjsCodeflask from '@calumk/editorjs-codeflask';
 import { setTempOption } from '@/store/reducers/chartSlice';
@@ -22,7 +22,7 @@ const ChartOptions = ({ option }: { option: any }) => {
 			},
 		],
 	};
-	const initEditor = () => {
+	const getEditor = () => {
 		const editor = new EditorJS({
 			holder: 'editorjs',
 			tools: {
@@ -41,7 +41,7 @@ const ChartOptions = ({ option }: { option: any }) => {
 
 	useEffect(() => {
 		if (!ejInstance.current) {
-			const editor = initEditor();
+			const editor = getEditor();
 			ejInstance.current = editor;
 		}
 		return () => {

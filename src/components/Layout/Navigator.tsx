@@ -6,11 +6,11 @@ import Logo from './Logo';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
-import DatabaseIcon from './icons/DatabaseIcon';
-import QueriesIcon from './icons/QueriesIcon';
-import ChartIcon from './icons/ChartIcon';
-import ScreenIcon from './icons/ScreenIcon';
-import SettingsIcon from './icons/SettingsIcon';
+import DatabaseIcon from '../Icons/DatabaseIcon';
+import QueriesIcon from '../Icons/QueriesIcon';
+import ChartIcon from '../Icons/ChartIcon';
+import ScreenIcon from '../Icons/ScreenIcon';
+import SettingsIcon from '../Icons/SettingsIcon';
 
 const Navigator = () => {
 	const links = [

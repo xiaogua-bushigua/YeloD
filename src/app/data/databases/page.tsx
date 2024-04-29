@@ -4,7 +4,7 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { RootState } from '@/store/store';
 import { useSelector } from 'react-redux';
-import DatabaseCard from '@/components/DatabaseCard';
+import DatabaseCard from '@/components/Data/DatabaseCard';
 
 export interface ICardsInfo {
 	name: string;

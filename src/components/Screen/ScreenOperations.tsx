@@ -7,12 +7,20 @@ import DrawerContentUI from './DrawerContentUI';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch } from '@/store/hooks';
 import { setFullScreen } from '@/store/reducers/screenSlice';
+import html2canvas from 'html2canvas';
 
 const ScreenOperations = () => {
 	const router = useRouter();
 	const dispatch = useAppDispatch();
 	const handleFullScreenClick = () => {
 		dispatch(setFullScreen(true));
+	};
+	const handleSaveClick = () => {
+		const element = document.getElementById('yeloD') as HTMLElement;
+		html2canvas(element).then((canvas: HTMLCanvasElement) => {
+			const base64Image = canvas.toDataURL();
+			console.log(base64Image);
+		});
 	};
 	return (
 		<div className="w-full flex items-center justify-between mt-1">
@@ -24,7 +32,7 @@ const ScreenOperations = () => {
 					variant="outline"
 					size="icon"
 					className="bg-violet-400 px-2 ml-4 w-16 text-white hover:text-white font-mono hover:bg-violet-500 active:ring active:ring-violet-200 active:bg-violet-500"
-					// onClick={handleFullScreenClick}
+					onClick={handleSaveClick}
 				>
 					Save
 				</Button>

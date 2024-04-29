@@ -5,10 +5,15 @@ import { RootState } from '@/store/store';
 import { setFullScreen } from '@/store/reducers/screenSlice';
 import Image from 'next/image';
 import ScreenChart from './ScreenChart';
+import { useDispatch } from 'react-redux';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { fetchOptionData } from '@/store/reducers/screenSlice';
 
 const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement> }) => {
 	const dispatch = useAppDispatch();
-	const { fullScreen, charts, background } = useAppSelector((state: RootState) => state.screen);
+	const dispatchAsync: ThunkDispatch<RootState, any, any> = useDispatch();
+	const { fullScreen, charts, background, staticInterval } = useAppSelector((state: RootState) => state.screen);
+	const { user } = useAppSelector((state: RootState) => state.auth);
 
 	const handleMouseOver = (title: HTMLElement, corner: HTMLElement, style: string) => {
 		title.style.display = style;
@@ -139,24 +144,49 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 			});
 		});
 	}, []);
+
+	useEffect(() => {
+		const queryIndexes = charts
+			.flatMap((chart) => {
+				if (chart.checked) return chart.selectedTags.map((tag) => tag.queryIndex);
+				else return null;
+			})
+			.filter((item) => item !== null);
+		const uniqueQueryIndexes = Array.from(new Set(queryIndexes)) as number[];
+
+		if (uniqueQueryIndexes.length) {
+			setInterval(() => {
+				dispatchAsync(
+					fetchOptionData({
+						username: user.name || user.username,
+						queryIndexes: uniqueQueryIndexes,
+					})
+				);
+			}, staticInterval * 1000 * 60);
+		}
+	}, []);
+
 	return (
 		<>
-			{charts.map((chart) => (
-				<div
-					key={chart._id}
-					className={`panes absolute w-[300px] h-[240px] rounded-lg border-2 border-transparent`}
-				>
+			{charts.map((chart) => {
+				if (!chart.checked) return null;
+				return (
 					<div
-						className={`titles cursor-move w-full h-[30px] rounded-t-lg hidden absolute top-0 left-0 ${
-							background === 'light' ? 'bg-violet-600 opacity-20' : 'bg-slate-50 opacity-20'
-						}`}
-					></div>
-					<div className="corners cursor-nwse-resize w-[30px] h-[30px] absolute bottom-1 right-1 hidden">
-						<Image src={'/imgs/zoom.png'} width={40} height={40} alt="zoom" />
+						key={chart._id}
+						className={`panes absolute w-[300px] h-[240px] rounded-lg border-2 border-transparent`}
+					>
+						<div
+							className={`titles cursor-move w-full h-[30px] rounded-t-lg hidden absolute top-0 left-0 ${
+								background === 'light' ? 'bg-violet-600 opacity-20' : 'bg-slate-50 opacity-20'
+							}`}
+						></div>
+						<div className="corners cursor-nwse-resize w-[30px] h-[30px] absolute bottom-1 right-1 hidden">
+							<Image src={'/imgs/zoom.png'} width={40} height={40} alt="zoom" />
+						</div>
+						<ScreenChart chart={chart} />
 					</div>
-					<ScreenChart chart={chart} />
-				</div>
-			))}
+				);
+			})}
 		</>
 	);
 };

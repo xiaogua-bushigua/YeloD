@@ -4,6 +4,7 @@ import { UserModel } from '@/lib/models';
 import dbConnectPublic from '@/lib/mongodb_public';
 import { transferQuery } from '@/lib/transferQuery';
 
+// 获取查询语句对应文档的某一字段合集
 export const POST = async (req: NextRequest) => {
 	try {
 		const { uri, collectionName, query, field } = await req.json();
@@ -30,6 +31,7 @@ export const POST = async (req: NextRequest) => {
 	}
 };
 
+// 获取所有的tag标签和该标签对应的查询信息
 export const GET = async (req: NextRequest) => {
 	try {
 		dbConnect();
@@ -55,7 +57,6 @@ export const GET = async (req: NextRequest) => {
 					}
 					client.close();
 					array = array?.map((arr) => arr[query.field]);
-					console.log(array);
 					return {
 						tag: query.tag,
 						data: array,
@@ -71,6 +72,7 @@ export const GET = async (req: NextRequest) => {
 	}
 };
 
+// 更新某一查询语句信息
 export const PATCH = async (req: NextRequest) => {
 	const { uri, collectionName, query, field, tag, username, index } = await req.json();
 	try {
@@ -78,6 +80,7 @@ export const PATCH = async (req: NextRequest) => {
 		const user = await UserModel.findOne({ username });
 		const queries = user.queries;
 		const hasExistedIndex = queries.findIndex((q: any) => q.tag === tag);
+		// 如果有相同的查询tag提示无法更新，保证tag名称的唯一性
 		if (hasExistedIndex !== index) {
 			return NextResponse.json({ status: 202, data: [hasExistedIndex, index] });
 		}
@@ -96,6 +99,7 @@ export const PATCH = async (req: NextRequest) => {
 	}
 };
 
+// 删除某一查询语句信息
 export const DELETE = async (req: NextRequest) => {
 	const { rows, username } = await req.json();
 	try {

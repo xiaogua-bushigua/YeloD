@@ -34,6 +34,7 @@ const initialState: IinitialState = {
 	selectedTags: [],
 };
 
+// 获取所有的tag标签和该标签对应的查询信息
 export const fetchTagsInfo = createAsyncThunk('dbTags', async (username: string) => {
 	const res = await fetch(`/api/dbQuery?username=${username}`, {
 		method: 'GET',
@@ -45,6 +46,7 @@ const chartSlice = createSlice({
 	name: 'chart',
 	initialState,
 	reducers: {
+		// 点击新建卡片时，重置所有状态
 		resetChart(state) {
 			state.chartName = 'chart-name';
 			state.chartType = 'line';
@@ -55,6 +57,7 @@ const chartSlice = createSlice({
 			state.tags = [];
 			state.selectedTags = [];
 		},
+		// 点击图表卡片时，把图表的信息储存在状态里，以便于带到下一个页面
 		initChart(state, action) {
 			state.chartName = action.payload.chartName;
 			state.chartType = action.payload.chartType;
@@ -96,7 +99,7 @@ const chartSlice = createSlice({
 		setOption(state, action) {
 			state.option = action.payload;
 		},
-		setSelectedTags(state, action) {
+		setSelectedTags(state, action) {      
 			state.selectedTags[action.payload.index] = {
 				tag: action.payload.tag,
 				queryIndex: action.payload.queryIndex,

@@ -17,9 +17,10 @@ import { useAppDispatch } from '@/store/hooks';
 const ChartTags = () => {
 	const { tags, selectedTags } = useAppSelector((state: RootState) => state.chart);
 	const dispatch = useAppDispatch();
-	const handleChartTypeSelectChange = async (value: string, type: string) => {
+
+	const handleChartTagSelectChange = async (value: string, type: string) => {
 		const query = tags.filter((tag) => tag.tag === value)[0];
-    const queryIndex = tags.findIndex((tag) => tag.tag === value);
+		const queryIndex = tags.findIndex((tag) => tag.tag === value);
 		const res = await fetch('/api/dbTags', {
 			method: 'POST',
 			body: JSON.stringify(query),
@@ -35,7 +36,10 @@ const ChartTags = () => {
 	};
 	return (
 		<div className="flex flex-col gap-2 px-4">
-			<Select value={selectedTags[0] ? selectedTags[0].tag : ''} onValueChange={(value) => handleChartTypeSelectChange(value, 'xData')}>
+			<Select
+				value={selectedTags[0] ? selectedTags[0].tag : ''}
+				onValueChange={(value) => handleChartTagSelectChange(value, 'xData')}
+			>
 				<SelectTrigger className="w-[180px] font-mono">
 					<SelectValue placeholder="Select x data" />
 				</SelectTrigger>
@@ -50,7 +54,10 @@ const ChartTags = () => {
 					</SelectGroup>
 				</SelectContent>
 			</Select>
-			<Select value={selectedTags[1] ? selectedTags[1].tag : ''} onValueChange={(value) => handleChartTypeSelectChange(value, 'series')}>
+			<Select
+				value={selectedTags[1] ? selectedTags[1].tag : ''}
+				onValueChange={(value) => handleChartTagSelectChange(value, 'series')}
+			>
 				<SelectTrigger className="w-[180px] font-mono">
 					<SelectValue placeholder="Select y series" />
 				</SelectTrigger>

@@ -18,17 +18,12 @@ import { RootState } from '@/store/store';
 import { useToast } from '@/components/ui/use-toast';
 import PubSub from 'pubsub-js';
 
-interface Props {
-	chartName: string;
-	chartType: string;
-}
-
-const ChartOperations = ({ chartName, chartType }: Props) => {
+const ChartOperations = ({ chartName, chartType }: { chartName: string; chartType: string }) => {
+	const { tempOption } = useAppSelector((state: RootState) => state.chart);
 	const dispatch = useAppDispatch();
 	const router = useRouter();
 	const { toast } = useToast();
 
-	const { tempOption } = useAppSelector((state: RootState) => state.chart);
 	const handleChartTypeSelectChange = (value: string) => {
 		dispatch(changeChartType(value));
 	};
@@ -46,9 +41,11 @@ const ChartOperations = ({ chartName, chartType }: Props) => {
 			});
 		}
 	};
+  // 点击保存时发布生成图表缩略图的指令
 	const handleClickSave = () => {
 		PubSub.publish('saveChartThumbnail');
 	};
+
 	return (
 		<div className="flex w-full justify-between">
 			<div className="flex w-48">

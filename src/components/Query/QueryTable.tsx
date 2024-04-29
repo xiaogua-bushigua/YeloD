@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 import { useToast } from '@/components/ui/use-toast';
-import Dialog from './Dialog';
+import Dialog from '../Dialog';
 
 interface Itags {
 	_id: string;
@@ -22,14 +22,15 @@ interface Itags {
 }
 
 const QueryTable = () => {
-	const headers = ['Database uri', 'Query', 'Collection', 'Field', 'Query tag', 'Operations'];
 	const { user } = useAppSelector((state: RootState) => state.auth);
 	const [rows, setRows] = useState([] as Itags[]);
 	const [code, setCode] = useState({} as any);
 	const [tag, setTag] = useState('');
+	const [warningRow, setWarningRow] = useState([] as number[]);
 	const { toast } = useToast();
-  const [warningRow, setWarningRow] = useState([] as number[]);
+	const headers = ['Database uri', 'Query', 'Collection', 'Field', 'Query tag', 'Operations'];
 
+	// 获取所有查询语句信息，并设置到rows中
 	const fetchData = async () => {
 		const res = await fetch(`/api/dbQuery?username=${user.name || user.username}`, {
 			method: 'GET',
@@ -48,6 +49,7 @@ const QueryTable = () => {
 			body: JSON.stringify({ uri, collectionName, query }),
 		});
 		const { data } = await res.json();
+		// 如果表格里field空的，则渲染文档的所有信息；反之，只渲染对应field的信息
 		if (!rows[index].field) setCode({ data });
 		else {
 			const code = data.map((item: any) => item[rows[index].field!]);
@@ -78,13 +80,14 @@ const QueryTable = () => {
 		});
 		const { status, data } = await res.json();
 		if (status === 200) {
-      setWarningRow([])
+			setWarningRow([]);
 			toast({
 				title: 'Success',
 				description: 'The tag has been saved.',
 			});
+			// 如果有冲突的两行，则保存它们的indexes
 		} else if (status === 202) {
-      setWarningRow(data)
+			setWarningRow(data);
 			toast({
 				title: 'Error',
 				description: 'The tag has existed!',
@@ -122,6 +125,7 @@ const QueryTable = () => {
 			return newRows;
 		});
 	};
+  // 应对表格中field和tag列改变的情况
 	const handleInputChange = (index: number, type: string, e: React.ChangeEvent<HTMLInputElement>) => {
 		const newRows = [...rows];
 		if (type === 'field') newRows[index].field = e.target.value;
@@ -133,6 +137,7 @@ const QueryTable = () => {
 		fetchData();
 	}, []);
 
+	// 当code改变时，对代码进行高亮
 	useEffect(() => {
 		Prism.highlightAll();
 	}, [code]);
@@ -172,7 +177,9 @@ const QueryTable = () => {
 							<Input
 								type="text"
 								placeholder=""
-								className={`${warningRow.includes(index) ? 'border-red-700' : ''} focus:outline-none active:outline-none`}
+								className={`${
+									warningRow.includes(index) ? 'border-red-700' : ''
+								} focus:outline-none active:outline-none`}
 								value={row.tag || ''}
 								onChange={(e) => handleInputChange(index, 'tag', e)}
 							/>

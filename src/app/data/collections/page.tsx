@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { RootState } from '@/store/store';
 import { useAppSelector } from '@/store/hooks';
-import DatabaseCard from '@/components/DatabaseCard';
+import DatabaseCard from '@/components/Data/DatabaseCard';
 import { ICardsInfo } from '@/app/data/databases/page';
 
 const page = () => {

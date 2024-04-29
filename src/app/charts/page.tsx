@@ -1,7 +1,7 @@
 'use client';
 
-import ChartCard from '@/components/ChartCard';
-import AddIcon from '@/components/icons/AddIcon';
+import ChartCard from '@/components/Chart/ChartCard';
+import AddIcon from '@/components/Icons/AddIcon';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -16,9 +16,11 @@ export default function Charts() {
 	const [cards, setCards] = useState<Array<ICharts>>();
 	const router = useRouter();
 	const handleAddClick = () => {
+		// 点击新建卡片时，重置所有状态
 		dispatch(resetChart());
 		router.push('/charts/options');
 	};
+  // 点击图表卡片时，把图表的信息储存在状态里，以便于带到下一个页面
 	const handleChartClick = (chart: ICharts) => {
 		dispatch(initChart(chart));
 		router.push('/charts/options?id=' + chart._id);
