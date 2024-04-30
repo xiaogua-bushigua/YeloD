@@ -12,6 +12,28 @@ export interface ICharts {
 	_id: string;
 }
 
+export interface IChartsInfo {
+	chartId: string;
+	geometry: {
+		left: string;
+		top: string;
+		width: string;
+		height: string;
+	};
+}
+
+export interface IScreens {
+	screenName: string;
+	background: string;
+	title: string;
+	ratio: string;
+	staticInterval: number;
+	dynamicInterval: number;
+	screenImg: string;
+	_id: string;
+	chartsInfo: Array<IChartsInfo>;
+}
+
 interface IUser {
 	username: string;
 	password?: string;
@@ -25,6 +47,7 @@ interface IUser {
 		query: string;
 	}>;
 	charts: Array<ICharts>;
+	screens: Array<IScreens>;
 }
 
 const userSchema = new Schema<IUser>({
@@ -48,6 +71,18 @@ const userSchema = new Schema<IUser>({
 			option: { type: Object, required: true },
 			selectedTags: { type: Array, required: true },
 			img: { type: String, required: true },
+		},
+	],
+	screens: [
+		{
+			screenName: { type: String, required: true },
+			background: { type: String, required: true },
+			title: { type: String, required: true },
+			ratio: { type: String, required: true },
+			staticInterval: { type: Number, required: true },
+			dynamicInterval: { type: Number, required: true },
+			screenImg: { type: String, required: true },
+			chartsInfo: { type: Array, required: true },
 		},
 	],
 });

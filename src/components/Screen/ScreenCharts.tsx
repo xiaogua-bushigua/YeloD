@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { RootState } from '@/store/store';
-import { setFullScreen } from '@/store/reducers/screenSlice';
+import { setFullScreen, setGeometry } from '@/store/reducers/screenSlice';
 import Image from 'next/image';
 import ScreenChart from './ScreenChart';
 import { useDispatch } from 'react-redux';
@@ -79,7 +79,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 		let z = 1;
 		const panes = document.querySelectorAll('.panes') as NodeListOf<HTMLElement>;
 
-		panes.forEach((pane: HTMLElement) => {
+		panes.forEach((pane: HTMLElement, index: number) => {
 			const title = pane.querySelector('.titles') as HTMLElement;
 			const corner = pane.querySelector('.corners') as HTMLElement;
 
@@ -107,6 +107,9 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 
 					pane.style.left = l + (event.pageX - startX) + 'px';
 					pane.style.top = t + (event.pageY - startY) + 'px';
+
+					dispatch(setGeometry({ type: 'left', value: pane.style.left, id: pane.id }));
+					dispatch(setGeometry({ type: 'top', value: pane.style.top, id: pane.id }));
 				};
 
 				const mouseup = () => {
@@ -132,6 +135,8 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 
 					pane.style.width = w + (event.pageX - startX) + 'px';
 					pane.style.height = h + (event.pageY - startY) + 'px';
+					dispatch(setGeometry({ type: 'width', value: pane.style.width, id: pane.id }));
+					dispatch(setGeometry({ type: 'height', value: pane.style.height, id: pane.id }));
 				};
 
 				const mouseup = () => {
@@ -173,7 +178,14 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 				return (
 					<div
 						key={chart._id}
-						className={`panes absolute w-[300px] h-[240px] rounded-lg border-2 border-transparent`}
+						id={chart._id}
+						className={`panes absolute rounded-lg border-2 border-transparent`}
+						style={{
+							width: chart.width || '300px',
+							height: chart.height || '240px',
+							left: chart.left || '0',
+							top: chart.top || '0',
+						}}
 					>
 						<div
 							className={`titles cursor-move w-full h-[30px] rounded-t-lg hidden absolute top-0 left-0 ${

@@ -5,23 +5,89 @@ import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 import DrawerContentUI from './DrawerContentUI';
 import { useRouter } from 'next/navigation';
-import { useAppDispatch } from '@/store/hooks';
-import { setFullScreen } from '@/store/reducers/screenSlice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { setFullScreen, setScreenName } from '@/store/reducers/screenSlice';
 import html2canvas from 'html2canvas';
+import { RootState } from '@/store/store';
+import { useSearchParams } from 'next/navigation';
+import { useToast } from '@/components/ui/use-toast';
 
 const ScreenOperations = () => {
+	const { screenName, background, title, ratio, staticInterval, dynamicInterval, charts } = useAppSelector(
+		(state: RootState) => state.screen
+	);
+	const { user } = useAppSelector((state: RootState) => state.auth);
 	const router = useRouter();
+	const searchParams = useSearchParams();
 	const dispatch = useAppDispatch();
+	const { toast } = useToast();
+
 	const handleFullScreenClick = () => {
 		dispatch(setFullScreen(true));
 	};
-	const handleSaveClick = () => {
+	const handleSaveClick = async () => {
+		if (!screenName) {
+			toast({
+				title: 'Error',
+				description: 'The screen should have a name.',
+			});
+			return;
+		}
+		if (charts.filter((chart) => chart.checked).length === 0) {
+			toast({
+				title: 'Error',
+				description: 'The screen should charts selected.',
+			});
+			return;
+		}
 		const element = document.getElementById('yeloD') as HTMLElement;
-		html2canvas(element).then((canvas: HTMLCanvasElement) => {
+		try {
+			const canvas = await html2canvas(element);
 			const base64Image = canvas.toDataURL();
-			console.log(base64Image);
-		});
+			const chartsInfo = charts
+				.filter((chart) => chart.checked)
+				.map((chart) => ({
+					chartId: chart._id,
+					geometry: {
+						left: chart.left,
+						top: chart.top,
+						width: chart.width,
+						height: chart.height,
+					},
+				}));
+			const screenInfo = {
+				screenName,
+				background,
+				title,
+				ratio,
+				staticInterval,
+				dynamicInterval,
+				chartsInfo,
+				screenImg: base64Image,
+			};
+			const id = searchParams.get('id');
+			const res = await fetch('/api/screen', {
+				method: 'PATCH',
+				body: JSON.stringify({ screenInfo, username: user.name || user.username, id }),
+			});
+			const { status } = await res.json();
+			if (status === 200) {
+				toast({
+					title: 'Success',
+					description: 'The screen has been saved.',
+				});
+				router.push('/screens');
+			} else {
+				toast({
+					title: 'Error',
+					description: 'Something went wrong. Please try again.',
+				});
+			}
+		} catch (error) {
+			console.error('Error occurred during screen image capture:', error);
+		}
 	};
+
 	return (
 		<div className="w-full flex items-center justify-between mt-1">
 			<div className="flex items-center">
@@ -40,6 +106,8 @@ const ScreenOperations = () => {
 					type="text"
 					placeholder="Give a name for the screen"
 					className="focus:outline-none active:outline-none w-72 ml-4"
+					value={screenName}
+					onChange={(e) => dispatch(setScreenName(e.target.value))}
 				/>
 			</div>
 			<div className="flex items-center justify-center w-48">

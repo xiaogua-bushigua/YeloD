@@ -1,11 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { ICharts } from '@/lib/models';
+import { ICharts, IChartsInfo } from '@/lib/models';
 
 export interface newICharts extends ICharts {
 	checked: boolean;
+	left: string;
+	top: string;
+	width: string;
+	height: string;
 }
 
-interface IScreen {
+export interface IScreen {
 	screenName: string;
 	charts: Array<newICharts>;
 	background: string;
@@ -42,15 +46,27 @@ const screenSlice = createSlice({
 	name: 'screen',
 	initialState,
 	reducers: {
-		initStateFunction: (state) => {
+		// 当点击已有的screen卡片时，初始化该screen的states
+		initScreen: (state, { payload }) => {
+			state.background = payload.background;
+			state.title = payload.title;
+			state.ratio = payload.ratio;
+			state.fullScreen = false;
+			state.staticInterval = parseInt(payload.staticInterval);
+			state.dynamicInterval = parseInt(payload.dynamicInterval);
+			state.screenName = payload.screenName;
+      state.charts = payload.charts;
+		},
+		// 当点击新建的screen卡片时，初始化该screen的states
+		resetScreen: (state) => {
+			state.screenName = '';
+			state.charts = [];
 			state.background = 'light';
 			state.title = 'Dashboard';
 			state.ratio = '1:1';
 			state.fullScreen = false;
 			state.staticInterval = 5;
 			state.dynamicInterval = 5;
-			state.charts = [];
-			state.screenName = '';
 		},
 		setBackground: (state, { payload }) => {
 			state.background = payload;
@@ -65,6 +81,9 @@ const screenSlice = createSlice({
 		setTitle: (state, { payload }) => {
 			state.title = payload;
 		},
+		setScreenName: (state, { payload }) => {
+			state.screenName = payload;
+		},
 		setRatio: (state, { payload }) => {
 			state.ratio = payload;
 		},
@@ -76,6 +95,25 @@ const screenSlice = createSlice({
 				state.staticInterval = payload.interval;
 			} else {
 				state.dynamicInterval = payload.interval;
+			}
+		},
+		setGeometry: (state, { payload }) => {
+			const index = state.charts.findIndex((chart) => chart._id === payload.id);
+			switch (payload.type) {
+				case 'left':
+					state.charts[index].left = payload.value;
+					break;
+				case 'top':
+					state.charts[index].top = payload.value;
+					break;
+				case 'width':
+					state.charts[index].width = payload.value;
+					break;
+				case 'height':
+					state.charts[index].height = payload.value;
+					break;
+				default:
+					break;
 			}
 		},
 	},
@@ -106,5 +144,8 @@ export const {
 	setRatio,
 	setFullScreen,
 	setRefreshInterval,
-	initStateFunction,
+	initScreen,
+	setGeometry,
+	setScreenName,
+	resetScreen,
 } = screenSlice.actions;
