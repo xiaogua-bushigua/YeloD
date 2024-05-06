@@ -1,9 +1,10 @@
 import dbConnect from '@/lib/mongodb';
 import { NextResponse, NextRequest } from 'next/server';
-import { UserModel } from '@/lib/models';
+import { ICharts, UserModel } from '@/lib/models';
 import dbConnectPublic from '@/lib/mongodb_public';
 import { transferQuery } from '@/lib/transferQuery';
 
+// 更新charts
 export const PATCH = async (req: NextRequest) => {
 	const { chartInfo, username, id } = await req.json();
 	try {
@@ -23,6 +24,7 @@ export const PATCH = async (req: NextRequest) => {
 	}
 };
 
+// 获取charts
 export const GET = async (req: NextRequest) => {
 	const username = req.nextUrl.searchParams.get('username');
 	try {
@@ -36,6 +38,7 @@ export const GET = async (req: NextRequest) => {
 	}
 };
 
+// 返回查询到的数据
 export const POST = async (req: NextRequest) => {
 	const { username, queryIndexes } = await req.json();
 	try {
@@ -69,5 +72,21 @@ export const POST = async (req: NextRequest) => {
 		return NextResponse.json({ data: resArray, status: 200 });
 	} catch (error) {
 		return NextResponse.json({ error, status: 500 });
+	}
+};
+
+// 删除chart
+export const DELETE = async (req: NextRequest) => {
+	const { chartId, username } = await req.json();
+	try {
+		await dbConnect();
+		const user = await UserModel.findOne({ username });
+		const charts = user.charts;
+		const newCharts = charts.filter((chart: ICharts) => chart._id.toString() !== chartId);
+		await UserModel.updateOne({ username }, { $set: { charts: newCharts } });
+		return NextResponse.json({ status: 200 });
+	} catch (error) {
+		console.log(error);
+		throw error;
 	}
 };

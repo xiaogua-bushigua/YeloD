@@ -7,12 +7,14 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { RootState } from '@/store/store';
 import { IScreens } from '@/lib/models';
 import { initScreen, resetScreen } from '@/store/reducers/screenSlice';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function Screens() {
 	const [hover, setHover] = useState(false);
 	const [cards, setCards] = useState<Array<IScreens>>();
 	const { user } = useAppSelector((state: RootState) => state.auth);
 	const router = useRouter();
+	const { toast } = useToast();
 	const dispatch = useAppDispatch();
 
 	const handleAddClick = () => {
@@ -26,8 +28,28 @@ export default function Screens() {
 			body: JSON.stringify({ username: user.name || user.username, chartsInfo: screen.chartsInfo }),
 		});
 		const { data } = await res.json();
-		dispatch(initScreen({...screen, charts: data}));
+		dispatch(initScreen({ ...screen, charts: data }));
 		router.push('/screens/configurations?id=' + screen._id);
+	};
+	const handleScreenDeleteClick = async (screenId: string) => {
+		fetch('/api/screen', {
+			method: 'DELETE',
+			body: JSON.stringify({ username: user.name || user.username, screenId }),
+		})
+			.then(() => {
+				fetchData();
+				toast({
+					title: 'Success',
+					description: 'The screen has been removed.',
+				});
+			})
+			.catch((error) => {
+				console.error('Error:', error);
+				toast({
+					title: 'Error',
+					description: 'Something went wrong. Please try again.',
+				});
+			});
 	};
 	const fetchData = async () => {
 		const res = await fetch(`/api/screen?username=${user.name || user.username}`, {
@@ -45,6 +67,7 @@ export default function Screens() {
 			{cards?.map((screen: IScreens) => (
 				<ScreenCard
 					onClick={() => handleScreenClick(screen)}
+					onDeleteClick={() => handleScreenDeleteClick(screen._id)}
 					key={screen._id}
 					title={screen.screenName}
 					cover={screen.screenImg}

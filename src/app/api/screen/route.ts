@@ -1,7 +1,7 @@
 import dbConnect from '@/lib/mongodb';
 import { NextResponse, NextRequest } from 'next/server';
 import { UserModel } from '@/lib/models';
-import { ICharts, IChartsInfo } from '@/lib/models';
+import { ICharts, IChartsInfo, IScreens } from '@/lib/models';
 import { newICharts } from '@/store/reducers/screenSlice';
 
 export const PATCH = async (req: NextRequest) => {
@@ -43,24 +43,52 @@ export const POST = async (req: NextRequest) => {
 		const user = await UserModel.findOne({ username });
 		const charts = user.charts;
 		let data = [] as any;
-		charts.forEach((chart: ICharts) => {
-			chartsInfo.forEach((info: IChartsInfo) => {
-				if (info.chartId === chart._id.toString()) {
-					data.push({
-						chartName: chart.chartName,
-						chartType: chart.chartType,
-						option: chart.option,
-						selectedTags: chart.selectedTags,
-						img: chart.img,
-						_id: chart._id,
-						checked: true,
-						...info.geometry,
-					});
-				}
+
+		charts.forEach((chart: newICharts) => {
+			data.push({
+				chartName: chart.chartName,
+				chartType: chart.chartType,
+				option: chart.option,
+				selectedTags: chart.selectedTags,
+				img: chart.img,
+				_id: chart._id,
+				checked: false,
+				left: 0,
+				top: 0,
+				width: '300px',
+				height: '240px',
 			});
+		});
+
+		data.forEach((chart: newICharts) => {
+			const index = chartsInfo.findIndex((info: IChartsInfo) => info.chartId === chart._id.toString());
+			if (index > -1) {
+				chart.checked = true;
+				if (chartsInfo[index].geometry) {
+					chart.left = chartsInfo[index].geometry.left || 0;
+					chart.top = chartsInfo[index].geometry.top || 0;
+					chart.width = chartsInfo[index].geometry.width || '300px';
+					chart.height = chartsInfo[index].geometry.height || '240px';
+				}
+			}
 		});
 		return NextResponse.json({ data, status: 200 });
 	} catch (error) {
 		return NextResponse.json({ status: 500 });
+	}
+};
+
+export const DELETE = async (req: NextRequest) => {
+	const { screenId, username } = await req.json();
+	try {
+		await dbConnect();
+		const user = await UserModel.findOne({ username });
+		const screens = user.screens;
+		const newScreens = screens.filter((screen: IScreens) => screen._id.toString() !== screenId);
+		await UserModel.updateOne({ username }, { $set: { screens: newScreens } });
+		return NextResponse.json({ status: 200 });
+	} catch (error) {
+		console.log(error);
+		throw error;
 	}
 };

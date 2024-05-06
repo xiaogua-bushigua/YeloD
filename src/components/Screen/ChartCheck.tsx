@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
 import { useAppDispatch } from '@/store/hooks';
 import { setCheckedChart } from '@/store/reducers/screenSlice';
 import { newICharts } from '@/store/reducers/screenSlice';

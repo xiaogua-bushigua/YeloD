@@ -55,7 +55,7 @@ const screenSlice = createSlice({
 			state.staticInterval = parseInt(payload.staticInterval);
 			state.dynamicInterval = parseInt(payload.dynamicInterval);
 			state.screenName = payload.screenName;
-      state.charts = payload.charts;
+			state.charts = payload.charts;
 		},
 		// 当点击新建的screen卡片时，初始化该screen的states
 		resetScreen: (state) => {

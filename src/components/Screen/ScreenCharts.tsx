@@ -93,6 +93,9 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 				corner.style.zIndex = (z + 1000).toString();
 			});
 
+			pane.addEventListener('mouseover', () => handleMouseOver(title, corner, 'block'));
+			pane.addEventListener('mouseleave', () => handleMouseOver(title, corner, 'none'));
+
 			title.addEventListener('mousedown', (event) => {
 				pane.classList.add('is-dragging-pane');
 
@@ -148,7 +151,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 				document.addEventListener('mouseup', mouseup);
 			});
 		});
-	}, []);
+	}, [charts]);
 
 	useEffect(() => {
 		const queryIndexes = charts

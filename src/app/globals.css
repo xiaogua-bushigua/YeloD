@@ -119,7 +119,3 @@
 .is-dragging-pane {
   border: 2px solid rgb(251, 153, 210) !important;
 }
-
-.is-mouseup-title {
-  display: block
-}
