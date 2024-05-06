@@ -83,11 +83,13 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 			const title = pane.querySelector('.titles') as HTMLElement;
 			const corner = pane.querySelector('.corners') as HTMLElement;
 
+			// 两表发生重合时，点击其中一个增大其z，让其排在上面
 			pane.addEventListener('mousedown', () => {
 				z = z + 1;
 				pane.style.zIndex = z.toString();
 			});
 
+			// 让title和corner排在pane的更上面，使得能操作
 			pane.addEventListener('mouseenter', () => {
 				title.style.zIndex = (z + 1000).toString();
 				corner.style.zIndex = (z + 1000).toString();
@@ -96,15 +98,18 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 			pane.addEventListener('mouseover', () => handleMouseOver(title, corner, 'block'));
 			pane.addEventListener('mouseleave', () => handleMouseOver(title, corner, 'none'));
 
+			// 操作title时
 			title.addEventListener('mousedown', (event) => {
 				pane.classList.add('is-dragging-pane');
 
+				// 记录鼠标按下的时候位置信息
 				let l = pane.offsetLeft;
 				let t = pane.offsetTop;
 
 				let startX = event.pageX;
 				let startY = event.pageY;
 
+				// 鼠标移动时的事件
 				const drag = (event: MouseEvent) => {
 					event.preventDefault();
 
@@ -115,6 +120,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 					dispatch(setGeometry({ type: 'top', value: pane.style.top, id: pane.id }));
 				};
 
+				// 鼠标抬起时候的事件
 				const mouseup = () => {
 					pane.classList.remove('is-dragging-pane');
 
@@ -122,10 +128,12 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 					document.removeEventListener('mouseup', mouseup);
 				};
 
+				// 鼠标按下title的时候添加拖拽和鼠标抬起事件
 				document.addEventListener('mousemove', drag);
 				document.addEventListener('mouseup', mouseup);
 			});
 
+			// 操作corner时
 			corner.addEventListener('mousedown', (event) => {
 				let w = pane.clientWidth;
 				let h = pane.clientHeight;
@@ -154,6 +162,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 	}, [charts]);
 
 	useEffect(() => {
+    // 获取所勾选图表对应的数据查询语句的index
 		const queryIndexes = charts
 			.flatMap((chart) => {
 				if (chart.checked) return chart.selectedTags.map((tag) => tag.queryIndex);
@@ -162,6 +171,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 			.filter((item) => item !== null);
 		const uniqueQueryIndexes = Array.from(new Set(queryIndexes)) as number[];
 
+    // 进行静态更新数据
 		if (uniqueQueryIndexes.length) {
 			setInterval(() => {
 				dispatchAsync(

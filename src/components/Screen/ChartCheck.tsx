@@ -7,7 +7,8 @@ import { newICharts } from '@/store/reducers/screenSlice';
 
 const ChartCheck = ({ info }: { info: newICharts }) => {
   const dispatch = useAppDispatch();
-	const handleCheck = () => {
+  // 勾选和取消勾选
+  const handleCheck = () => {
 		dispatch(setCheckedChart(info.chartName));
 	};
 	return (

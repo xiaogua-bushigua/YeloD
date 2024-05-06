@@ -1,9 +1,10 @@
 import dbConnect from '@/lib/mongodb';
 import { NextResponse, NextRequest } from 'next/server';
 import { UserModel } from '@/lib/models';
-import { ICharts, IChartsInfo, IScreens } from '@/lib/models';
+import { IChartsInfo, IScreens } from '@/lib/models';
 import { newICharts } from '@/store/reducers/screenSlice';
 
+// 更新screen信息
 export const PATCH = async (req: NextRequest) => {
 	const { screenInfo, username, id } = await req.json();
 	try {
@@ -23,6 +24,7 @@ export const PATCH = async (req: NextRequest) => {
 	}
 };
 
+// 获取所有的screens
 export const GET = async (req: NextRequest) => {
 	const username = req.nextUrl.searchParams.get('username');
 	try {
@@ -36,6 +38,7 @@ export const GET = async (req: NextRequest) => {
 	}
 };
 
+// 初始化抽屉里待勾选的图表列表
 export const POST = async (req: NextRequest) => {
 	const { username, chartsInfo } = await req.json();
 	try {
@@ -78,6 +81,7 @@ export const POST = async (req: NextRequest) => {
 	}
 };
 
+// 删除screen
 export const DELETE = async (req: NextRequest) => {
 	const { screenId, username } = await req.json();
 	try {

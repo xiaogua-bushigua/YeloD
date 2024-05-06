@@ -21,13 +21,16 @@ const DrawerContentUI = () => {
 	const { background, charts, title, ratio, staticInterval, dynamicInterval } = useAppSelector(
 		(state: RootState) => state.screen
 	);
+
 	const fetchData = async () => {
+    // 初始化抽屉里待勾选的图表
 		const res = await fetch(`/api/chart?username=${user.name || user.username}`, {
 			method: 'GET',
 		});
 		const { data } = await res.json();
 		dispatch(initCharts(data));
 	};
+
 	useEffect(() => {
 		fetchData();
 	}, []);

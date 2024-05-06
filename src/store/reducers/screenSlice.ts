@@ -57,7 +57,7 @@ const screenSlice = createSlice({
 			state.screenName = payload.screenName;
 			state.charts = payload.charts;
 		},
-		// 当点击新建的screen卡片时，初始化该screen的states
+		// 当点击新建screen卡片时，初始化该screen的states
 		resetScreen: (state) => {
 			state.screenName = '';
 			state.charts = [];
@@ -68,11 +68,12 @@ const screenSlice = createSlice({
 			state.staticInterval = 5;
 			state.dynamicInterval = 5;
 		},
-		setBackground: (state, { payload }) => {
-			state.background = payload;
-		},
+		// 点击新建screen卡片时，初始化states里的charts
 		initCharts(state, { payload }) {
 			if (!state.charts.length) state.charts = payload;
+		},
+		setBackground: (state, { payload }) => {
+			state.background = payload;
 		},
 		setCheckedChart: (state, { payload }) => {
 			const index = state.charts.findIndex((chart) => chart.chartName === payload);
@@ -117,6 +118,7 @@ const screenSlice = createSlice({
 			}
 		},
 	},
+  // 根据查询语句更新screen上所有图表option的data
 	extraReducers(builder) {
 		builder.addCase(fetchOptionData.fulfilled, (state, action) => {
 			const res = action.payload.data;

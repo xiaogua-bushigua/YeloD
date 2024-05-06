@@ -36,7 +36,7 @@ const ScreenOperations = () => {
 		if (charts.filter((chart) => chart.checked).length === 0) {
 			toast({
 				title: 'Error',
-				description: 'The screen should charts selected.',
+				description: 'The screen should have charts selected.',
 			});
 			return;
 		}
@@ -44,6 +44,7 @@ const ScreenOperations = () => {
 		try {
 			const canvas = await html2canvas(element);
 			const base64Image = canvas.toDataURL();
+			// 保存勾选id和对应chart的宽高和位置
 			const chartsInfo = charts
 				.filter((chart) => chart.checked)
 				.map((chart) => ({

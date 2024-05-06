@@ -5,8 +5,8 @@ import { RootState } from '@/store/store';
 import ScreenCharts from './ScreenCharts';
 
 const Screen = () => {
-	const screenRef = useRef<HTMLDivElement>(null);
 	const wrapRef = useRef<HTMLDivElement>(null);
+	const screenRef = useRef<HTMLDivElement>(null);
 	const { background, title, ratio } = useAppSelector((state: RootState) => state.screen);
 
 	const handleResizeScreen = () => {
@@ -34,7 +34,11 @@ const Screen = () => {
 	}, [ratio]);
 
 	return (
-		<div ref={wrapRef} id="yeloD" className="w-full h-full box-border bg-white rounded-md flex items-center justify-center">
+		<div
+			ref={wrapRef}
+			id="yeloD"
+			className="w-full h-full box-border bg-white rounded-md flex items-center justify-center"
+		>
 			<div
 				ref={screenRef}
 				className={`bg-slate-50 relative border border-slate-300 bg-cover ${

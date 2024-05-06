@@ -28,9 +28,11 @@ export default function Screens() {
 			body: JSON.stringify({ username: user.name || user.username, chartsInfo: screen.chartsInfo }),
 		});
 		const { data } = await res.json();
+    // 点击已有卡片时，填入对应信息
 		dispatch(initScreen({ ...screen, charts: data }));
 		router.push('/screens/configurations?id=' + screen._id);
 	};
+
 	const handleScreenDeleteClick = async (screenId: string) => {
 		fetch('/api/screen', {
 			method: 'DELETE',
@@ -51,6 +53,7 @@ export default function Screens() {
 				});
 			});
 	};
+
 	const fetchData = async () => {
 		const res = await fetch(`/api/screen?username=${user.name || user.username}`, {
 			method: 'GET',
@@ -58,6 +61,7 @@ export default function Screens() {
 		const { data } = await res.json();
 		setCards(data);
 	};
+  
 	useEffect(() => {
 		fetchData();
 	}, []);
