@@ -1,7 +1,14 @@
 {
   "xAxis": {
     "type": "category",
-    "data": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
+    "data": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
+      "Sun"
     ]
   },
   "yAxis": {
@@ -17,6 +24,18 @@
         70,
         110,
         130
+      ],
+      "type": "bar"
+    },
+    {
+      "data": [
+        220,
+        200,
+        250,
+        200,
+        160,
+        210,
+        230
       ],
       "type": "bar"
     }

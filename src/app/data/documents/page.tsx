@@ -78,14 +78,14 @@ const page = () => {
 						<Button
 							variant="outline"
 							onClick={handleSearch}
-							className="font-mono w-1/6 ml-4 h-10 text-white hover:text-white bg-violet-400 hover:bg-violet-500 active:ring active:ring-violet-200 active:bg-violet-500"
+							className="font-mono w-24 ml-4 h-10 text-white hover:text-white bg-violet-400 hover:bg-violet-500 active:ring active:ring-violet-200 active:bg-violet-500"
 						>
 							Search
 						</Button>
 						<Button
 							variant="outline"
 							onClick={handleSaveQuery}
-							className="font-mono w-1/6 ml-4 h-10 text-white hover:text-white bg-pink-400 hover:bg-pink-500 active:ring active:ring-pink-200 active:bg-pink-500"
+							className="font-mono w-24 ml-4 h-10 text-white hover:text-white bg-pink-400 hover:bg-pink-500 active:ring active:ring-pink-200 active:bg-pink-500"
 						>
 							Save
 						</Button>

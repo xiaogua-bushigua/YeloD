@@ -81,7 +81,7 @@ export const PATCH = async (req: NextRequest) => {
 		const queries = user.queries;
 		const hasExistedIndex = queries.findIndex((q: any) => q.tag === tag);
 		// 如果有相同的查询tag提示无法更新，保证tag名称的唯一性
-		if (hasExistedIndex !== index) {
+		if (hasExistedIndex > -1 && hasExistedIndex !== index) {
 			return NextResponse.json({ status: 202, data: [hasExistedIndex, index] });
 		}
 		queries[index] = {

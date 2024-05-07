@@ -8,8 +8,7 @@ interface IinitialState {
 	chartType: string;
 	option: any;
 	tempOption: string;
-	xData: string[] | number[];
-	seriesData: Array<string[] | number[]>;
+	optionData: Array<string[] | number[]>;
 	tags: Array<{
 		tag: string;
 		field: string;
@@ -28,10 +27,22 @@ const initialState: IinitialState = {
 	chartType: 'line',
 	option: lineBasicOption,
 	tempOption: '',
-	xData: lineBasicOption.xAxis.data,
-	seriesData: [lineBasicOption.series[0].data],
+	optionData: [lineBasicOption.xAxis.data, lineBasicOption.series[0].data, lineBasicOption.series[1].data],
 	tags: [],
-	selectedTags: [],
+	selectedTags: [
+		{
+			tag: 'default',
+			queryIndex: -1,
+		},
+		{
+			tag: 'default',
+			queryIndex: -1,
+		},
+		{
+			tag: 'default',
+			queryIndex: -1,
+		},
+	],
 };
 
 // 获取所有的tag标签和该标签对应的查询信息
@@ -52,10 +63,26 @@ const chartSlice = createSlice({
 			state.chartType = 'line';
 			state.option = lineBasicOption;
 			state.tempOption = '';
-			state.xData = lineBasicOption.xAxis.data;
-			state.seriesData = [lineBasicOption.series[0].data];
+			state.optionData = [
+				lineBasicOption.xAxis.data,
+				lineBasicOption.series[0].data,
+				lineBasicOption.series[1].data,
+			];
 			state.tags = [];
-			state.selectedTags = [];
+			state.selectedTags = [
+				{
+					tag: 'default',
+					queryIndex: -1,
+				},
+				{
+					tag: 'default',
+					queryIndex: -1,
+				},
+				{
+					tag: 'default',
+					queryIndex: -1,
+				},
+			];
 		},
 		// 点击图表卡片时，把图表的信息储存在状态里，以便于带到下一个页面
 		initChart(state, action) {
@@ -79,19 +106,40 @@ const chartSlice = createSlice({
 				default:
 					break;
 			}
-			state.selectedTags = [];
+			state.selectedTags = [
+				{
+					tag: 'default',
+					queryIndex: -1,
+				},
+				{
+					tag: 'default',
+					queryIndex: -1,
+				},
+				{
+					tag: 'default',
+					queryIndex: -1,
+				},
+			];
 		},
 		changeChartName(state, action) {
 			state.chartName = action.payload;
 		},
-		setXData(state, action) {
-			state.xData = action.payload;
-			state.option.xAxis.data = state.xData;
-		},
-		setSeries(state, action) {
-			const index = action.payload.index;
-			state.seriesData[index] = action.payload.data;
-			state.option.series[index].data = state.seriesData[index];
+		setOptionData(state, action) {
+			state.optionData[action.payload.index] = action.payload.data;
+			if (state.chartType === 'line' || state.chartType === 'bar') {
+				state.option.xAxis.data = state.optionData[0];
+				for (let i = 1; i < state.optionData.length; i++) {
+					state.option.series[i - 1] = {
+						data: state.optionData[i],
+						type: state.chartType,
+					};
+				}
+			} else if (state.chartType === 'pie') {
+				state.option.series[0].data = state.optionData.map((data, index) => ({
+					value: data.length,
+					name: index,
+				}));
+			}
 		},
 		setTempOption(state, action) {
 			state.tempOption = action.payload;
@@ -99,7 +147,7 @@ const chartSlice = createSlice({
 		setOption(state, action) {
 			state.option = action.payload;
 		},
-		setSelectedTags(state, action) {      
+		setSelectedTags(state, action) {
 			state.selectedTags[action.payload.index] = {
 				tag: action.payload.tag,
 				queryIndex: action.payload.queryIndex,
@@ -120,8 +168,7 @@ export const {
 	changeChartType,
 	changeChartName,
 	resetChart,
-	setXData,
-	setSeries,
+	setOptionData,
 	setTempOption,
 	setOption,
 	setSelectedTags,

@@ -118,7 +118,7 @@ const screenSlice = createSlice({
 			}
 		},
 	},
-  // 根据查询语句更新screen上所有图表option的data
+	// 根据查询语句更新screen上所有图表option的data
 	extraReducers(builder) {
 		builder.addCase(fetchOptionData.fulfilled, (state, action) => {
 			const res = action.payload.data;
@@ -126,8 +126,12 @@ const screenSlice = createSlice({
 				chart.selectedTags.forEach((tag, index) => {
 					const position = res.findIndex((item: any) => item.queryIndex === tag.queryIndex);
 					if (position !== -1) {
-						if (index === 0) chart.option.xAxis.data = res[position].data;
-						else chart.option.series[0].data = res[position].data;
+						if (chart.chartType === 'line' || chart.chartType === 'bar') {
+							if (index === 0) chart.option.xAxis.data = res[position].data;
+							else chart.option.series[index - 1].data = res[position].data;
+						} else if (chart.chartType === 'pie') {
+							chart.option.series[0].data[index].value = res[position].data.length;
+						}
 					}
 				});
 			});

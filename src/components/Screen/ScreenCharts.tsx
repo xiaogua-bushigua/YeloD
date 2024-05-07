@@ -162,7 +162,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 	}, [charts]);
 
 	useEffect(() => {
-    // 获取所勾选图表对应的数据查询语句的index
+		// 获取所勾选图表对应的数据查询语句的index
 		const queryIndexes = charts
 			.flatMap((chart) => {
 				if (chart.checked) return chart.selectedTags.map((tag) => tag.queryIndex);
@@ -171,7 +171,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 			.filter((item) => item !== null);
 		const uniqueQueryIndexes = Array.from(new Set(queryIndexes)) as number[];
 
-    // 进行静态更新数据
+		// 进行静态更新数据
 		if (uniqueQueryIndexes.length) {
 			setInterval(() => {
 				dispatchAsync(

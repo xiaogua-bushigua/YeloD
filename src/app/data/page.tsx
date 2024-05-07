@@ -19,6 +19,7 @@ export default function Data() {
 			body: JSON.stringify({ username: user.name || user.username }),
 		});
 		const { data } = await res.json();
+    if(data.length === 1 && data[0] === '') return;
 		dispatch(saveDbLinks(data));
 		dispatchAsync(fetchDatabaseInfo(data));
 	};

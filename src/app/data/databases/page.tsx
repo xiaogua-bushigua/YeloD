@@ -18,12 +18,14 @@ const page = () => {
 	const [cardsInfo, setCardsInfo] = useState([] as Array<ICardsInfo>);
 
 	useEffect(() => {
-		const newCardsInfo = info.map((i) => ({
-			name: i.dbStats.db,
-			size: i.dbStats.storageSize,
-			count: i.collections.length,
-		}));
-		setCardsInfo(newCardsInfo);
+		if (database[0] !== '') {
+			const newCardsInfo = info.map((i) => ({
+				name: i.dbStats.db,
+				size: i.dbStats.storageSize,
+				count: i.collections.length,
+			}));
+			setCardsInfo(newCardsInfo);
+		}
 	}, [info]);
 
 	return (

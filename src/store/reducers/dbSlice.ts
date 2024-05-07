@@ -24,13 +24,13 @@ export interface IDb {
 const initialState: IDb = {
 	database: [''],
 	info: [
-		{
-			collections: [],
-			dbStats: {
-				db: '',
-				storageSize: 0,
-			},
-		},
+		// {
+		// 	collections: [],
+		// 	dbStats: {
+		// 		db: '',
+		// 		storageSize: 0,
+		// 	},
+		// },
 	],
 	databaseIndex: 0,
 	collectionIndex: 0,

@@ -9,7 +9,7 @@ const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
 	const pathname = usePathname();
 	useEffect(() => {
 	}, []);
-	if (pathname === '/login') {
+	if (pathname === '/login' || pathname === '/register') {
 		return children;
 	}
 	return (
