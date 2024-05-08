@@ -82,14 +82,14 @@
 }
 
 *::-webkit-scrollbar-track {
-  background: rgb(229, 229, 229);
+  background: transparent;
   border-radius: 5px;
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: rgb(134, 134, 134);
+  background-color: rgb(184, 184, 184);
   border-radius: 14px;
-  border: 1px solid rgb(100, 100, 100);
+  border: 1px solid rgb(156, 156, 156);
 }
 
 .language-js {
@@ -118,4 +118,12 @@
 
 .is-dragging-pane {
   border: 2px solid rgb(251, 153, 210) !important;
+}
+
+.checkboxItems>button {
+  border: 1px solid #334155;
+}
+
+.checkboxItems>button[data-state='checked'] {
+  background-color: #404c5d;
 }

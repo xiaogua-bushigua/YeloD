@@ -19,6 +19,7 @@ interface IinitialState {
 	selectedTags: Array<{
 		tag: string;
 		queryIndex: number;
+		xAxis: boolean;
 	}>;
 }
 
@@ -27,22 +28,9 @@ const initialState: IinitialState = {
 	chartType: 'line',
 	option: lineBasicOption,
 	tempOption: '',
-	optionData: [lineBasicOption.xAxis.data, lineBasicOption.series[0].data, lineBasicOption.series[1].data],
+	optionData: [lineBasicOption.xAxis.data, lineBasicOption.series[0].data],
 	tags: [],
-	selectedTags: [
-		{
-			tag: 'default',
-			queryIndex: -1,
-		},
-		{
-			tag: 'default',
-			queryIndex: -1,
-		},
-		{
-			tag: 'default',
-			queryIndex: -1,
-		},
-	],
+	selectedTags: [],
 };
 
 // 获取所有的tag标签和该标签对应的查询信息
@@ -63,26 +51,24 @@ const chartSlice = createSlice({
 			state.chartType = 'line';
 			state.option = lineBasicOption;
 			state.tempOption = '';
-			state.optionData = [
-				lineBasicOption.xAxis.data,
-				lineBasicOption.series[0].data,
-				lineBasicOption.series[1].data,
-			];
+			state.optionData = [lineBasicOption.xAxis.data, lineBasicOption.series[0].data];
 			state.tags = [];
-			state.selectedTags = [
-				{
-					tag: 'default',
-					queryIndex: -1,
-				},
-				{
-					tag: 'default',
-					queryIndex: -1,
-				},
-				{
-					tag: 'default',
-					queryIndex: -1,
-				},
-			];
+			state.selectedTags = [];
+		},
+		// 在option页面点击reset时，仅仅重置option
+		resetOption(state) {
+			switch (state.chartType) {
+				case 'line':
+					state.option = lineBasicOption;
+					break;
+				case 'pie':
+					state.option = PieBasicOption;
+					break;
+				case 'bar':
+					state.option = BarBasicOption;
+				default:
+					break;
+			}
 		},
 		// 点击图表卡片时，把图表的信息储存在状态里，以便于带到下一个页面
 		initChart(state, action) {
@@ -106,26 +92,14 @@ const chartSlice = createSlice({
 				default:
 					break;
 			}
-			state.selectedTags = [
-				{
-					tag: 'default',
-					queryIndex: -1,
-				},
-				{
-					tag: 'default',
-					queryIndex: -1,
-				},
-				{
-					tag: 'default',
-					queryIndex: -1,
-				},
-			];
+			state.selectedTags = [];
+			state.optionData = [];
 		},
 		changeChartName(state, action) {
 			state.chartName = action.payload;
 		},
 		setOptionData(state, action) {
-			state.optionData[action.payload.index] = action.payload.data;
+			state.optionData = action.payload;
 			if (state.chartType === 'line' || state.chartType === 'bar') {
 				state.option.xAxis.data = state.optionData[0];
 				for (let i = 1; i < state.optionData.length; i++) {
@@ -134,6 +108,9 @@ const chartSlice = createSlice({
 						type: state.chartType,
 					};
 				}
+				// state.option.legend = {
+				// 	data: state.selectedTags.map((tag) => tag.tag),
+				// };
 			} else if (state.chartType === 'pie') {
 				state.option.series[0].data = state.optionData.map((data, index) => ({
 					value: data.length,
@@ -148,10 +125,27 @@ const chartSlice = createSlice({
 			state.option = action.payload;
 		},
 		setSelectedTags(state, action) {
-			state.selectedTags[action.payload.index] = {
-				tag: action.payload.tag,
-				queryIndex: action.payload.queryIndex,
-			};
+			switch (action.payload.type) {
+				case 'checked':
+					state.selectedTags.push({
+						tag: action.payload.tag,
+						queryIndex: action.payload.queryIndex,
+						xAxis: action.payload.xAxis,
+					});
+					break;
+				case 'unchecked':
+					state.selectedTags = state.selectedTags.filter((tag) => tag.tag !== action.payload.tag);
+					break;
+				case 'xAxis':
+					state.selectedTags.forEach((tag) => {
+						if (tag.tag === action.payload.tag) tag.xAxis = true;
+					});
+					break;
+				case 'reset':
+					state.selectedTags = [];
+				default:
+					break;
+			}
 		},
 	},
 	extraReducers(builder) {
@@ -173,4 +167,5 @@ export const {
 	setOption,
 	setSelectedTags,
 	initChart,
+	resetOption,
 } = chartSlice.actions;
