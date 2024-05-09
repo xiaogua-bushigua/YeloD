@@ -73,7 +73,7 @@ const ChartTags = () => {
 				body: JSON.stringify(query),
 			});
 			const { data } = await res.json();
-			return data;
+			return { data, tag: query.tag };
 		});
 		const info = await Promise.all(promises);
 		dispatch(setOptionData(info));

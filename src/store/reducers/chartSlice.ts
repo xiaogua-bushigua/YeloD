@@ -99,22 +99,26 @@ const chartSlice = createSlice({
 			state.chartName = action.payload;
 		},
 		setOptionData(state, action) {
-			state.optionData = action.payload;
+			const data = action.payload.map((d: { data: Array<string[] | number[]>; tag: string }) => d.data);
+			const tags = action.payload.map((d: { data: Array<string[] | number[]>; tag: string }) => d.tag);
+			state.optionData = data;
+			state.option.legend = {
+				data: tags,
+			};
 			if (state.chartType === 'line' || state.chartType === 'bar') {
 				state.option.xAxis.data = state.optionData[0];
+				state.option.legend.data.shift();
 				for (let i = 1; i < state.optionData.length; i++) {
 					state.option.series[i - 1] = {
 						data: state.optionData[i],
 						type: state.chartType,
+						name: tags[i - 1],
 					};
 				}
-				// state.option.legend = {
-				// 	data: state.selectedTags.map((tag) => tag.tag),
-				// };
 			} else if (state.chartType === 'pie') {
 				state.option.series[0].data = state.optionData.map((data, index) => ({
 					value: data.length,
-					name: index,
+					name: tags[index],
 				}));
 			}
 		},
