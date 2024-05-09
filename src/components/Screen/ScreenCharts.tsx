@@ -8,6 +8,7 @@ import ScreenChart from './ScreenChart';
 import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import { fetchOptionData } from '@/store/reducers/screenSlice';
+import OptionsSheet from './OptionsStyle/OptionsSheet';
 
 const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement> }) => {
 	const dispatch = useAppDispatch();
@@ -15,9 +16,10 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 	const { fullScreen, charts, background, staticInterval } = useAppSelector((state: RootState) => state.screen);
 	const { user } = useAppSelector((state: RootState) => state.auth);
 
-	const handleMouseOver = (title: HTMLElement, corner: HTMLElement, style: string) => {
+	const handleMouseOver = (title: HTMLElement, corner: HTMLElement, edit: HTMLElement, style: string) => {
 		title.style.display = style;
 		corner.style.display = style;
+		edit.style.display = style;
 	};
 	// 全屏前后保持图表相对于大屏背景的寸尺和位置不变
 	useEffect(() => {
@@ -38,9 +40,10 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 
 			const title = pane.querySelector('.titles') as HTMLElement;
 			const corner = pane.querySelector('.corners') as HTMLElement;
+			const edit = pane.querySelector('.editIcon') as HTMLElement;
 
-			pane.addEventListener('mouseover', () => handleMouseOver(title, corner, 'block'));
-			pane.addEventListener('mouseleave', () => handleMouseOver(title, corner, 'none'));
+			pane.addEventListener('mouseover', () => handleMouseOver(title, corner, edit, 'block'));
+			pane.addEventListener('mouseleave', () => handleMouseOver(title, corner, edit, 'none'));
 		});
 
 		const handleFullScreenChange = () => {
@@ -66,7 +69,8 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 			panes.forEach((pane: HTMLElement) => {
 				const title = pane.querySelector('.titles') as HTMLElement;
 				const corner = pane.querySelector('.corners') as HTMLElement;
-				pane.addEventListener('mouseover', () => handleMouseOver(title, corner, 'none'));
+				const edit = pane.querySelector('.editIcon') as HTMLElement;
+				pane.addEventListener('mouseover', () => handleMouseOver(title, corner, edit, 'none'));
 			});
 			screenRef.current!.requestFullscreen();
 			return () => {
@@ -82,6 +86,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 		panes.forEach((pane: HTMLElement, index: number) => {
 			const title = pane.querySelector('.titles') as HTMLElement;
 			const corner = pane.querySelector('.corners') as HTMLElement;
+			const edit = pane.querySelector('.editIcon') as HTMLElement;
 
 			// 两表发生重合时，点击其中一个增大其z，让其排在上面
 			pane.addEventListener('mousedown', () => {
@@ -93,10 +98,11 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 			pane.addEventListener('mouseenter', () => {
 				title.style.zIndex = (z + 1000).toString();
 				corner.style.zIndex = (z + 1000).toString();
+				edit.style.zIndex = (z + 1000).toString();
 			});
 
-			pane.addEventListener('mouseover', () => handleMouseOver(title, corner, 'block'));
-			pane.addEventListener('mouseleave', () => handleMouseOver(title, corner, 'none'));
+			pane.addEventListener('mouseover', () => handleMouseOver(title, corner, edit, 'block'));
+			pane.addEventListener('mouseleave', () => handleMouseOver(title, corner, edit, 'none'));
 
 			// 操作title时
 			title.addEventListener('mousedown', (event) => {
@@ -208,6 +214,11 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 						<div className="corners cursor-nwse-resize w-[30px] h-[30px] absolute bottom-1 right-1 hidden">
 							<Image src={'/imgs/zoom.png'} width={40} height={40} alt="zoom" />
 						</div>
+						<OptionsSheet>
+							<div className="editIcon cursor-pointer w-[30px] h-[30px] absolute bottom-1 left-1 hidden ">
+								<Image src={'/imgs/edit.png'} width={30} height={40} alt="edit" />
+							</div>
+						</OptionsSheet>
 						<ScreenChart chart={chart} />
 					</div>
 				);
