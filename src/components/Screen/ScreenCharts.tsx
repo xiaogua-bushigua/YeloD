@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { RootState } from '@/store/store';
 import { setFullScreen, setGeometry } from '@/store/reducers/screenSlice';
@@ -15,6 +15,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 	const dispatchAsync: ThunkDispatch<RootState, any, any> = useDispatch();
 	const { fullScreen, charts, background, staticInterval } = useAppSelector((state: RootState) => state.screen);
 	const { user } = useAppSelector((state: RootState) => state.auth);
+	const [chartId, setChartId] = useState('');
 
 	const handleMouseOver = (title: HTMLElement, corner: HTMLElement, edit: HTMLElement, style: string) => {
 		title.style.display = style;
@@ -190,6 +191,10 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 		}
 	}, []);
 
+	const handleSheetOpenChange = (open: boolean, id: string) => {
+		setChartId(open ? id : '');
+	};
+
 	return (
 		<>
 			{charts.map((chart) => {
@@ -204,6 +209,8 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 							height: chart.height || '240px',
 							left: chart.left || '0',
 							top: chart.top || '0',
+							border:
+								chartId === chart._id ? '2px solid rgb(251, 153, 210)' : '2px solid transparent',
 						}}
 					>
 						<div
@@ -214,7 +221,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 						<div className="corners cursor-nwse-resize w-[30px] h-[30px] absolute bottom-1 right-1 hidden">
 							<Image src={'/imgs/zoom.png'} width={40} height={40} alt="zoom" />
 						</div>
-						<OptionsSheet>
+						<OptionsSheet onOpen={(open) => handleSheetOpenChange(open, chart._id)} chartId={chartId}>
 							<div className="editIcon cursor-pointer w-[30px] h-[30px] absolute bottom-1 left-1 hidden ">
 								<Image src={'/imgs/edit.png'} width={30} height={40} alt="edit" />
 							</div>

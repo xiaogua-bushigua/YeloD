@@ -6,7 +6,7 @@ import 'react-color-palette/css';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
 
-const Axis = () => {
+const Axis = ({ chartId }: { chartId: string }) => {
 	const [color, setColor] = useColor('#561ecb');
 
 	return (

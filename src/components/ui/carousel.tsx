@@ -160,7 +160,7 @@ const CarouselItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLD
 				role="group"
 				aria-roledescription="slide"
 				className={cn(
-					'min-w-0 shrink-0 grow-0 basis-full text-sm',
+					'min-w-0 shrink-0 grow-0 text-sm w-24',
 					orientation === 'horizontal' ? 'pl-1' : 'pt-4',
 					className
 				)}
@@ -200,7 +200,7 @@ const CarouselPrevious = React.forwardRef<HTMLButtonElement, React.ComponentProp
 CarouselPrevious.displayName = 'CarouselPrevious';
 
 const CarouselNext = React.forwardRef<HTMLButtonElement, React.ComponentProps<typeof Button>>(
-	({ className, variant = 'outline', size = 'icon', ...props }, ref) => {
+	({ className, variant = 'outline', size = 'icon', ...props}, ref) => {
 		const { orientation, scrollNext, canScrollNext } = useCarousel();
 
 		return (

@@ -8,21 +8,25 @@ import DataColors from './DataColors';
 
 const OptionsSheet = ({
 	children,
+	onOpen,
+	chartId,
 }: Readonly<{
 	children: React.ReactNode;
+	onOpen: (open: boolean) => void;
+	chartId: string;
 }>) => {
 	return (
-		<Sheet>
+		<Sheet onOpenChange={(open) => onOpen(open)}>
 			<SheetTrigger>{children}</SheetTrigger>
 			<SheetContent className="w-72 min-w-72">
 				<SheetHeader>
-					<SheetTitle className="my-4">Change chart styles here!</SheetTitle>
+					<SheetTitle className="my-4 font-mono">Change chart styles</SheetTitle>
 				</SheetHeader>
-				<Padding />
-				<Label />
-				<Title />
-				<Axis />
-				<DataColors />
+				<Padding chartId={chartId} />
+				<Label chartId={chartId} />
+				<Title chartId={chartId} />
+				<Axis chartId={chartId} />
+				<DataColors chartId={chartId} />
 			</SheetContent>
 		</Sheet>
 	);

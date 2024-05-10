@@ -104,6 +104,9 @@ const chartSlice = createSlice({
 			state.optionData = data;
 			state.option.legend = {
 				data: tags,
+				left: 10,
+				top: 0,
+				orient: 'vertical',
 			};
 			if (state.chartType === 'line' || state.chartType === 'bar') {
 				state.option.xAxis.data = state.optionData[0];

@@ -5,7 +5,7 @@ import { ColorPicker, useColor } from 'react-color-palette';
 import 'react-color-palette/css';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
-const DataColors = () => {
+const DataColors = ({ chartId }: { chartId: string }) => {
 	const [color, setColor] = useColor('#561ecb');
 
 	return (

@@ -117,6 +117,51 @@ const screenSlice = createSlice({
 					break;
 			}
 		},
+		changeChartOption: (state, { payload }) => {
+			const index = state.charts.findIndex((chart) => chart._id === payload.id);
+			switch (payload.type) {
+				case 'padding':
+					const grid = state.charts[index].option.grid ? state.charts[index].option.grid : {};
+					grid[payload.prop] = payload.value;
+					state.charts[index].option.grid = grid;
+					break;
+				case 'label':
+					const labels = state.charts[index].option.series.map((s: any) => ({
+						show: payload.prop === 'show' ? payload.value : s.label || false,
+						position: payload.prop === 'position' ? payload.value : s.label || 'top',
+						color: payload.prop === 'color' ? payload.value : s.label || '#bfbfbf',
+						fontSize: payload.prop === 'fontSize' ? payload.value : s.label || 12,
+					}));
+					state.charts[index].option.series.forEach((s: any, i: number) => {
+						s.label = labels[i];
+					});
+					break;
+				case 'title':
+					let title = state.charts[index].option.title || {};
+					state.charts[index].option.title = {
+						left: 'center',
+						show: payload.prop === 'show' ? payload.value : title.show || false,
+						text: payload.prop === 'text' ? payload.value : title.text || '',
+						textStyle: {
+							color:
+								payload.prop === 'color'
+									? payload.value
+									: title.textStyle
+									? title.textStyle.color
+									: '#bfbfbf',
+							fontSize:
+								payload.prop === 'fontSize'
+									? payload.value
+									: title.textStyle
+									? title.textStyle.fontSize
+									: 18,
+						},
+					};
+					break;
+				default:
+					break;
+			}
+		},
 	},
 	// 根据查询语句更新screen上所有图表option的data
 	extraReducers(builder) {
@@ -154,4 +199,5 @@ export const {
 	setGeometry,
 	setScreenName,
 	resetScreen,
+	changeChartOption,
 } = screenSlice.actions;
