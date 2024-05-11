@@ -121,19 +121,23 @@ const screenSlice = createSlice({
 			const index = state.charts.findIndex((chart) => chart._id === payload.id);
 			switch (payload.type) {
 				case 'padding':
-					const grid = state.charts[index].option.grid ? state.charts[index].option.grid : {};
-					grid[payload.prop] = payload.value;
-					state.charts[index].option.grid = grid;
+					if (payload.prop === 'radius') {
+						state.charts[index].option.series[0].radius = payload.value;
+					} else {
+						const grid = state.charts[index].option.grid ? state.charts[index].option.grid : {};
+						grid[payload.prop] = payload.value;
+						state.charts[index].option.grid = grid;
+					}
 					break;
 				case 'label':
-					const labels = state.charts[index].option.series.map((s: any) => ({
-						show: payload.prop === 'show' ? payload.value : s.label || false,
-						position: payload.prop === 'position' ? payload.value : s.label || 'top',
-						color: payload.prop === 'color' ? payload.value : s.label || '#bfbfbf',
-						fontSize: payload.prop === 'fontSize' ? payload.value : s.label || 12,
-					}));
-					state.charts[index].option.series.forEach((s: any, i: number) => {
-						s.label = labels[i];
+					const label = state.charts[index].option.series[0].label || {};
+					state.charts[index].option.series.forEach((s: any) => {
+						s.label = {
+							show: payload.prop === 'show' ? payload.value : label.show || false,
+							position: payload.prop === 'position' ? payload.value : label.position || 'top',
+							color: payload.prop === 'color' ? payload.value : label.color || '#bfbfbf',
+							fontSize: payload.prop === 'fontSize' ? payload.value : label.fontSize || 12,
+						};
 					});
 					break;
 				case 'title':
@@ -155,6 +159,62 @@ const screenSlice = createSlice({
 									: title.textStyle
 									? title.textStyle.fontSize
 									: 18,
+						},
+					};
+					break;
+				case 'axis':
+					let axisLabel = state.charts[index].option.xAxis.axisLabel || {};
+					state.charts[index].option.xAxis.axisLabel = {
+						color: payload.prop === 'color' ? payload.value : axisLabel.color || '#bfbfbf',
+						fontSize: payload.prop === 'fontSize' ? payload.value : axisLabel.fontSize || 12,
+					};
+					state.charts[index].option.yAxis.axisLabel = {
+						color: payload.prop === 'color' ? payload.value : axisLabel.color || '#bfbfbf',
+						fontSize: payload.prop === 'fontSize' ? payload.value : axisLabel.fontSize || 12,
+					};
+					break;
+				case 'legend':
+					let legend = state.charts[index].option.legend || {};
+					state.charts[index].option.legend = {
+						orient: payload.prop === 'orient' ? payload.value : legend.orient || 'vertical',
+						left: payload.prop === 'left' ? payload.value : legend.left || 10,
+						top: payload.prop === 'top' ? payload.value : legend.top || 0,
+						textStyle: {
+							color:
+								payload.prop === 'color'
+									? payload.value
+									: legend.textStyle
+									? legend.textStyle.color
+									: '#bfbfbf',
+							fontSize:
+								payload.prop === 'fontSize'
+									? payload.value
+									: legend.textStyle
+									? legend.textStyle.fontSize
+									: 12,
+						},
+					};
+					break;
+				case 'series':
+					let series = state.charts[index].option.series || {};
+					state.charts[index].option.series[payload.index] = {
+						...series[payload.index],
+						name: payload.prop === 'name' ? payload.value : series.name,
+						lineStyle: {
+							color:
+								payload.prop === 'color'
+									? payload.value
+									: series[payload.index].lineStyle
+									? series[payload.index].lineStyle.color
+									: '#44ff44',
+						},
+						itemStyle: {
+							color:
+								payload.prop === 'color'
+									? payload.value
+									: series[payload.index].itemStyle
+									? series[payload.index].itemStyle.color
+									: '#44ff44',
 						},
 					};
 					break;

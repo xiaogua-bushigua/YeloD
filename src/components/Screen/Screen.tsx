@@ -34,13 +34,10 @@ const Screen = () => {
 	}, [ratio]);
 
 	return (
-		<div
-			ref={wrapRef}
-			id="yeloD"
-			className="w-full h-full box-border bg-white rounded-md flex items-center justify-center"
-		>
+		<div ref={wrapRef} className="w-full h-full box-border bg-white rounded-md flex items-center justify-center">
 			<div
 				ref={screenRef}
+				id="yeloD"
 				className={`bg-slate-50 relative border border-slate-300 bg-cover ${
 					background === 'light' ? "bg-[url('/imgs/light.png')]" : "bg-[url('/imgs/dark.png')]"
 				}`}

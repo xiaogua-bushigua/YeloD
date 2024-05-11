@@ -42,7 +42,7 @@ export const GET = async (req: NextRequest) => {
 export const POST = async (req: NextRequest) => {
 	const { username, queryIndexes } = await req.json();
 	try {
-		dbConnect();
+		await dbConnect();
 		const queries = await UserModel.findOne({ username }, { queries: 1 });
 		let promises = queryIndexes.map(async (queryIndex: number) => {
 			const { uri, collectionName, query, field } = queries.queries[queryIndex];

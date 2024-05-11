@@ -29,7 +29,7 @@ export const register = async (previousState: any, formData: FormData) => {
 	const hashedPassword = await bcrypt.hash(password, salt);
 
 	try {
-		dbConnect();
+		await dbConnect();
 		const user = await UserModel.findOne({ username });
 		if (user) {
 			return { error: 'Username already exists' };
@@ -53,7 +53,7 @@ export const register = async (previousState: any, formData: FormData) => {
 
 export const login = async (username: string, password: string): Promise<LoginResult> => {
 	try {
-		dbConnect();
+		await dbConnect();
 		const user = await UserModel.findOne({ username });
 		if (!user) return { error: 'There is no such user' };
 		const isPasswordCorrect = await bcrypt.compare(password, user.password);

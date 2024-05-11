@@ -209,8 +209,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 							height: chart.height || '240px',
 							left: chart.left || '0',
 							top: chart.top || '0',
-							border:
-								chartId === chart._id ? '2px solid rgb(251, 153, 210)' : '2px solid transparent',
+							border: chartId === chart._id ? '2px solid rgb(251, 153, 210)' : '2px solid transparent',
 						}}
 					>
 						<div
@@ -221,7 +220,12 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 						<div className="corners cursor-nwse-resize w-[30px] h-[30px] absolute bottom-1 right-1 hidden">
 							<Image src={'/imgs/zoom.png'} width={40} height={40} alt="zoom" />
 						</div>
-						<OptionsSheet onOpen={(open) => handleSheetOpenChange(open, chart._id)} chartId={chartId}>
+						<OptionsSheet
+							onOpen={(open) => handleSheetOpenChange(open, chart._id)}
+							chartId={chartId}
+							chartType={chart.chartType}
+							option={chart.option}
+						>
 							<div className="editIcon cursor-pointer w-[30px] h-[30px] absolute bottom-1 left-1 hidden ">
 								<Image src={'/imgs/edit.png'} width={30} height={40} alt="edit" />
 							</div>

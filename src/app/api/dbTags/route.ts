@@ -34,7 +34,7 @@ export const POST = async (req: NextRequest) => {
 // 获取所有的tag标签和该标签对应的查询信息
 export const GET = async (req: NextRequest) => {
 	try {
-		dbConnect();
+		await dbConnect();
 		const username = req.nextUrl.searchParams.get('username');
 		const queries = await UserModel.findOne({ username }, { queries: 1 });
 		const data = await Promise.all(

@@ -31,7 +31,7 @@ export const authOptions: AuthOptions = {
 			credentials: {},
 			async authorize(credentials: any, req) {
 				try {
-					dbConnect();
+					await dbConnect();
 					const user = await UserModel.findOne({ username: credentials.username });
 					return user;
 				} catch (err) {
@@ -45,7 +45,7 @@ export const authOptions: AuthOptions = {
 		async signIn(params: { account: Account | null; profile?: Profile | undefined }) {
 			const { account, profile } = params;
 			if (account && account?.provider === 'github') {
-				dbConnect();
+				await dbConnect();
 				try {
 					const user = await UserModel.findOne({ username: profile?.login });
 					if (!user) {

@@ -4,29 +4,35 @@ import Padding from './Padding';
 import Label from './Label';
 import Title from './Title';
 import Axis from './Axis';
-import DataColors from './DataColors';
+import DataSeries from './DataSeries';
+import Legend from './Legend';
 
 const OptionsSheet = ({
 	children,
 	onOpen,
 	chartId,
+	chartType,
+	option,
 }: Readonly<{
 	children: React.ReactNode;
 	onOpen: (open: boolean) => void;
 	chartId: string;
+	chartType: string;
+	option: any;
 }>) => {
 	return (
 		<Sheet onOpenChange={(open) => onOpen(open)}>
 			<SheetTrigger>{children}</SheetTrigger>
-			<SheetContent className="w-72 min-w-72">
+			<SheetContent className="w-72 min-w-72 overflow-auto">
 				<SheetHeader>
 					<SheetTitle className="my-4 font-mono">Change chart styles</SheetTitle>
 				</SheetHeader>
-				<Padding chartId={chartId} />
-				<Label chartId={chartId} />
+				<Padding chartId={chartId} chartType={chartType} />
+				<Label chartId={chartId} chartType={chartType} />
 				<Title chartId={chartId} />
-				<Axis chartId={chartId} />
-				<DataColors chartId={chartId} />
+				{chartType !== 'pie' && <Axis chartId={chartId} />}
+				<Legend chartId={chartId} />
+				<DataSeries chartId={chartId} option={option} />
 			</SheetContent>
 		</Sheet>
 	);

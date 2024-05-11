@@ -103,7 +103,6 @@ const chartSlice = createSlice({
 			const tags = action.payload.map((d: { data: Array<string[] | number[]>; tag: string }) => d.tag);
 			state.optionData = data;
 			state.option.legend = {
-				data: tags,
 				left: 10,
 				top: 0,
 				orient: 'vertical',

@@ -18,12 +18,12 @@ import 'react-color-palette/css';
 import { useAppDispatch } from '@/store/hooks';
 import { changeChartOption } from '@/store/reducers/screenSlice';
 
-const Label = ({ chartId }: { chartId: string }) => {
+const Label = ({ chartId, chartType }: { chartId: string; chartType: string }) => {
 	const dispatch = useAppDispatch();
 	const [color, setColor] = useColor('#bfbfbf');
 	const [checked, setChecked] = useState(false);
 	const [popoverOpen, setPopoverOpen] = useState(false);
-	const [position, setPosition] = useState('top');
+	const [position, setPosition] = useState(chartType === 'pie' ? 'inside' : 'top');
 	const positionItems = [
 		'top',
 		'left',
@@ -39,6 +39,7 @@ const Label = ({ chartId }: { chartId: string }) => {
 		'insideTopRight',
 		'insideBottomRight',
 	];
+	const positionItemsPie = ['outside', 'inside', 'center'];
 
 	const handleShowLabelChange = (checked: boolean) => {
 		setChecked(checked);
@@ -73,7 +74,7 @@ const Label = ({ chartId }: { chartId: string }) => {
 							<SelectContent>
 								<SelectGroup>
 									<SelectLabel className="font-mono">positions</SelectLabel>
-									{positionItems.map((position) => (
+									{(chartType === 'pie' ? positionItemsPie : positionItems).map((position) => (
 										<SelectItem className="font-mono" value={position} key={position}>
 											{position}
 										</SelectItem>
@@ -83,7 +84,7 @@ const Label = ({ chartId }: { chartId: string }) => {
 						</Select>
 					</div>
 					<div className="flex pl-4 my-1 items-center">
-						<span className="font-mono mr-4 w-24 text-sm">fontSize: </span>
+						<span className="font-mono mr-4 w-24 text-sm">size: </span>
 						<Slider
 							defaultValue={[12]}
 							max={24}

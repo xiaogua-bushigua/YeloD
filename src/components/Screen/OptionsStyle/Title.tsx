@@ -50,7 +50,7 @@ const Title = ({ chartId }: { chartId: string }) => {
 						/>
 					</div>
 					<div className="flex pl-4 my-1 items-center">
-						<span className="font-mono mr-4 w-24 text-sm">fontSize: </span>
+						<span className="font-mono mr-4 w-24 text-sm">size: </span>
 						<Slider
 							defaultValue={[18]}
 							max={24}

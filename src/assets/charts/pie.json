@@ -8,22 +8,12 @@
   },
   "series": [
     {
-      "name": "Access From",
       "type": "pie",
-      "avoidLabelOverlap": false,
+      "radius": "50%",
+      "avoidLabelOverlap": true,
       "label": {
         "show": false,
-        "position": "center"
-      },
-      "emphasis": {
-        "label": {
-          "show": true,
-          "fontSize": 40,
-          "fontWeight": "bold"
-        }
-      },
-      "labelLine": {
-        "show": false
+        "position": "inside"
       },
       "data": [
         { "value": 1048, "name": "Search Engine"
