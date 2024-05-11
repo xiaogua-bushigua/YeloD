@@ -1,5 +1,5 @@
 // svg => jsx: https://react-svgr.com/playground/
-const SvgComponent = ({ fill }: { fill: string }) => (
+const AddIcon = ({ fill }: { fill: string }) => (
 	<svg xmlns="http://www.w3.org/2000/svg" width={400} height={400} fill="none" viewBox="0 0 24 24">
 		<path
 			fill={fill}
@@ -13,4 +13,4 @@ const SvgComponent = ({ fill }: { fill: string }) => (
 		/>
 	</svg>
 );
-export default SvgComponent;
+export default AddIcon;
