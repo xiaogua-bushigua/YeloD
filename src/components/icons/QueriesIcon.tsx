@@ -1,5 +1,5 @@
 // svg => jsx: https://react-svgr.com/playground/
-const QueriesIcon = ({ fill }: { fill: string }) => (
+const SvgComponent = ({ fill }: { fill: string }) => (
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		width={20}
@@ -21,4 +21,4 @@ const QueriesIcon = ({ fill }: { fill: string }) => (
 		/>
 	</svg>
 );
-export default QueriesIcon;
+export default SvgComponent;

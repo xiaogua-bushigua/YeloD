@@ -1,5 +1,5 @@
 // svg => jsx: https://react-svgr.com/playground/
-const ChartIcon = ({ fill }: { fill: string }) => (
+const SvgComponent = ({ fill }: { fill: string }) => (
 	<svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} fill="none" viewBox="0 0 24 24" className={fill}>
 		<path
 			fillRule="evenodd"
@@ -8,4 +8,4 @@ const ChartIcon = ({ fill }: { fill: string }) => (
 		/>
 	</svg>
 );
-export default ChartIcon;
+export default SvgComponent;
