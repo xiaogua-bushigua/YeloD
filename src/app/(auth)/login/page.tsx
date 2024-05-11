@@ -2,7 +2,7 @@ import ExtraLoginForm from '@/components/Auth/ExtraLoginForm';
 import LoginForm from '@/components/Auth/LoginForm';
 import Link from 'next/link';
 
-const page = () => {
+const Page = () => {
 	return (
 		<section className="flex h-screen flex-col items-center justify-center w-full bg-neutral-50">
 			<div className="w-1/2 mt-2">
@@ -17,4 +17,4 @@ const page = () => {
 	);
 };
 
-export default page;
+export default Page;

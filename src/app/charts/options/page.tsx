@@ -14,7 +14,7 @@ import dynamic from 'next/dynamic';
 // EditorJS不支持服务端渲染，这里使用客户端渲染
 const ChartOptions = dynamic(() => import('@/components/Chart/ChartOptions'), { ssr: false });
 
-const page = () => {
+const Page = () => {
 	const { option, chartName, chartType } = useAppSelector((state: RootState) => state.chart);
 	const dispatchAsync: ThunkDispatch<RootState, any, any> = useDispatch();
 	const { user } = useAppSelector((state: RootState) => state.auth);
@@ -40,4 +40,4 @@ const page = () => {
 	);
 };
 
-export default page;
+export default Page;

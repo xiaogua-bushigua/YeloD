@@ -2,7 +2,7 @@
 import ScreenOperations from '@/components/Screen/ScreenOperations';
 import Screen from '@/components/Screen/Screen';
 
-const page = () => {
+const Page = () => {
 	return (
 		<div className="w-full h-full overflow-hidden flex flex-col gap-4">
 			<ScreenOperations />
@@ -11,4 +11,4 @@ const page = () => {
 	);
 };
 
-export default page;
+export default Page;

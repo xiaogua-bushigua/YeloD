@@ -6,7 +6,7 @@ import { useAppSelector } from '@/store/hooks';
 import DatabaseCard from '@/components/Data/DatabaseCard';
 import { ICardsInfo } from '@/app/data/databases/page';
 
-const page = () => {
+const Page = () => {
 	const { info, databaseIndex } = useAppSelector((state: RootState) => state.db);
 	const [cardsInfo, setCardsInfo] = useState([] as Array<ICardsInfo>);
 
@@ -31,4 +31,4 @@ const page = () => {
 	);
 };
 
-export default page;
+export default Page;

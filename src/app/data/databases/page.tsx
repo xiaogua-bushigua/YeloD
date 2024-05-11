@@ -12,7 +12,7 @@ export interface ICardsInfo {
 	count: number;
 }
 
-const page = () => {
+const Page = () => {
 	const { database } = useSelector((state: RootState) => state.db);
 	const { info } = useSelector((state: RootState) => state.db);
 	const [cardsInfo, setCardsInfo] = useState([] as Array<ICardsInfo>);
@@ -49,4 +49,4 @@ const page = () => {
 	);
 };
 
-export default page;
+export default Page;

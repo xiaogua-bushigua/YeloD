@@ -10,7 +10,7 @@ import { transferQuery } from '@/lib/transferQuery';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 
-const page = () => {
+const Page = () => {
 	const { info, databaseIndex, collectionIndex, database } = useAppSelector((state: RootState) => state.db);
 	const { user } = useAppSelector((state: RootState) => state.auth);
 	const [path, setPath] = useState('');
@@ -100,4 +100,4 @@ const page = () => {
 	);
 };
 
-export default page;
+export default Page;
