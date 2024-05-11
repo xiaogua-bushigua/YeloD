@@ -10,7 +10,7 @@ const Page = () => {
 				<span className="font-mono text-slate-700 self-start">or sign in with: </span>
 				<ExtraLoginForm />
 				<Link href="/register" className="font-mono text-slate-700 cursor-pointer">
-					Don't have an account? Register Now!
+					{'Don\'t have an account? Register Now!'}
 				</Link>
 			</div>
 		</section>
