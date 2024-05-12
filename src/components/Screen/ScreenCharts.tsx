@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { RootState } from '@/store/store';
 import { setFullScreen, setGeometry } from '@/store/reducers/screenSlice';
@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import { fetchOptionData } from '@/store/reducers/screenSlice';
 import OptionsSheet from './OptionsStyle/OptionsSheet';
+import EChartsReact from 'echarts-for-react';
 
 const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement> }) => {
 	const dispatch = useAppDispatch();
@@ -16,6 +17,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 	const { fullScreen, charts, background, staticInterval } = useAppSelector((state: RootState) => state.screen);
 	const { user } = useAppSelector((state: RootState) => state.auth);
 	const [chartId, setChartId] = useState('');
+	const childRef = useRef<EChartsReact[] | null[]>([]);
 
 	const handleMouseOver = (title: HTMLElement, corner: HTMLElement, edit: HTMLElement, style: string) => {
 		title.style.display = style;
@@ -197,7 +199,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 
 	return (
 		<>
-			{charts.map((chart) => {
+			{charts.map((chart, index) => {
 				if (!chart.checked) return null;
 				return (
 					<div
@@ -224,13 +226,18 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 							onOpen={(open) => handleSheetOpenChange(open, chart._id)}
 							chartId={chartId}
 							chartType={chart.chartType}
-							option={chart.option}
+							chartRef={childRef.current[index]!}
 						>
 							<div className="editIcon cursor-pointer w-[30px] h-[30px] absolute bottom-1 left-1 hidden ">
 								<Image src={'/imgs/edit.png'} width={30} height={40} alt="edit" />
 							</div>
 						</OptionsSheet>
-						<ScreenChart chart={chart} />
+						<ScreenChart
+							ref={(ref) => {
+								childRef.current[index] = ref;
+							}}
+							chart={chart}
+						/>
 					</div>
 				);
 			})}

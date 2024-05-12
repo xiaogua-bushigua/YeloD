@@ -13,7 +13,7 @@ import { changeChartOption } from '@/store/reducers/screenSlice';
 const Title = ({ chartId }: { chartId: string }) => {
 	const [color, setColor] = useColor('#561ecb');
 	const [checked, setChecked] = useState(false);
-  const [title, setTitle] = useState('')
+	const [title, setTitle] = useState('');
 	const dispatch = useAppDispatch();
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
@@ -22,10 +22,10 @@ const Title = ({ chartId }: { chartId: string }) => {
 		dispatch(changeChartOption({ type: 'title', prop: 'show', value: checked, id: chartId }));
 	};
 
-  const handleInputChange = (value: string) => {
-    setTitle(value);
-    dispatch(changeChartOption({ type: 'title', prop: 'text', value, id: chartId }));
-  }
+	const handleInputChange = (value: string) => {
+		setTitle(value);
+		dispatch(changeChartOption({ type: 'title', prop: 'text', value, id: chartId }));
+	};
 
 	useEffect(() => {
 		if (!popoverOpen) {

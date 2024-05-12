@@ -1,8 +1,14 @@
 import ReactECharts from 'echarts-for-react';
 import { newICharts } from '@/store/reducers/screenSlice';
+import { forwardRef, Ref } from 'react';
+import EChartsReact from 'echarts-for-react';
 
-const ScreenChart = ({ chart }: { chart: newICharts }) => {
-	return <ReactECharts option={chart.option} style={{ height: '100%', width: '100%' }} />;
-};
+interface Props {
+	chart: newICharts;
+}
 
-export default ScreenChart
+const ScreenChart = forwardRef((props: Props, ref: Ref<EChartsReact>) => {
+	return <ReactECharts ref={ref} option={props.chart.option} style={{ height: '100%', width: '100%' }} />;
+});
+
+export default ScreenChart;

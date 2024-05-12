@@ -8,9 +8,10 @@ import { Input } from '@/components/ui/input';
 import { useAppDispatch } from '@/store/hooks';
 import { changeChartOption } from '@/store/reducers/screenSlice';
 
-const DataSerie = ({ chartId, index, serie }: { chartId: string; index: number; serie: any }) => {
+const DataSerie = ({ chartId, index, serie, scolor }: { chartId: string; index: number; serie: any; scolor: string }) => {
+  console.log(serie);
 	const dispatch = useAppDispatch();
-	const [color, setColor] = useColor(serie.lineStyle ? serie.lineStyle.color : '#ddd');
+	const [color, setColor] = useColor(serie.lineStyle.color || scolor);
 	const [serieName, setSerieName] = useState(serie.name);
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
