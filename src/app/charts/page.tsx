@@ -28,25 +28,30 @@ export default function Charts() {
 		dispatch(initChart(chart));
 		router.push('/charts/options?id=' + chart._id);
 	};
-	const handleScreenDeleteClick = async (chartId: string) => {
-		fetch('/api/chart', {
+	const handleChartDeleteClick = async (chartId: string) => {
+		const res = await fetch('/api/chart', {
 			method: 'DELETE',
 			body: JSON.stringify({ username: user.name || user.username, chartId }),
-		})
-			.then(() => {
-				fetchData();
-				toast({
-					title: 'Success',
-					description: 'The screen has been removed.',
-				});
-			})
-			.catch((error) => {
-				console.error('Error:', error);
-				toast({
-					title: 'Error',
-					description: 'Something went wrong. Please try again.',
-				});
+		});
+		const { status } = await res.json();
+		if (status === 200) {
+			fetchData();
+			toast({
+				title: 'Success',
+				description: 'The chart has been removed.',
 			});
+			// 如果该chart被screen使用了，不让删除
+		} else if (status === 202) {
+			toast({
+				title: 'Suspend',
+				description: 'The chart has been used in a screen!',
+			});
+		} else {
+			toast({
+				title: 'Error',
+				description: 'Something went wrong. Please try again.',
+			});
+		}
 	};
 	const fetchData = async () => {
 		const res = await fetch(`/api/chart?username=${user.name || user.username}`, {
@@ -66,7 +71,7 @@ export default function Charts() {
 					key={i._id}
 					title={i.chartName}
 					cover={i.img}
-					onDeleteClick={() => handleScreenDeleteClick(i._id)}
+					onDeleteClick={() => handleChartDeleteClick(i._id)}
 				/>
 			))}
 			<div

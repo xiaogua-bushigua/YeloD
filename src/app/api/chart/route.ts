@@ -1,6 +1,6 @@
 import dbConnect from '@/lib/mongodb';
 import { NextResponse, NextRequest } from 'next/server';
-import { ICharts, UserModel } from '@/lib/models';
+import { ICharts, UserModel, IScreens, IChartsInfo } from '@/lib/models';
 import dbConnectPublic from '@/lib/mongodb_public';
 import { transferQuery } from '@/lib/transferQuery';
 
@@ -82,9 +82,24 @@ export const DELETE = async (req: NextRequest) => {
 		await dbConnect();
 		const user = await UserModel.findOne({ username });
 		const charts = user.charts;
-		const newCharts = charts.filter((chart: ICharts) => chart._id.toString() !== chartId);
-		await UserModel.updateOne({ username }, { $set: { charts: newCharts } });
-		return NextResponse.json({ status: 200 });
+		const screens = user.screens;
+		let checkedIds = [] as string[];
+		if (screens.length) {
+			screens.forEach((screen: IScreens) => {
+				if (screen.chartsInfo.length) {
+					screen.chartsInfo.forEach((chart: IChartsInfo) => {
+						checkedIds.push(chart.chartId);
+					});
+				}
+			});
+		}
+		checkedIds = Array.from(new Set(checkedIds));
+		if (checkedIds.includes(chartId)) return NextResponse.json({ status: 202 });
+		else {
+			const newCharts = charts.filter((chart: ICharts) => chart._id.toString() !== chartId);
+			await UserModel.updateOne({ username }, { $set: { charts: newCharts } });
+			return NextResponse.json({ status: 200 });
+		}
 	} catch (error) {
 		console.log(error);
 		throw error;

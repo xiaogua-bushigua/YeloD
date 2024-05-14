@@ -163,8 +163,8 @@ const screenSlice = createSlice({
 					};
 					break;
 				case 'axis':
-					let axisLabel = state.charts[index].option.xAxis.axisLabel || {};
-					state.charts[index].option.xAxis.axisLabel = {
+					let axisLabel = state.charts[index].option.xAxis[0].axisLabel || {};
+					state.charts[index].option.xAxis[0].axisLabel = {
 						color: payload.prop === 'color' ? payload.value : axisLabel.color || '#bfbfbf',
 						fontSize: payload.prop === 'fontSize' ? payload.value : axisLabel.fontSize || 12,
 					};
