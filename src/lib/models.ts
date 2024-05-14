@@ -34,6 +34,15 @@ export interface IScreens {
 	chartsInfo: Array<IChartsInfo>;
 }
 
+export interface IQuery {
+	uri: string;
+	collectionName: string;
+	query: string;
+	field?: string;
+	tag?: string;
+	_id?: string;
+}
+
 interface IUser {
 	username: string;
 	password?: string;
@@ -41,11 +50,7 @@ interface IUser {
 	databases: {
 		links: string[];
 	};
-	queries: Array<{
-		uri: string;
-		collectionName: string;
-		query: string;
-	}>;
+	queries: Array<IQuery>;
 	charts: Array<ICharts>;
 	screens: Array<IScreens>;
 }

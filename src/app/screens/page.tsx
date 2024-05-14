@@ -8,14 +8,20 @@ import { RootState } from '@/store/store';
 import { IScreens } from '@/lib/models';
 import { initScreen, resetScreen } from '@/store/reducers/screenSlice';
 import { useToast } from '@/components/ui/use-toast';
+import { initCharts } from '@/store/reducers/screenSlice';
+import { fetchOptionData } from '@/store/reducers/screenSlice';
+import { useDispatch } from 'react-redux';
+import { ThunkDispatch } from '@reduxjs/toolkit';
 
 export default function Screens() {
 	const [hover, setHover] = useState(false);
 	const [cards, setCards] = useState<Array<IScreens>>();
 	const { user } = useAppSelector((state: RootState) => state.auth);
+	const { charts } = useAppSelector((state: RootState) => state.screen);
 	const router = useRouter();
 	const { toast } = useToast();
 	const dispatch = useAppDispatch();
+	const dispatchAsync: ThunkDispatch<RootState, any, any> = useDispatch();
 
 	const handleAddClick = () => {
 		// 点击新建卡片时，重置所有状态
@@ -28,7 +34,7 @@ export default function Screens() {
 			body: JSON.stringify({ username: user.name || user.username, chartsInfo: screen.chartsInfo }),
 		});
 		const { data } = await res.json();
-    // 点击已有卡片时，填入对应信息
+		// 点击已有卡片时，填入对应信息
 		dispatch(initScreen({ ...screen, charts: data }));
 		router.push('/screens/configurations?id=' + screen._id);
 	};
@@ -39,7 +45,7 @@ export default function Screens() {
 			body: JSON.stringify({ username: user.name || user.username, screenId }),
 		})
 			.then(() => {
-				fetchData();
+				fetchScreenCards();
 				toast({
 					title: 'Success',
 					description: 'The screen has been removed.',
@@ -54,16 +60,45 @@ export default function Screens() {
 			});
 	};
 
-	const fetchData = async () => {
+	// 初始化所有的屏幕卡片
+	const fetchScreenCards = async () => {
 		const res = await fetch(`/api/screen?username=${user.name || user.username}`, {
 			method: 'GET',
 		});
 		const { data } = await res.json();
 		setCards(data);
 	};
-  
+
+	// 初始化抽屉里待勾选的图表
+	const fetchCharts = async () => {
+		const res = await fetch(`/api/chart?username=${user.name || user.username}`, {
+			method: 'GET',
+		});
+		const { data } = await res.json();
+		dispatch(initCharts(data));
+	};
+
 	useEffect(() => {
-		fetchData();
+		fetchScreenCards();
+		fetchCharts();
+		if (charts.length) {
+			// 获取图表对应的数据查询语句的index
+			const queryIndexes = charts
+				.flatMap((chart) => {
+					return chart.selectedTags.map((tag) => tag.queryIndex);
+				})
+				.filter((item) => item !== null);
+			const uniqueQueryIndexes = Array.from(new Set(queryIndexes)) as number[];
+
+			if (uniqueQueryIndexes.length) {
+				dispatchAsync(
+					fetchOptionData({
+						username: user.name || user.username,
+						queryIndexes: uniqueQueryIndexes,
+					})
+				);
+			}
+		}
 	}, []);
 
 	return (

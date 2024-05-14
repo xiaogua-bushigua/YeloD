@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, current } from '@reduxjs/toolkit';
 import { ICharts, IChartsInfo } from '@/lib/models';
 
 export interface newICharts extends ICharts {
@@ -70,7 +70,7 @@ const screenSlice = createSlice({
 		},
 		// 点击新建screen卡片时，初始化states里的charts
 		initCharts(state, { payload }) {
-			if (!state.charts.length) state.charts = payload;
+			state.charts = payload;
 		},
 		setBackground: (state, { payload }) => {
 			state.background = payload;

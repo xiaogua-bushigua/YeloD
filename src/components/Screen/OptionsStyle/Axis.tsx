@@ -8,8 +8,8 @@ import { Slider } from '@/components/ui/slider';
 import { useAppDispatch } from '@/store/hooks';
 import { changeChartOption } from '@/store/reducers/screenSlice';
 
-const Axis = ({ chartId }: { chartId: string; }) => {
-	const [color, setColor] = useColor('#bfbfbf');
+const Axis = ({ chartId, option }: { chartId: string; option: any }) => {  
+	const [color, setColor] = useColor(option.xAxis[0].axisLabel.color || '#777');
 	const dispatch = useAppDispatch();
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
@@ -25,7 +25,7 @@ const Axis = ({ chartId }: { chartId: string; }) => {
 			<div className="flex pl-4 my-1 items-center">
 				<span className="font-mono mr-4 w-24 text-sm">size: </span>
 				<Slider
-					defaultValue={[12]}
+					defaultValue={[option.xAxis[0].axisLabel.fontSize || 12]}
 					max={20}
 					min={8}
 					step={1}

@@ -10,10 +10,10 @@ import { Slider } from '@/components/ui/slider';
 import { useAppDispatch } from '@/store/hooks';
 import { changeChartOption } from '@/store/reducers/screenSlice';
 
-const Title = ({ chartId }: { chartId: string }) => {
-	const [color, setColor] = useColor('#561ecb');
-	const [checked, setChecked] = useState(false);
-	const [title, setTitle] = useState('');
+const Title = ({ chartId, option }: { chartId: string; option: any }) => {
+	const [color, setColor] = useColor(option.title ? option.title.textStyle.color : '#999');
+	const [checked, setChecked] = useState(option.title ? option.title.show : false);
+	const [title, setTitle] = useState(option.title ? option.title.text : '');
 	const dispatch = useAppDispatch();
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
@@ -52,7 +52,7 @@ const Title = ({ chartId }: { chartId: string }) => {
 					<div className="flex pl-4 my-1 items-center">
 						<span className="font-mono mr-4 w-24 text-sm">size: </span>
 						<Slider
-							defaultValue={[18]}
+							defaultValue={[option.title ? option.title.textStyle.fontSize : 18]}
 							max={24}
 							min={12}
 							step={1}

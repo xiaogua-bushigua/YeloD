@@ -12,28 +12,15 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { useAppDispatch } from '@/store/hooks';
-import { setBackground, initCharts, setTitle, setRatio, setRefreshInterval } from '@/store/reducers/screenSlice';
+import { setBackground, setTitle, setRatio, setRefreshInterval } from '@/store/reducers/screenSlice';
 import { Input } from '@/components/ui/input';
 
 const DrawerContentUI = () => {
 	const dispatch = useAppDispatch();
-	const { user } = useAppSelector((state: RootState) => state.auth);
 	const { background, charts, title, ratio, staticInterval, dynamicInterval } = useAppSelector(
 		(state: RootState) => state.screen
 	);
-
-	const fetchData = async () => {
-    // 初始化抽屉里待勾选的图表
-		const res = await fetch(`/api/chart?username=${user.name || user.username}`, {
-			method: 'GET',
-		});
-		const { data } = await res.json();
-		dispatch(initCharts(data));
-	};
-
-	useEffect(() => {
-		fetchData()
-	}, []);
+  
 	return (
 		<div className="w-full h-full flex">
 			<div className="w-64 border-r flex flex-col border-slate-300 p-4">

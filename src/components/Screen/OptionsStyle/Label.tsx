@@ -19,13 +19,13 @@ import { useAppDispatch } from '@/store/hooks';
 import { changeChartOption } from '@/store/reducers/screenSlice';
 
 const Label = ({ chartId, chartType, option }: { chartId: string; chartType: string; option: any }) => {
-  console.log(option);
-  
 	const dispatch = useAppDispatch();
-	const [color, setColor] = useColor('#333');
-	const [checked, setChecked] = useState(false);
+	const [color, setColor] = useColor(option.series[0].label.color || '#666');
+	const [checked, setChecked] = useState(option.series[0].label.show || false);
 	const [popoverOpen, setPopoverOpen] = useState(false);
-	const [position, setPosition] = useState(chartType === 'pie' ? 'inside' : 'top');
+	const [position, setPosition] = useState(
+		chartType === 'pie' ? option.series[0].label.position || 'inside' : option.series[0].label.position || 'top'
+	);
 	const positionItems = [
 		'top',
 		'left',
@@ -88,7 +88,7 @@ const Label = ({ chartId, chartType, option }: { chartId: string; chartType: str
 					<div className="flex pl-4 my-1 items-center">
 						<span className="font-mono mr-4 w-24 text-sm">size: </span>
 						<Slider
-							defaultValue={[12]}
+							defaultValue={[option.series[0].label.fontSize || 12]}
 							max={24}
 							min={10}
 							step={1}

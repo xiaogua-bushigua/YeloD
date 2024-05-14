@@ -23,7 +23,7 @@ const OptionsSheet = ({
 	chartType: string;
 	chartRef: EChartsReact;
 }>) => {
-  const [option, setOption] = useState({} as any);
+	const [option, setOption] = useState({} as any);
 	useEffect(() => {
 		if (chartRef) {
 			const echartInstance = chartRef!.getEchartsInstance();
@@ -40,11 +40,15 @@ const OptionsSheet = ({
 					<SheetTitle className="my-4 font-mono">Change chart styles</SheetTitle>
 				</SheetHeader>
 				<Padding chartId={chartId} chartType={chartType} />
-				{Object.keys(option).length && <Label chartId={chartId} chartType={chartType} option={option} />}
-				{/* <Title chartId={chartId} /> */}
-				{/* {chartType !== 'pie' && <Axis chartId={chartId} />} */}
-				{/* <Legend chartId={chartId} /> */}
-				{/* <DataSeries chartId={chartId} option={option} /> */}
+				{Object.keys(option).length && (
+					<>
+						<Label chartId={chartId} chartType={chartType} option={option} />
+						<Title chartId={chartId} option={option} />
+						{chartType !== 'pie' && <Axis chartId={chartId} option={option} />}
+						{/* <Legend chartId={chartId} /> */}
+						{/* <DataSeries chartId={chartId} option={option} /> */}
+					</>
+				)}
 			</SheetContent>
 		</Sheet>
 	);

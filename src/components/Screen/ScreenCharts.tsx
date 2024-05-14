@@ -170,28 +170,28 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 		});
 	}, [charts]);
 
-	useEffect(() => {
-		// 获取所勾选图表对应的数据查询语句的index
-		const queryIndexes = charts
-			.flatMap((chart) => {
-				if (chart.checked) return chart.selectedTags.map((tag) => tag.queryIndex);
-				else return null;
-			})
-			.filter((item) => item !== null);
-		const uniqueQueryIndexes = Array.from(new Set(queryIndexes)) as number[];
+	// useEffect(() => {
+	// 	// 获取所勾选图表对应的数据查询语句的index
+	// 	const queryIndexes = charts
+	// 		.flatMap((chart) => {
+	// 			if (chart.checked) return chart.selectedTags.map((tag) => tag.queryIndex);
+	// 			else return null;
+	// 		})
+	// 		.filter((item) => item !== null);
+	// 	const uniqueQueryIndexes = Array.from(new Set(queryIndexes)) as number[];
 
-		// 进行静态更新数据
-		if (uniqueQueryIndexes.length) {
-			setInterval(() => {
-				dispatchAsync(
-					fetchOptionData({
-						username: user.name || user.username,
-						queryIndexes: uniqueQueryIndexes,
-					})
-				);
-			}, staticInterval * 1000 * 60);
-		}
-	}, []);
+	// 	// 进行静态更新数据
+	// 	if (uniqueQueryIndexes.length) {
+	// 		setInterval(() => {
+	// 			dispatchAsync(
+	// 				fetchOptionData({
+	// 					username: user.name || user.username,
+	// 					queryIndexes: uniqueQueryIndexes,
+	// 				})
+	// 			);
+	// 		}, staticInterval * 1000 * 60);
+	// 	}
+	// }, []);
 
 	const handleSheetOpenChange = (open: boolean, id: string) => {
 		setChartId(open ? id : '');
