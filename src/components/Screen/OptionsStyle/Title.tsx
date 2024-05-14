@@ -65,7 +65,7 @@ const Title = ({ chartId }: { chartId: string }) => {
 					</div>
 					<div className="flex pl-4 my-1 items-center">
 						<span className="font-mono mr-4 w-[60px] text-sm">color: </span>
-						<Popover open={popoverOpen} onOpenChange={(value) => setPopoverOpen(value)}>
+						<Popover modal={true} open={popoverOpen} onOpenChange={(value) => setPopoverOpen(value)}>
 							<PopoverTrigger>
 								<div
 									className="w-10 h-5 rounded-md border-2 border-violet-400"

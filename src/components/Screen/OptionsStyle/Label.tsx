@@ -18,9 +18,11 @@ import 'react-color-palette/css';
 import { useAppDispatch } from '@/store/hooks';
 import { changeChartOption } from '@/store/reducers/screenSlice';
 
-const Label = ({ chartId, chartType }: { chartId: string; chartType: string }) => {
+const Label = ({ chartId, chartType, option }: { chartId: string; chartType: string; option: any }) => {
+  console.log(option);
+  
 	const dispatch = useAppDispatch();
-	const [color, setColor] = useColor('#bfbfbf');
+	const [color, setColor] = useColor('#333');
 	const [checked, setChecked] = useState(false);
 	const [popoverOpen, setPopoverOpen] = useState(false);
 	const [position, setPosition] = useState(chartType === 'pie' ? 'inside' : 'top');
@@ -99,7 +101,7 @@ const Label = ({ chartId, chartType }: { chartId: string; chartType: string }) =
 					</div>
 					<div className="flex pl-4 my-1 items-center">
 						<span className="font-mono mr-4 w-[60px] text-sm">color: </span>
-						<Popover open={popoverOpen} onOpenChange={(value) => setPopoverOpen(value)}>
+						<Popover modal={true} open={popoverOpen} onOpenChange={(value) => setPopoverOpen(value)}>
 							<PopoverTrigger>
 								<div
 									className="w-10 h-5 rounded-md border-2 border-violet-400"

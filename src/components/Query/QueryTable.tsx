@@ -186,7 +186,7 @@ const QueryTable = () => {
 						</TableCell>
 						<TableCell>
 							<div className="flex">
-								<Popover>
+								<Popover modal={true}>
 									<PopoverTrigger
 										onClick={() => handleView(index)}
 										className="mr-4 font-mono font-bold text-zinc-600 hover:text-zinc-900"

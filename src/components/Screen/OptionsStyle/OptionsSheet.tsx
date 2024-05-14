@@ -40,11 +40,11 @@ const OptionsSheet = ({
 					<SheetTitle className="my-4 font-mono">Change chart styles</SheetTitle>
 				</SheetHeader>
 				<Padding chartId={chartId} chartType={chartType} />
-				<Label chartId={chartId} chartType={chartType} />
-				<Title chartId={chartId} />
-				{chartType !== 'pie' && <Axis chartId={chartId} />}
-				<Legend chartId={chartId} />
-				<DataSeries chartId={chartId} option={option} />
+				{Object.keys(option).length && <Label chartId={chartId} chartType={chartType} option={option} />}
+				{/* <Title chartId={chartId} /> */}
+				{/* {chartType !== 'pie' && <Axis chartId={chartId} />} */}
+				{/* <Legend chartId={chartId} /> */}
+				{/* <DataSeries chartId={chartId} option={option} /> */}
 			</SheetContent>
 		</Sheet>
 	);

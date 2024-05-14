@@ -125,7 +125,7 @@ const screenSlice = createSlice({
 						state.charts[index].option.series[0].radius = payload.value;
 					} else {
 						const grid = state.charts[index].option.grid ? state.charts[index].option.grid : {};
-						grid[payload.prop] = payload.value;
+						grid[0][payload.prop] = payload.value;
 						state.charts[index].option.grid = grid;
 					}
 					break;
@@ -168,7 +168,7 @@ const screenSlice = createSlice({
 						color: payload.prop === 'color' ? payload.value : axisLabel.color || '#bfbfbf',
 						fontSize: payload.prop === 'fontSize' ? payload.value : axisLabel.fontSize || 12,
 					};
-					state.charts[index].option.yAxis.axisLabel = {
+					state.charts[index].option.yAxis[0].axisLabel = {
 						color: payload.prop === 'color' ? payload.value : axisLabel.color || '#bfbfbf',
 						fontSize: payload.prop === 'fontSize' ? payload.value : axisLabel.fontSize || 12,
 					};
@@ -232,7 +232,7 @@ const screenSlice = createSlice({
 					const position = res.findIndex((item: any) => item.queryIndex === tag.queryIndex);
 					if (position !== -1) {
 						if (chart.chartType === 'line' || chart.chartType === 'bar') {
-							if (index === 0) chart.option.xAxis.data = res[position].data;
+							if (index === 0) chart.option.xAxis[0].data = res[position].data;
 							else chart.option.series[index - 1].data = res[position].data;
 						} else if (chart.chartType === 'pie') {
 							chart.option.series[0].data[index].value = res[position].data.length;

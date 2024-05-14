@@ -28,7 +28,7 @@ const DataSerie = ({ chartId, index, serie, scolor }: { chartId: string; index: 
 		<div className="flex pl-4 my-1 items-center">
 			<span className="font-mono mr-4 w-[60px] text-sm">{'series' + (index + 1) + ': '}</span>
 			<Input className="text-sm h-8" value={serieName} onChange={(e) => handleInputChange(e.target.value)} />
-			<Popover open={popoverOpen} onOpenChange={(value) => setPopoverOpen(value)}>
+			<Popover modal={true} open={popoverOpen} onOpenChange={(value) => setPopoverOpen(value)}>
 				<PopoverTrigger>
 					<div
 						className="w-12 h-5 rounded-md ml-2 flex items-center justify-center text-xs font-mono border-2 border-violet-400"
