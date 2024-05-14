@@ -32,7 +32,7 @@ const DrawerContentUI = () => {
 	};
 
 	useEffect(() => {
-		fetchData();
+		fetchData()
 	}, []);
 	return (
 		<div className="w-full h-full flex">
