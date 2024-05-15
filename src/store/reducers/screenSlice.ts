@@ -31,17 +31,6 @@ const initialState: IScreen = {
 	dynamicInterval: 5,
 };
 
-export const fetchOptionData = createAsyncThunk(
-	'screenChartQuery',
-	async ({ username, queryIndexes }: { username: string; queryIndexes: number[] }) => {
-		const res = await fetch('/api/chart', {
-			method: 'POST',
-			body: JSON.stringify({ username, queryIndexes }),
-		});
-		return res.json();
-	}
-);
-
 const screenSlice = createSlice({
 	name: 'screen',
 	initialState,
@@ -57,7 +46,6 @@ const screenSlice = createSlice({
 			state.screenName = payload.screenName;
 			state.charts = payload.charts;
 		},
-		// 当点击新建screen卡片时，初始化该screen的states
 		resetScreen: (state) => {
 			state.screenName = '';
 			state.charts = [];
@@ -117,6 +105,13 @@ const screenSlice = createSlice({
 					break;
 			}
 		},
+		// 局部刷新更新的option data
+		localRefreshOptionData: (state, { payload }) => {
+			state.charts.forEach((chart: newICharts) => {
+				const chartIndex = payload.findIndex((p: newICharts) => p._id === chart._id);
+				if (chartIndex > -1) chart.option = payload[chartIndex].option;
+			});
+		},
 		changeChartOption: (state, { payload }) => {
 			const index = state.charts.findIndex((chart) => chart._id === payload.id);
 			switch (payload.type) {
@@ -135,7 +130,7 @@ const screenSlice = createSlice({
 						s.label = {
 							show: payload.prop === 'show' ? payload.value : label.show || false,
 							position: payload.prop === 'position' ? payload.value : label.position || 'top',
-							color: payload.prop === 'color' ? payload.value : label.color || '#bfbfbf',
+							color: payload.prop === 'color' ? payload.value : label.color || '#666',
 							fontSize: payload.prop === 'fontSize' ? payload.value : label.fontSize || 12,
 						};
 					});
@@ -152,7 +147,7 @@ const screenSlice = createSlice({
 									? payload.value
 									: title.textStyle
 									? title.textStyle.color
-									: '#bfbfbf',
+									: '#777',
 							fontSize:
 								payload.prop === 'fontSize'
 									? payload.value
@@ -165,11 +160,11 @@ const screenSlice = createSlice({
 				case 'axis':
 					let axisLabel = state.charts[index].option.xAxis[0].axisLabel || {};
 					state.charts[index].option.xAxis[0].axisLabel = {
-						color: payload.prop === 'color' ? payload.value : axisLabel.color || '#bfbfbf',
+						color: payload.prop === 'color' ? payload.value : axisLabel.color || '#333',
 						fontSize: payload.prop === 'fontSize' ? payload.value : axisLabel.fontSize || 12,
 					};
 					state.charts[index].option.yAxis[0].axisLabel = {
-						color: payload.prop === 'color' ? payload.value : axisLabel.color || '#bfbfbf',
+						color: payload.prop === 'color' ? payload.value : axisLabel.color || '#333',
 						fontSize: payload.prop === 'fontSize' ? payload.value : axisLabel.fontSize || 12,
 					};
 					break;
@@ -185,7 +180,7 @@ const screenSlice = createSlice({
 									? payload.value
 									: legend.textStyle
 									? legend.textStyle.color
-									: '#bfbfbf',
+									: '#333',
 							fontSize:
 								payload.prop === 'fontSize'
 									? payload.value
@@ -197,50 +192,64 @@ const screenSlice = createSlice({
 					break;
 				case 'series':
 					let series = state.charts[index].option.series || {};
-					state.charts[index].option.series[payload.index] = {
-						...series[payload.index],
-						name: payload.prop === 'name' ? payload.value : series.name,
-						lineStyle: {
-							color:
-								payload.prop === 'color'
-									? payload.value
-									: series[payload.index].lineStyle
-									? series[payload.index].lineStyle.color
-									: '#44ff44',
-						},
-						itemStyle: {
-							color:
-								payload.prop === 'color'
-									? payload.value
-									: series[payload.index].itemStyle
-									? series[payload.index].itemStyle.color
-									: '#44ff44',
-						},
-					};
-					break;
+					switch (payload.chartType) {
+						case 'pie':
+							state.charts[index].option.series[0].data[payload.index] = {
+								...series[0].data[payload.index],
+								name: payload.prop === 'name' ? payload.value : series[0].data[payload.index].name,
+								itemStyle: {
+									color:
+										payload.prop === 'color'
+											? payload.value
+											: series[payload.index].itemStyle
+											? series[payload.index].itemStyle.color
+											: '#44ff44',
+								},
+							};
+							break;
+						case 'bar':
+							state.charts[index].option.series[payload.index] = {
+								...series[payload.index],
+								name: payload.prop === 'name' ? payload.value : series.name,
+								itemStyle: {
+									color:
+										payload.prop === 'color'
+											? payload.value
+											: series[payload.index].itemStyle
+											? series[payload.index].itemStyle.color
+											: '#44ff44',
+								},
+							};
+							break;
+						case 'line':
+							state.charts[index].option.series[payload.index] = {
+								...series[payload.index],
+								name: payload.prop === 'name' ? payload.value : series.name,
+								lineStyle: {
+									color:
+										payload.prop === 'color'
+											? payload.value
+											: series[payload.index].lineStyle
+											? series[payload.index].lineStyle.color
+											: '#44ff44',
+								},
+								itemStyle: {
+									color:
+										payload.prop === 'color'
+											? payload.value
+											: series[payload.index].itemStyle
+											? series[payload.index].itemStyle.color
+											: '#44ff44',
+								},
+							};
+							break;
+						default:
+							break;
+					}
 				default:
 					break;
 			}
 		},
-	},
-	// 根据查询语句更新screen上所有图表option的data
-	extraReducers(builder) {
-		builder.addCase(fetchOptionData.fulfilled, (state, action) => {
-			const res = action.payload.data;
-			state.charts.forEach((chart) => {
-				chart.selectedTags.forEach((tag, index) => {
-					const position = res.findIndex((item: any) => item.queryIndex === tag.queryIndex);
-					if (position !== -1) {
-						if (chart.chartType === 'line' || chart.chartType === 'bar') {
-							if (index === 0) chart.option.xAxis[0].data = res[position].data;
-							else chart.option.series[index - 1].data = res[position].data;
-						} else if (chart.chartType === 'pie') {
-							chart.option.series[0].data[index].value = res[position].data.length;
-						}
-					}
-				});
-			});
-		});
 	},
 });
 
@@ -258,6 +267,7 @@ export const {
 	initScreen,
 	setGeometry,
 	setScreenName,
+	localRefreshOptionData,
 	resetScreen,
 	changeChartOption,
 } = screenSlice.actions;

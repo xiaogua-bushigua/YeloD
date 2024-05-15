@@ -38,16 +38,13 @@ export const GET = async (req: NextRequest) => {
 	}
 };
 
-// 返回查询到的数据
-// 不用返回，直接原地更改chart的数据
+// 原地根据queries对chart的option的series数据进行更新
 export const POST = async (req: NextRequest) => {
 	const { username } = await req.json();
 	try {
 		await dbConnect();
 		const queries = await UserModel.findOne({ username }, { queries: 1 });
-		let data = [] as any[];
-    // 用promises改
-		queries.queries.forEach(async (query_: IQuery) => {
+		const data = queries.queries.map(async (query_: IQuery) => {
 			const { uri, collectionName, query, field } = query_;
 			const { db, client } = await dbConnectPublic(uri);
 			const collection = db.collection(collectionName);
@@ -66,27 +63,33 @@ export const POST = async (req: NextRequest) => {
 			}
 			client.close();
 			array = array?.map((arr) => arr[field as string]);
-			data.push(array);
+			return array;
 		});
+		const res = await Promise.all(data);
 		const user = await UserModel.findOne({ username });
 		const charts = user.charts || [];
 		charts.forEach((chart: ICharts) => {
 			const containXAxis = chart.selectedTags.filter(
 				(t: { xAxis?: boolean; tag: string; queryIndex: number }) => t.xAxis
-			);      
-			if (containXAxis.length) chart.option.xAxis[0].data = data[containXAxis[0].queryIndex];
+			);
+			if (containXAxis.length) chart.option.xAxis[0].data = res[containXAxis[0].queryIndex];
 			const nonContainXAxis = chart.selectedTags.filter(
 				(t: { xAxis?: boolean; tag: string; queryIndex: number }) => !t.xAxis
 			);
 			if (chart.chartType !== 'pie') {
 				nonContainXAxis.forEach((t: { xAxis?: boolean; tag: string; queryIndex: number }, index: number) => {
-					chart.option.series[index].data = data[t.queryIndex];
+					chart.option.series[index].data = res[t.queryIndex];
 				});
 			} else {
+				nonContainXAxis.forEach((t: { xAxis?: boolean; tag: string; queryIndex: number }, index: number) => {
+					chart.option.series[0].data[index] = {
+						value: res[t.queryIndex].length,
+						name: t.tag,
+					};
+				});
 			}
 		});
-		console.log(charts[0].option.series[0].data)
-		console.log(charts[0].option.xAxis[0].data)
+    await UserModel.updateOne({ username }, { $set: { charts } });
 		return NextResponse.json({ status: 200 });
 	} catch (error) {
 		return NextResponse.json({ error, status: 500 });

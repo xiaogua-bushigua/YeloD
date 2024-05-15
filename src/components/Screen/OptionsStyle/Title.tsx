@@ -12,7 +12,7 @@ import { changeChartOption } from '@/store/reducers/screenSlice';
 
 const Title = ({ chartId, option }: { chartId: string; option: any }) => {
 	const [color, setColor] = useColor(option.title ? option.title.textStyle.color : '#999');
-	const [checked, setChecked] = useState(option.title ? option.title.show : false);
+	const [checked, setChecked] = useState(option.title === undefined ? false : option.title.show === undefined ? false : option.title.show);
 	const [title, setTitle] = useState(option.title ? option.title.text : '');
 	const dispatch = useAppDispatch();
 	const [popoverOpen, setPopoverOpen] = useState(false);

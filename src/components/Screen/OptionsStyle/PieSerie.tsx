@@ -8,20 +8,33 @@ import { Input } from '@/components/ui/input';
 import { useAppDispatch } from '@/store/hooks';
 import { changeChartOption } from '@/store/reducers/screenSlice';
 
-const DataSerie = ({ chartId, index, serie, scolor }: { chartId: string; index: number; serie: any; scolor: string }) => {
-  console.log(serie);
+const PieSerie = ({
+	chartId,
+	index,
+	serie,
+	scolor,
+  chartType
+}: {
+	chartId: string;
+	index: number;
+	serie: any;
+	scolor: string;
+  chartType: string;
+}) => {
 	const dispatch = useAppDispatch();
-	const [color, setColor] = useColor(serie.lineStyle.color || scolor);
+	const [color, setColor] = useColor(
+		serie.itemStyle ? (serie.itemStyle.color ? serie.itemStyle.color : scolor) : scolor
+	);
 	const [serieName, setSerieName] = useState(serie.name);
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
 	const handleInputChange = (value: string) => {
 		setSerieName(value);
-		dispatch(changeChartOption({ type: 'series', prop: 'name', value, id: chartId, index }));
+		dispatch(changeChartOption({ type: 'series', prop: 'name', value, id: chartId, index, chartType }));
 	};
 	useEffect(() => {
 		if (!popoverOpen) {
-			dispatch(changeChartOption({ type: 'series', prop: 'color', value: color.hex, id: chartId, index }));
+			dispatch(changeChartOption({ type: 'series', prop: 'color', value: color.hex, id: chartId, index, chartType }));
 		}
 	}, [popoverOpen]);
 	return (
@@ -33,9 +46,7 @@ const DataSerie = ({ chartId, index, serie, scolor }: { chartId: string; index: 
 					<div
 						className="w-12 h-5 rounded-md ml-2 flex items-center justify-center text-xs font-mono border-2 border-violet-400"
 						style={{ backgroundColor: color.hex }}
-					>
-						{serie.lineStyle ? '' : 'select'}
-					</div>
+					></div>
 				</PopoverTrigger>
 				<PopoverContent sideOffset={24} side="left">
 					<ColorPicker color={color} onChange={setColor} />
@@ -45,4 +56,4 @@ const DataSerie = ({ chartId, index, serie, scolor }: { chartId: string; index: 
 	);
 };
 
-export default DataSerie;
+export default PieSerie;

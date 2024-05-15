@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect } from 'react';
-import DataSerie from './DataSerie';
+import PieSerie from './PieSerie';
+import LineBarSerie from './LineBarSerie';
 
-const DataSeries = ({ chartId, option }: { chartId: string; option: any }) => {
+const DataSeries = ({ chartId, option, chartType }: { chartId: string; option: any; chartType: string }) => {
 	const colors = option.color;
 
 	useEffect(() => {}, [option]);
@@ -11,16 +12,27 @@ const DataSeries = ({ chartId, option }: { chartId: string; option: any }) => {
 	return (
 		<div className="my-2">
 			<p className="font-mono font-bold select-none">- Data series</p>
-			{option.series &&
-				option.series.map((serie: any, index: number) => (
-					<DataSerie
-						key={'serie_' + index}
-						chartId={chartId}
-						index={index}
-						serie={serie}
-						scolor={colors[index]}
-					/>
-				))}
+			{chartType === 'pie'
+				? option.series[0].data.map((serie: any, index: number) => (
+						<PieSerie
+							key={'serie_' + index}
+							chartId={chartId}
+							index={index}
+							serie={serie}
+							scolor={colors[index]}
+							chartType={chartType}
+						/>
+				  ))
+				: option.series.map((serie: any, index: number) => (
+						<LineBarSerie
+							key={'serie_' + index}
+							chartId={chartId}
+							index={index}
+							serie={serie}
+							scolor={colors[index]}
+							chartType={chartType}
+						/>
+				  ))}
 		</div>
 	);
 };

@@ -2,18 +2,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { RootState } from '@/store/store';
-import { setFullScreen, setGeometry } from '@/store/reducers/screenSlice';
+import { localRefreshOptionData, setFullScreen, setGeometry } from '@/store/reducers/screenSlice';
 import Image from 'next/image';
 import ScreenChart from './ScreenChart';
-import { useDispatch } from 'react-redux';
-import { ThunkDispatch } from '@reduxjs/toolkit';
-import { fetchOptionData } from '@/store/reducers/screenSlice';
 import OptionsSheet from './OptionsStyle/OptionsSheet';
 import EChartsReact from 'echarts-for-react';
 
 const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement> }) => {
 	const dispatch = useAppDispatch();
-	const dispatchAsync: ThunkDispatch<RootState, any, any> = useDispatch();
 	const { fullScreen, charts, background, staticInterval } = useAppSelector((state: RootState) => state.screen);
 	const { user } = useAppSelector((state: RootState) => state.auth);
 	const [chartId, setChartId] = useState('');
@@ -170,28 +166,21 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 		});
 	}, [charts]);
 
-	// useEffect(() => {
-	// 	// 获取所勾选图表对应的数据查询语句的index
-	// 	const queryIndexes = charts
-	// 		.flatMap((chart) => {
-	// 			if (chart.checked) return chart.selectedTags.map((tag) => tag.queryIndex);
-	// 			else return null;
-	// 		})
-	// 		.filter((item) => item !== null);
-	// 	const uniqueQueryIndexes = Array.from(new Set(queryIndexes)) as number[];
-
-	// 	// 进行静态更新数据
-	// 	if (uniqueQueryIndexes.length) {
-	// 		setInterval(() => {
-	// 			dispatchAsync(
-	// 				fetchOptionData({
-	// 					username: user.name || user.username,
-	// 					queryIndexes: uniqueQueryIndexes,
-	// 				})
-	// 			);
-	// 		}, staticInterval * 1000 * 60);
-	// 	}
-	// }, []);
+	useEffect(() => {
+		// 进行静态更新数据
+		const interval = setInterval(async () => {
+			await fetch('/api/chart', {
+				method: 'POST',
+				body: JSON.stringify({ username: user.name || user.username }),
+			});
+			const res = await fetch(`/api/chart?username=${user.name || user.username}`, {
+				method: 'GET',
+			});
+			const { data } = await res.json();
+			dispatch(localRefreshOptionData(data));
+		}, staticInterval * 1000 * 60);
+		return () => clearInterval(interval);
+	}, []);
 
 	const handleSheetOpenChange = (open: boolean, id: string) => {
 		setChartId(open ? id : '');

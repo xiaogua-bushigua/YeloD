@@ -9,11 +9,17 @@ import 'react-color-palette/css';
 import { useAppDispatch } from '@/store/hooks';
 import { changeChartOption } from '@/store/reducers/screenSlice';
 
-const Legend = ({ chartId }: { chartId: string }) => {
+const Legend = ({ chartId, option }: { chartId: string; option: any }) => {
 	const dispatch = useAppDispatch();
-	const [color, setColor] = useColor('#bfbfbf');
+	const [color, setColor] = useColor(
+		option.legend.textStyle
+			? option.legend.textStyle.color === undefined
+				? '#333'
+				: option.legend.textStyle.color
+			: '#333'
+	);
 	const [popoverOpen, setPopoverOpen] = useState(false);
-	const [checked, setChecked] = useState(true);
+	const [checked, setChecked] = useState(option.legend.orient !== 'vertical');
 
 	const handleShowLegendChange = (checked: boolean) => {
 		setChecked(checked);
@@ -37,7 +43,7 @@ const Legend = ({ chartId }: { chartId: string }) => {
 		<div className="my-2">
 			<p className="font-mono font-bold select-none">- Legend</p>
 			<div className="flex pl-4 my-1 items-center">
-				<span className="font-mono mr-4 w-[60px] text-sm">orient: </span>
+				<span className="font-mono mr-4 w-[60px] text-sm">vertical: </span>
 				<Switch checked={checked} onCheckedChange={(checked: boolean) => handleShowLegendChange(checked)} />
 			</div>
 			<div className="flex pl-4 my-1 items-center">

@@ -9,9 +9,6 @@ import { IScreens } from '@/lib/models';
 import { initScreen, resetScreen } from '@/store/reducers/screenSlice';
 import { useToast } from '@/components/ui/use-toast';
 import { initCharts } from '@/store/reducers/screenSlice';
-import { fetchOptionData } from '@/store/reducers/screenSlice';
-import { useDispatch } from 'react-redux';
-import { ThunkDispatch } from '@reduxjs/toolkit';
 
 export default function Screens() {
 	const [hover, setHover] = useState(false);
@@ -21,11 +18,10 @@ export default function Screens() {
 	const router = useRouter();
 	const { toast } = useToast();
 	const dispatch = useAppDispatch();
-	const dispatchAsync: ThunkDispatch<RootState, any, any> = useDispatch();
 
 	const handleAddClick = () => {
 		// 点击新建卡片时，重置所有状态
-		dispatch(resetScreen());
+		// dispatch(resetScreen());
 		router.push('/screens/configurations');
 	};
 	const handleScreenClick = async (screen: IScreens) => {
@@ -77,28 +73,17 @@ export default function Screens() {
 		const { data } = await res.json();
 		dispatch(initCharts(data));
 	};
-
+	// 刷新所有charts的option data
+	const refreshCharts = async () => {
+		await fetch('/api/chart', {
+			method: 'POST',
+			body: JSON.stringify({ username: user.name || user.username }),
+		});
+	};
 	useEffect(() => {
+		refreshCharts();
 		fetchScreenCards();
 		fetchCharts();
-		if (charts.length) {
-			// 获取图表对应的数据查询语句的index
-			const queryIndexes = charts
-				.flatMap((chart) => {
-					return chart.selectedTags.map((tag) => tag.queryIndex);
-				})
-				.filter((item) => item !== null);
-			const uniqueQueryIndexes = Array.from(new Set(queryIndexes)) as number[];
-
-			if (uniqueQueryIndexes.length) {
-				dispatchAsync(
-					fetchOptionData({
-						username: user.name || user.username,
-						queryIndexes: uniqueQueryIndexes,
-					})
-				);
-			}
-		}
 	}, []);
 
 	return (

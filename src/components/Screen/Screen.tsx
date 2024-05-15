@@ -8,7 +8,6 @@ const Screen = () => {
 	const wrapRef = useRef<HTMLDivElement>(null);
 	const screenRef = useRef<HTMLDivElement>(null);
 	const { background, title, ratio, charts } = useAppSelector((state: RootState) => state.screen);
-	const { user } = useAppSelector((state: RootState) => state.auth);
 
 	const handleResizeScreen = () => {
 		const [w, h] = ratio.split(':').map(Number);
@@ -33,24 +32,6 @@ const Screen = () => {
 			window.removeEventListener('resize', handleResizeScreen);
 		};
 	}, [ratio]);
-
-	useEffect(() => {
-		// 把带着最新data的option保存到数据库中各自的chart里
-		charts.forEach((chart) => {
-			const chartInfo = {
-				chartName: chart.chartName,
-				chartType: chart.chartType,
-				option: chart.option,
-				selectedTags: chart.selectedTags,
-				img: chart.img,
-				_id: chart._id,
-			};
-			fetch('/api/chart', {
-				method: 'PATCH',
-				body: JSON.stringify({ chartInfo, username: user.name || user.username, id: chart._id }),
-			});
-		});
-	}, []);
 
 	return (
 		<div ref={wrapRef} className="w-full h-full box-border bg-white rounded-md flex items-center justify-center">

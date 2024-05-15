@@ -2,7 +2,7 @@
 
 import ReactECharts from 'echarts-for-react';
 import PubSub from 'pubsub-js';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import EChartsReact from 'echarts-for-react';
 import { useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
@@ -17,6 +17,7 @@ const ChartView = () => {
 	const { toast } = useToast();
 	const router = useRouter();
 	const searchParams = useSearchParams();
+	const [realOption, setRealOption] = useState({} as any);
 
 	// 订阅点击保存按钮的指令
 	useEffect(() => {
@@ -26,7 +27,7 @@ const ChartView = () => {
 			const chartInfo = {
 				chartName,
 				chartType,
-				option,
+				option: realOption,
 				selectedTags,
 				img: base64,
 			};
@@ -54,12 +55,13 @@ const ChartView = () => {
 			PubSub.unsubscribe(token);
 		};
 		// 下面的依赖都会影像图表的信息，因此都要监听
-	}, [selectedTags, chartName, chartType, option]);
+	}, [selectedTags, chartName, chartType, option, realOption]);
 
 	useEffect(() => {
 		const echartInstance = echartRef.current!.getEchartsInstance();
 		echartInstance.clear();
 		echartInstance.setOption(option);
+		setRealOption(echartInstance.getOption());
 	}, [option]);
 
 	return <ReactECharts ref={echartRef} option={option} style={{ height: '100%', width: '100%' }} />;

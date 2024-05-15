@@ -109,12 +109,11 @@ const chartSlice = createSlice({
 			};
 			if (state.chartType === 'line' || state.chartType === 'bar') {
 				state.option.xAxis.data = state.optionData[0];
-				state.option.legend.data.shift();
 				for (let i = 1; i < state.optionData.length; i++) {
 					state.option.series[i - 1] = {
 						data: state.optionData[i],
 						type: state.chartType,
-						name: tags[i - 1],
+						name: tags[i],
 					};
 				}
 			} else if (state.chartType === 'pie') {

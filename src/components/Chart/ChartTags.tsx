@@ -17,6 +17,7 @@ import { setOptionData, setSelectedTags, resetOption } from '@/store/reducers/ch
 import { useAppDispatch } from '@/store/hooks';
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
+import { IQuery } from '@/lib/models';
 
 const ChartTags = () => {
 	const { tags, selectedTags, optionData, chartType } = useAppSelector((state: RootState) => state.chart);
@@ -58,8 +59,10 @@ const ChartTags = () => {
 			});
 			return;
 		}
-		let queries = tags.filter((tag) => {
-			if (selectedTags.findIndex((selectedTag) => selectedTag.tag === tag.tag) > -1) return tag;
+		let queries = [] as IQuery[];
+		selectedTags.forEach((selectedTag) => {
+			const index = tags.findIndex((tag) => tag.tag === selectedTag.tag);
+			if (index > -1) queries.push(tags[index]);
 		});
 		if (chartType === 'line' || chartType === 'bar') {
 			const selectedQueryIndex = queries.findIndex((query) => query.tag === selectValue);
@@ -67,6 +70,7 @@ const ChartTags = () => {
 			queries = queries.filter((query) => query.tag !== selectValue);
 			queries.unshift(selectedQuery);
 		}
+
 		const promises = queries.map(async (query) => {
 			const res = await fetch('/api/dbTags', {
 				method: 'POST',

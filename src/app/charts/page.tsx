@@ -60,7 +60,16 @@ export default function Charts() {
 		const { data } = await res.json();
 		setCards(data);
 	};
+
+  // 刷新所有charts的option data
+	const refreshCharts = async () => {
+		await fetch('/api/chart', {
+			method: 'POST',
+			body: JSON.stringify({ username: user.name || user.username }),
+		});
+	};
 	useEffect(() => {
+    refreshCharts();
 		fetchData();
 	}, []);
 	return (

@@ -45,8 +45,8 @@ const OptionsSheet = ({
 						<Label chartId={chartId} chartType={chartType} option={option} />
 						<Title chartId={chartId} option={option} />
 						{chartType !== 'pie' && <Axis chartId={chartId} option={option} />}
-						{/* <Legend chartId={chartId} /> */}
-						{/* <DataSeries chartId={chartId} option={option} /> */}
+						<Legend chartId={chartId} option={option} />
+						<DataSeries chartId={chartId} option={option} chartType={chartType} />
 					</>
 				)}
 			</SheetContent>

@@ -21,7 +21,9 @@ import { changeChartOption } from '@/store/reducers/screenSlice';
 const Label = ({ chartId, chartType, option }: { chartId: string; chartType: string; option: any }) => {
 	const dispatch = useAppDispatch();
 	const [color, setColor] = useColor(option.series[0].label.color || '#666');
-	const [checked, setChecked] = useState(option.series[0].label.show || false);
+	const [checked, setChecked] = useState(
+		option.series[0].label.show === undefined ? false : option.series[0].label.show
+	);
 	const [popoverOpen, setPopoverOpen] = useState(false);
 	const [position, setPosition] = useState(
 		chartType === 'pie' ? option.series[0].label.position || 'inside' : option.series[0].label.position || 'top'
