@@ -183,7 +183,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 	}, []);
 
 	const handleSheetOpenChange = (open: boolean, id: string) => {
-		setChartId(open ? id : '');
+		setChartId(id);
 	};
 
 	return (

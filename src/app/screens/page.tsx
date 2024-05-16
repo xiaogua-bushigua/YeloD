@@ -19,18 +19,20 @@ export default function Screens() {
 	const { toast } = useToast();
 	const dispatch = useAppDispatch();
 
+	// 点击新建卡片时，重置所有状态
 	const handleAddClick = () => {
-		// 点击新建卡片时，重置所有状态
-		// dispatch(resetScreen());
+		dispatch(resetScreen());
 		router.push('/screens/configurations');
 	};
+
+	// 点击已有卡片时，填入对应信息
 	const handleScreenClick = async (screen: IScreens) => {
 		const res = await fetch('/api/screen', {
 			method: 'POST',
 			body: JSON.stringify({ username: user.name || user.username, chartsInfo: screen.chartsInfo }),
 		});
 		const { data } = await res.json();
-		// 点击已有卡片时，填入对应信息
+    
 		dispatch(initScreen({ ...screen, charts: data }));
 		router.push('/screens/configurations?id=' + screen._id);
 	};
@@ -67,12 +69,13 @@ export default function Screens() {
 
 	// 初始化抽屉里待勾选的图表
 	const fetchCharts = async () => {
-		const res = await fetch(`/api/chart?username=${user.name || user.username}`, {
+		const chartsRes = await fetch(`/api/chart?username=${user.name || user.username}`, {
 			method: 'GET',
 		});
-		const { data } = await res.json();
-		dispatch(initCharts(data));
+		let { data } = await chartsRes.json();
+		dispatch(initCharts({ charts: data }));
 	};
+
 	// 刷新所有charts的option data
 	const refreshCharts = async () => {
 		await fetch('/api/chart', {

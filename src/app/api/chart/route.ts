@@ -14,7 +14,7 @@ export const PATCH = async (req: NextRequest) => {
 		if (!id) charts.push(chartInfo);
 		else {
 			const index = charts.findIndex((chart: any) => chart._id.toString() === id);
-			charts[index] = chartInfo;
+			charts[index] = { ...charts[index], ...chartInfo, _id: charts[index]._id };
 		}
 		await UserModel.updateOne({ username }, { $set: { charts } });
 		return NextResponse.json({ status: 200 });
@@ -89,7 +89,7 @@ export const POST = async (req: NextRequest) => {
 				});
 			}
 		});
-    await UserModel.updateOne({ username }, { $set: { charts } });
+		await UserModel.updateOne({ username }, { $set: { charts } });
 		return NextResponse.json({ status: 200 });
 	} catch (error) {
 		return NextResponse.json({ error, status: 500 });

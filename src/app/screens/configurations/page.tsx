@@ -1,3 +1,5 @@
+'use client';
+
 import ScreenOperations from '@/components/Screen/ScreenOperations';
 import Screen from '@/components/Screen/Screen';
 

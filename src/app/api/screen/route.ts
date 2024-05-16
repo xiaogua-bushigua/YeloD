@@ -41,6 +41,7 @@ export const GET = async (req: NextRequest) => {
 // 初始化抽屉里待勾选的图表列表
 export const POST = async (req: NextRequest) => {
 	const { username, chartsInfo } = await req.json();
+
 	try {
 		await dbConnect();
 		const user = await UserModel.findOne({ username });

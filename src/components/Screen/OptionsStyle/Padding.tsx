@@ -3,7 +3,7 @@ import { Slider } from '@/components/ui/slider';
 import { changeChartOption } from '@/store/reducers/screenSlice';
 import { useAppDispatch } from '@/store/hooks';
 
-const Padding = ({ chartId, chartType }: { chartId: string; chartType: string }) => {
+const Padding = ({ chartId, chartType, option }: { chartId: string; chartType: string; option: any }) => {
 	const dispatch = useAppDispatch();
 	const handleValueChange = (value: number, type: string) => {
 		dispatch(changeChartOption({ type: 'padding', prop: type, value: value + '%', id: chartId }));
@@ -17,7 +17,7 @@ const Padding = ({ chartId, chartType }: { chartId: string; chartType: string })
 						<span className="font-mono mr-4 w-24 text-sm">radius: </span>
 						<Slider
 							onValueChange={(value) => handleValueChange(value[0], 'radius')}
-							defaultValue={[50]}
+							defaultValue={[option.series[0].radius ? parseFloat(option.series[0].radius) : 50]}
 							min={30}
 							max={80}
 							step={2}
@@ -30,7 +30,7 @@ const Padding = ({ chartId, chartType }: { chartId: string; chartType: string })
 						<span className="font-mono mr-4 w-24 text-sm">left: </span>
 						<Slider
 							onValueChange={(value) => handleValueChange(value[0], 'left')}
-							defaultValue={[10]}
+							defaultValue={[option.grid[0].left ? parseFloat(option.grid[0].left) : 10]}
 							max={30}
 							step={0.5}
 						/>
@@ -39,7 +39,7 @@ const Padding = ({ chartId, chartType }: { chartId: string; chartType: string })
 						<span className="font-mono mr-4 w-24 text-sm">right: </span>
 						<Slider
 							onValueChange={(value) => handleValueChange(value[0], 'right')}
-							defaultValue={[10]}
+							defaultValue={[option.grid[0].right ? parseFloat(option.grid[0].right) : 10]}
 							max={30}
 							step={0.5}
 						/>
@@ -48,7 +48,7 @@ const Padding = ({ chartId, chartType }: { chartId: string; chartType: string })
 						<span className="font-mono mr-4 w-24 text-sm">bottom: </span>
 						<Slider
 							onValueChange={(value) => handleValueChange(value[0], 'bottom')}
-							defaultValue={[10]}
+							defaultValue={[option.grid[0].bottom ? parseFloat(option.grid[0].bottom) : 10]}
 							max={30}
 							step={0.5}
 						/>
@@ -57,7 +57,7 @@ const Padding = ({ chartId, chartType }: { chartId: string; chartType: string })
 						<span className="font-mono mr-4 w-24 text-sm">top: </span>
 						<Slider
 							onValueChange={(value) => handleValueChange(value[0], 'top')}
-							defaultValue={[10]}
+							defaultValue={[option.grid[0].top ? parseFloat(option.grid[0].top) : 10]}
 							max={30}
 							step={0.5}
 						/>

@@ -48,7 +48,7 @@ const screenSlice = createSlice({
 		},
 		resetScreen: (state) => {
 			state.screenName = '';
-			state.charts = [];
+			// state.charts = [];
 			state.background = 'light';
 			state.title = 'Dashboard';
 			state.ratio = '1:1';
@@ -58,7 +58,7 @@ const screenSlice = createSlice({
 		},
 		// 点击新建screen卡片时，初始化states里的charts
 		initCharts(state, { payload }) {
-			state.charts = payload;
+			state.charts = payload.charts;
 		},
 		setBackground: (state, { payload }) => {
 			state.background = payload;
@@ -136,23 +136,23 @@ const screenSlice = createSlice({
 					});
 					break;
 				case 'title':
-					let title = state.charts[index].option.title || {};
-					state.charts[index].option.title = {
+					let title = state.charts[index].option.title || [];
+					state.charts[index].option.title[0] = {
 						left: 'center',
-						show: payload.prop === 'show' ? payload.value : title.show || false,
-						text: payload.prop === 'text' ? payload.value : title.text || '',
+						show: true,
+						text: payload.prop === 'text' ? payload.value : title[0].text || '',
 						textStyle: {
 							color:
 								payload.prop === 'color'
 									? payload.value
-									: title.textStyle
-									? title.textStyle.color
+									: title[0].textStyle
+									? title[0].textStyle.color
 									: '#777',
 							fontSize:
 								payload.prop === 'fontSize'
 									? payload.value
-									: title.textStyle
-									? title.textStyle.fontSize
+									: title[0].textStyle
+									? title[0].textStyle.fontSize
 									: 18,
 						},
 					};
