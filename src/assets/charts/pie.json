@@ -1,10 +1,26 @@
 {
+  "title": [
+    {
+      "show": false,
+      "left": "center",
+      "text": "",
+      "textStyle": {
+        "color": "#777",
+        "fontSize": 18
+      }
+    }
+  ],
+  "legend": [{
+    "orient": "horizontal",
+    "left": 10,
+    "top": 0,
+    "textStyle": {
+      "color": "#333",
+      "fontSize": 12
+    }
+  }],
   "tooltip": {
     "trigger": "item"
-  },
-  "legend": {
-    "top": "5%",
-    "left": "center"
   },
   "series": [
     {
@@ -13,12 +29,20 @@
       "avoidLabelOverlap": true,
       "label": {
         "show": false,
-        "position": "inside"
+        "position": "inside",
+        "color": "#666",
+        "fontSize": 12
       },
       "data": [
-        { "value": 1048, "name": "Search Engine"
+        {
+          "value": 1048,
+          "name": "Search Engine",
+          "itemStyle": {}
         },
-        { "value": 735, "name": "Direct"
+        {
+          "value": 735,
+          "name": "Direct",
+          "itemStyle": {}
         }
       ]
     }

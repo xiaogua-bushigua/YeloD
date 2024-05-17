@@ -28,7 +28,7 @@ const initialState: IinitialState = {
 	chartType: 'line',
 	option: lineBasicOption,
 	tempOption: '',
-	optionData: [lineBasicOption.xAxis.data, lineBasicOption.series[0].data],
+	optionData: [lineBasicOption.xAxis[0].data, lineBasicOption.series[0].data],
 	tags: [],
 	selectedTags: [],
 };
@@ -51,7 +51,7 @@ const chartSlice = createSlice({
 			state.chartType = 'line';
 			state.option = lineBasicOption;
 			state.tempOption = '';
-			state.optionData = [lineBasicOption.xAxis.data, lineBasicOption.series[0].data];
+			state.optionData = [lineBasicOption.xAxis[0].data, lineBasicOption.series[0].data];
 			state.tags = [];
 			state.selectedTags = [];
 		},
@@ -102,13 +102,8 @@ const chartSlice = createSlice({
 			const data = action.payload.map((d: { data: Array<string[] | number[]>; tag: string }) => d.data);
 			const tags = action.payload.map((d: { data: Array<string[] | number[]>; tag: string }) => d.tag);
 			state.optionData = data;
-			state.option.legend = {
-				left: 10,
-				top: 0,
-				orient: 'vertical',
-			};
 			if (state.chartType === 'line' || state.chartType === 'bar') {
-				state.option.xAxis.data = state.optionData[0];
+				state.option.xAxis[0].data = state.optionData[0];
 				for (let i = 1; i < state.optionData.length; i++) {
 					state.option.series[i - 1] = {
 						data: state.optionData[i],

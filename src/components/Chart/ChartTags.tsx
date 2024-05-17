@@ -15,7 +15,7 @@ import { useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
 import { setOptionData, setSelectedTags, resetOption } from '@/store/reducers/chartSlice';
 import { useAppDispatch } from '@/store/hooks';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { IQuery } from '@/lib/models';
 
@@ -44,6 +44,7 @@ const ChartTags = () => {
 		dispatch(resetOption());
 		dispatch(setSelectedTags({ type: 'reset' }));
 	};
+
 	const handleClickFill = async () => {
 		if (selectedTags.length < 2) {
 			toast({
@@ -82,6 +83,10 @@ const ChartTags = () => {
 		const info = await Promise.all(promises);
 		dispatch(setOptionData(info));
 	};
+
+  useEffect(() => {
+    setSelectValue(selectedTags.filter((tag) => tag.xAxis)[0] ? selectedTags.filter((tag) => tag.xAxis)[0].tag : '');
+  }, [])
 	return (
 		<div className="p-6 pt-0 h-1/4 w-full overflow-y-scroll">
 			<div className="flex">

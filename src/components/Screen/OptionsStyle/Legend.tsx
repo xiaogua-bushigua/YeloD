@@ -11,15 +11,9 @@ import { changeChartOption } from '@/store/reducers/screenSlice';
 
 const Legend = ({ chartId, option }: { chartId: string; option: any }) => {
 	const dispatch = useAppDispatch();
-	const [color, setColor] = useColor(
-		option.legend.textStyle
-			? option.legend.textStyle.color === undefined
-				? '#333'
-				: option.legend.textStyle.color
-			: '#333'
-	);
+	const [color, setColor] = useColor(option.legend[0].textStyle.color || '#333');
 	const [popoverOpen, setPopoverOpen] = useState(false);
-	const [checked, setChecked] = useState(option.legend.orient !== 'vertical');
+	const [checked, setChecked] = useState(option.legend[0].orient !== 'horizontal');
 
 	const handleShowLegendChange = (checked: boolean) => {
 		setChecked(checked);
@@ -43,13 +37,13 @@ const Legend = ({ chartId, option }: { chartId: string; option: any }) => {
 		<div className="my-2">
 			<p className="font-mono font-bold select-none">- Legend</p>
 			<div className="flex pl-4 my-1 items-center">
-				<span className="font-mono mr-4 w-[60px] text-sm">vertical: </span>
+				<span className="font-mono mr-4 w-[60px] text-sm">orient: </span>
 				<Switch checked={checked} onCheckedChange={(checked: boolean) => handleShowLegendChange(checked)} />
 			</div>
 			<div className="flex pl-4 my-1 items-center">
 				<span className="font-mono mr-4 w-24 text-sm">left: </span>
 				<Slider
-					defaultValue={[10]}
+					defaultValue={[option.legend[0].left || 10]}
 					max={80}
 					min={0}
 					step={1}
@@ -61,7 +55,7 @@ const Legend = ({ chartId, option }: { chartId: string; option: any }) => {
 			<div className="flex pl-4 my-1 items-center">
 				<span className="font-mono mr-4 w-24 text-sm">top: </span>
 				<Slider
-					defaultValue={[0]}
+					defaultValue={[option.legend[0].top || 0]}
 					max={20}
 					min={-16}
 					step={1}
@@ -73,7 +67,7 @@ const Legend = ({ chartId, option }: { chartId: string; option: any }) => {
 			<div className="flex pl-4 my-1 items-center">
 				<span className="font-mono mr-4 w-24 text-sm">size: </span>
 				<Slider
-					defaultValue={[12]}
+					defaultValue={[option.legend[0].textStyle.fontSize || 12]}
 					max={24}
 					min={10}
 					step={1}

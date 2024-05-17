@@ -25,13 +25,13 @@ const LineBarSerie = ({
 	const [color, setColor] = useColor(
 		serie.itemStyle ? (serie.itemStyle.color ? serie.itemStyle.color : scolor) : scolor
 	);
-	const [serieName, setSerieName] = useState(serie.name);
+	// const [serieName, setSerieName] = useState(serie.name);
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
-	const handleInputChange = (value: string) => {
-		setSerieName(value);
-		dispatch(changeChartOption({ type: 'series', prop: 'name', value, id: chartId, index, chartType }));
-	};
+	// const handleInputChange = (value: string) => {
+	// 	setSerieName(value);
+	// 	dispatch(changeChartOption({ type: 'series', prop: 'name', value, id: chartId, index, chartType }));
+	// };
 	useEffect(() => {
 		if (!popoverOpen) {
 			dispatch(
@@ -49,7 +49,7 @@ const LineBarSerie = ({
 	return (
 		<div className="flex pl-4 my-1 items-center">
 			<span className="font-mono mr-4 w-[60px] text-sm">{'series' + (index + 1) + ': '}</span>
-			<Input className="text-sm h-8" value={serieName} onChange={(e) => handleInputChange(e.target.value)} />
+			{/* <Input className="text-sm h-8" value={serieName} onChange={(e) => handleInputChange(e.target.value)} /> */}
 			<Popover modal={true} open={popoverOpen} onOpenChange={(value) => setPopoverOpen(value)}>
 				<PopoverTrigger>
 					<div

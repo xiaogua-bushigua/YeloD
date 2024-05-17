@@ -136,23 +136,23 @@ const screenSlice = createSlice({
 					});
 					break;
 				case 'title':
-					let title = state.charts[index].option.title || [];
+					let title = state.charts[index].option.title[0] || {};
 					state.charts[index].option.title[0] = {
 						left: 'center',
 						show: true,
-						text: payload.prop === 'text' ? payload.value : title[0].text || '',
+						text: payload.prop === 'text' ? payload.value : title.text || '',
 						textStyle: {
 							color:
 								payload.prop === 'color'
 									? payload.value
-									: title[0].textStyle
-									? title[0].textStyle.color
+									: title.textStyle
+									? title.textStyle.color
 									: '#777',
 							fontSize:
 								payload.prop === 'fontSize'
 									? payload.value
-									: title[0].textStyle
-									? title[0].textStyle.fontSize
+									: title.textStyle
+									? title.textStyle.fontSize
 									: 18,
 						},
 					};
@@ -169,9 +169,9 @@ const screenSlice = createSlice({
 					};
 					break;
 				case 'legend':
-					let legend = state.charts[index].option.legend || {};
-					state.charts[index].option.legend = {
-						orient: payload.prop === 'orient' ? payload.value : legend.orient || 'vertical',
+					let legend = state.charts[index].option.legend[0] || {};
+					state.charts[index].option.legend[0] = {
+						orient: payload.prop === 'orient' ? payload.value : legend.orient || 'horizontal',
 						left: payload.prop === 'left' ? payload.value : legend.left || 10,
 						top: payload.prop === 'top' ? payload.value : legend.top || 0,
 						textStyle: {

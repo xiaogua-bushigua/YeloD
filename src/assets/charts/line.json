@@ -1,5 +1,25 @@
 {
-  "xAxis": {
+  "title": [
+    {
+      "show": false,
+      "left": "center",
+      "text": "",
+      "textStyle": {
+        "color": "#777",
+        "fontSize": 18
+      }
+    }
+  ],
+  "legend": [{
+    "orient": "horizontal",
+    "left": 10,
+    "top": 0,
+    "textStyle": {
+      "color": "#333",
+      "fontSize": 12
+    }
+  }],
+  "xAxis": [{
     "type": "category",
     "data": [
       "Mon",
@@ -9,11 +29,25 @@
       "Fri",
       "Sat",
       "Sun"
-    ]
-  },
-  "yAxis": {
-    "type": "value"
-  },
+    ],
+    "axisLabel": {
+      "color": "#333",
+      "fontSize": 12
+    }
+  }],
+  "yAxis": [{
+    "type": "value",
+    "axisLabel": {
+      "color": "#333",
+      "fontSize": 12
+    }
+  }],
+  "grid": [{
+    "left": "10%",
+    "right": "10%",
+    "top": "10%",
+    "bottom": "20%"
+  }],
   "series": [
     {
       "data": [
@@ -25,7 +59,16 @@
         147,
         260
       ],
-      "type": "line"
+      "type": "line",
+      "label": {
+        "show": false,
+        "position": "top",
+        "color": "#666",
+        "fontSize": 12
+      },
+      "name": "line-data",
+      "lineStyle": {},
+      "itemStyle": {}
     }
   ]
 }
