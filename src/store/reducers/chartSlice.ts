@@ -109,12 +109,14 @@ const chartSlice = createSlice({
 						data: state.optionData[i],
 						type: state.chartType,
 						name: tags[i],
+						tagName: tags[i],
 					};
 				}
 			} else if (state.chartType === 'pie') {
 				state.option.series[0].data = state.optionData.map((data, index) => ({
 					value: data.length,
 					name: tags[index],
+					tagName: tags[index],
 				}));
 			}
 		},

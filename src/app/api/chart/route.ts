@@ -12,8 +12,11 @@ export const PATCH = async (req: NextRequest) => {
 		const user = await UserModel.findOne({ username });
 		const charts = user.charts || [];
 		if (!id) charts.push(chartInfo);
-		else {
-			const index = charts.findIndex((chart: any) => chart._id.toString() === id);
+		if (charts.length) {
+			const i = charts.findIndex((chart: ICharts) => chart.chartName === chartInfo.chartName);
+			if (i > -1) return NextResponse.json({ status: 202 });
+		} else {
+			const index = charts.findIndex((chart: ICharts) => chart._id.toString() === id);
 			charts[index] = { ...charts[index], ...chartInfo, _id: charts[index]._id };
 		}
 		await UserModel.updateOne({ username }, { $set: { charts } });
@@ -78,14 +81,12 @@ export const POST = async (req: NextRequest) => {
 			);
 			if (chart.chartType !== 'pie') {
 				nonContainXAxis.forEach((t: { xAxis?: boolean; tag: string; queryIndex: number }, index: number) => {
+					// here!!
 					chart.option.series[index].data = res[t.queryIndex];
 				});
 			} else {
 				nonContainXAxis.forEach((t: { xAxis?: boolean; tag: string; queryIndex: number }, index: number) => {
-					chart.option.series[0].data[index] = {
-						value: res[t.queryIndex].length,
-						name: t.tag,
-					};
+					chart.option.series[0].data[index].value = res[t.queryIndex].length;
 				});
 			}
 		});

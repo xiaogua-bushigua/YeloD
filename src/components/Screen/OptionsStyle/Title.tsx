@@ -10,8 +10,6 @@ import { useAppDispatch } from '@/store/hooks';
 import { changeChartOption } from '@/store/reducers/screenSlice';
 
 const Title = ({ chartId, option }: { chartId: string; option: any }) => {
-	console.log(option);
-
 	const [color, setColor] = useColor(option.title ? option.title[0].textStyle.color : '#999');
 	const [title, setTitle] = useState(option.title ? option.title[0].text : '');
 	const dispatch = useAppDispatch();

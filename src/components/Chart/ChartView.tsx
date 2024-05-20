@@ -44,6 +44,11 @@ const ChartView = () => {
 					description: 'The chart has been saved.',
 				});
 				router.push('/charts');
+			} else if (status === 202) {
+				toast({
+					title: 'Suspend',
+					description: 'The chart name should be unique.',
+				});
 			} else {
 				toast({
 					title: 'Error',

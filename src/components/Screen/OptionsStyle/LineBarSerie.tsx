@@ -7,31 +7,35 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Input } from '@/components/ui/input';
 import { useAppDispatch } from '@/store/hooks';
 import { changeChartOption } from '@/store/reducers/screenSlice';
+import { useAppSelector } from '@/store/hooks';
+import { RootState } from '@/store/store';
 
 const LineBarSerie = ({
 	chartId,
-	index,
-	serie,
+	seriesIndex,
 	scolor,
 	chartType,
 }: {
 	chartId: string;
-	index: number;
-	serie: any;
+	seriesIndex: number;
 	scolor: string;
 	chartType: string;
 }) => {
+	const { charts } = useAppSelector((state: RootState) => state.screen);
+	const serie = charts.filter((c) => c._id === chartId)[0].option.series[seriesIndex];
 	const dispatch = useAppDispatch();
 	const [color, setColor] = useColor(
 		serie.itemStyle ? (serie.itemStyle.color ? serie.itemStyle.color : scolor) : scolor
 	);
-	// const [serieName, setSerieName] = useState(serie.name);
+	const [serieName, setSerieName] = useState(serie.name);
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
-	// const handleInputChange = (value: string) => {
-	// 	setSerieName(value);
-	// 	dispatch(changeChartOption({ type: 'series', prop: 'name', value, id: chartId, index, chartType }));
-	// };
+	const handleInputChange = (value: string) => {
+		setSerieName(value);
+		dispatch(
+			changeChartOption({ type: 'series', prop: 'name', value, id: chartId, index: seriesIndex, chartType, defaultColor: color.hex })
+		);
+	};
 	useEffect(() => {
 		if (!popoverOpen) {
 			dispatch(
@@ -40,16 +44,17 @@ const LineBarSerie = ({
 					prop: 'color',
 					value: color.hex,
 					id: chartId,
-					index,
+					index: seriesIndex,
 					chartType,
+          defaultName: serieName
 				})
 			);
 		}
 	}, [popoverOpen]);
 	return (
 		<div className="flex pl-4 my-1 items-center">
-			<span className="font-mono mr-4 w-[60px] text-sm">{'series' + (index + 1) + ': '}</span>
-			{/* <Input className="text-sm h-8" value={serieName} onChange={(e) => handleInputChange(e.target.value)} /> */}
+			<span className="font-mono mr-4 w-[60px] text-sm">{'series' + (seriesIndex + 1) + ': '}</span>
+			<Input className="text-sm h-8" value={serieName} onChange={(e) => handleInputChange(e.target.value)} />
 			<Popover modal={true} open={popoverOpen} onOpenChange={(value) => setPopoverOpen(value)}>
 				<PopoverTrigger>
 					<div

@@ -191,55 +191,42 @@ const screenSlice = createSlice({
 					};
 					break;
 				case 'series':
-					let series = state.charts[index].option.series || {};
 					switch (payload.chartType) {
 						case 'pie':
+							let series = state.charts[index].option.series[0] || {};
 							state.charts[index].option.series[0].data[payload.index] = {
-								...series[0].data[payload.index],
-								name: payload.prop === 'name' ? payload.value : series[0].data[payload.index].name,
+								...series.data[payload.index],
+								name: payload.prop === 'name' ? payload.value : series.data[payload.index].name,
 								itemStyle: {
 									color:
 										payload.prop === 'color'
 											? payload.value
-											: series[payload.index].itemStyle
-											? series[payload.index].itemStyle.color
+											: series.data[payload.index].itemStyle
+											? series.data[payload.index].itemStyle.color
 											: '#44ff44',
 								},
 							};
 							break;
 						case 'bar':
+							let series1 = state.charts[index].option.series || [];
 							state.charts[index].option.series[payload.index] = {
-								...series[payload.index],
-								name: payload.prop === 'name' ? payload.value : series.name,
+								...series1[payload.index],
+								name: payload.prop === 'name' ? payload.value : payload.defaultName,
 								itemStyle: {
-									color:
-										payload.prop === 'color'
-											? payload.value
-											: series[payload.index].itemStyle
-											? series[payload.index].itemStyle.color
-											: '#44ff44',
+									color: payload.prop === 'color' ? payload.value : payload.defaultColor,
 								},
 							};
 							break;
 						case 'line':
+							let series2 = state.charts[index].option.series || [];
 							state.charts[index].option.series[payload.index] = {
-								...series[payload.index],
-								name: payload.prop === 'name' ? payload.value : series.name,
+								...series2[payload.index],
+								name: payload.prop === 'name' ? payload.value : payload.defaultName,
 								lineStyle: {
-									color:
-										payload.prop === 'color'
-											? payload.value
-											: series[payload.index].lineStyle
-											? series[payload.index].lineStyle.color
-											: '#44ff44',
+									color: payload.prop === 'color' ? payload.value : payload.defaultColor,
 								},
 								itemStyle: {
-									color:
-										payload.prop === 'color'
-											? payload.value
-											: series[payload.index].itemStyle
-											? series[payload.index].itemStyle.color
-											: '#44ff44',
+									color: payload.prop === 'color' ? payload.value : payload.defaultColor,
 								},
 							};
 							break;

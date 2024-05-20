@@ -20,7 +20,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { IQuery } from '@/lib/models';
 
 const ChartTags = () => {
-	const { tags, selectedTags, optionData, chartType } = useAppSelector((state: RootState) => state.chart);
+	const { tags, selectedTags, chartType } = useAppSelector((state: RootState) => state.chart);
 	const [selectValue, setSelectValue] = useState<string | undefined>(undefined);
 	const dispatch = useAppDispatch();
 	const { toast } = useToast();
@@ -53,7 +53,8 @@ const ChartTags = () => {
 			});
 			return;
 		}
-		if ((chartType === 'line' || chartType === 'bar') && selectValue === undefined) {
+		const xAxisTag = selectedTags.filter((tag) => tag.xAxis);
+		if (xAxisTag.length === 0 && (chartType === 'line' || chartType === 'bar')) {
 			toast({
 				title: 'Error',
 				description: 'You should select one x axis tag.',
@@ -84,9 +85,11 @@ const ChartTags = () => {
 		dispatch(setOptionData(info));
 	};
 
-  useEffect(() => {
-    setSelectValue(selectedTags.filter((tag) => tag.xAxis)[0] ? selectedTags.filter((tag) => tag.xAxis)[0].tag : '');
-  }, [])
+	useEffect(() => {
+		setSelectValue(
+			selectedTags.filter((tag) => tag.xAxis)[0] ? selectedTags.filter((tag) => tag.xAxis)[0].tag : ''
+		);
+	}, []);
 	return (
 		<div className="p-6 pt-0 h-1/4 w-full overflow-y-scroll">
 			<div className="flex">

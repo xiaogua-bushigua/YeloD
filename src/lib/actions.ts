@@ -18,7 +18,7 @@ export const register = async (previousState: any, formData: FormData) => {
 	if (password.length < 8) {
 		return { error: 'The password length is too short!' };
 	}
-  if (username.length > 18) {
+	if (username.length > 18) {
 		return { error: 'The username length is too long!' };
 	}
 	if (password !== passwordRepeat) {
@@ -37,11 +37,11 @@ export const register = async (previousState: any, formData: FormData) => {
 		const newUser = new UserModel({
 			username,
 			password: hashedPassword,
-      databases: {
-        links: ['']
-      },
+			databases: {
+				links: [''],
+			},
 		});
-        
+
 		await newUser.save();
 		console.log('a new user has been saved to db');
 		return { success: true };
@@ -60,7 +60,7 @@ export const login = async (username: string, password: string): Promise<LoginRe
 		if (!isPasswordCorrect) return { error: 'Wrong username or password' };
 		return { success: true };
 	} catch (error) {
-    console.log(error);
-    return { error: 'Something went wrong!' };
-  }
+		console.log(error);
+		return { error: 'Something went wrong!' };
+	}
 };
