@@ -42,10 +42,10 @@ export const PATCH = async (req: NextRequest) => {
 	try {
 		await dbConnect();
 		let { queryObj, username } = await req.json();
-    queryObj.field = ''
-    queryObj.tag = ''
+		queryObj.field = '';
+		queryObj.tag = '';
 		let { queries } = await UserModel.findOne({ username }, { queries: 1 });
-		queries = [...queries, queryObj];    
+		queries = [...queries, queryObj];
 		await UserModel.updateOne({ username }, { $set: { queries } });
 		return NextResponse.json({ status: 200 });
 	} catch (error) {

@@ -14,14 +14,18 @@ export default function Data() {
 	const dispatchAsync: ThunkDispatch<RootState, any, any> = useDispatch();
 
 	const getLinks = async () => {
-		const res = await fetch('/api/dbLinks', {
-			method: 'POST',
-			body: JSON.stringify({ username: user.name || user.username }),
-		});
-		const { data } = await res.json();
-    if(data.length === 1 && data[0] === '') return;
-		dispatch(saveDbLinks(data));
-		dispatchAsync(fetchDatabaseInfo(data));
+		try {
+			const res = await fetch('/api/dbLinks', {
+				method: 'POST',
+				body: JSON.stringify({ username: user.name || user.username }),
+			});
+			const { data } = await res.json();
+			if (data.length === 1 && data[0] === '') return;
+			dispatch(saveDbLinks(data));
+			dispatchAsync(fetchDatabaseInfo(data));
+		} catch (error) {
+			console.error('Error getting links:', error);
+		}
 	};
 
 	useEffect(() => {

@@ -39,11 +39,15 @@ const OptionsSheet = ({
 	};
 
 	const updateChart = async (chartInfo: any) => {
-		// 根据id更新数据库中的图表信息
-		await fetch('/api/chart', {
-			method: 'PATCH',
-			body: JSON.stringify({ chartInfo, username: user.name || user.username, id: nowId }),
-		});
+		try {
+			// 根据id更新数据库中的图表信息
+			await fetch('/api/chart', {
+				method: 'PATCH',
+				body: JSON.stringify({ chartInfo, username: user.name || user.username, id: nowId }),
+			});
+		} catch (error) {
+      console.log('Error updating chart:', error);
+    }
 	};
 
 	useEffect(() => {

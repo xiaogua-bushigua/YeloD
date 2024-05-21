@@ -14,7 +14,6 @@ export default function Screens() {
 	const [hover, setHover] = useState(false);
 	const [cards, setCards] = useState<Array<IScreens>>();
 	const { user } = useAppSelector((state: RootState) => state.auth);
-	const { charts } = useAppSelector((state: RootState) => state.screen);
 	const router = useRouter();
 	const { toast } = useToast();
 	const dispatch = useAppDispatch();
@@ -27,62 +26,82 @@ export default function Screens() {
 
 	// 点击已有卡片时，填入对应信息
 	const handleScreenClick = async (screen: IScreens) => {
-		const res = await fetch('/api/screen', {
-			method: 'POST',
-			body: JSON.stringify({ username: user.name || user.username, chartsInfo: screen.chartsInfo }),
-		});
-		const { data } = await res.json();
-    
-		dispatch(initScreen({ ...screen, charts: data }));
-		router.push('/screens/configurations?id=' + screen._id);
+		try {
+			const res = await fetch('/api/screen', {
+				method: 'POST',
+				body: JSON.stringify({ username: user.name || user.username, chartsInfo: screen.chartsInfo }),
+			});
+			const { data } = await res.json();
+			dispatch(initScreen({ ...screen, charts: data }));
+			router.push('/screens/configurations?id=' + screen._id);
+		} catch (error) {
+			console.error('Error clicking screen:', error);
+		}
 	};
 
 	const handleScreenDeleteClick = async (screenId: string) => {
-		fetch('/api/screen', {
-			method: 'DELETE',
-			body: JSON.stringify({ username: user.name || user.username, screenId }),
-		})
-			.then(() => {
-				fetchScreenCards();
-				toast({
-					title: 'Success',
-					description: 'The screen has been removed.',
-				});
+		try {
+			fetch('/api/screen', {
+				method: 'DELETE',
+				body: JSON.stringify({ username: user.name || user.username, screenId }),
 			})
-			.catch((error) => {
-				console.error('Error:', error);
-				toast({
-					title: 'Error',
-					description: 'Something went wrong. Please try again.',
+				.then(() => {
+					fetchScreenCards();
+					toast({
+						title: 'Success',
+						description: 'The screen has been removed.',
+					});
+				})
+				.catch((error) => {
+					console.error('Error:', error);
+					toast({
+						title: 'Error',
+						description: 'Something went wrong. Please try again.',
+					});
 				});
-			});
+		} catch (error) {
+			console.error('Error deleting screen:', error);
+		}
 	};
 
 	// 初始化所有的屏幕卡片
 	const fetchScreenCards = async () => {
-		const res = await fetch(`/api/screen?username=${user.name || user.username}`, {
-			method: 'GET',
-		});
-		const { data } = await res.json();
-		setCards(data);
+		try {
+			const res = await fetch(`/api/screen?username=${user.name || user.username}`, {
+				method: 'GET',
+			});
+			const { data } = await res.json();
+			setCards(data);
+		} catch (error) {
+			console.error('Error fetching screens data:', error);
+		}
 	};
 
 	// 初始化抽屉里待勾选的图表
 	const fetchCharts = async () => {
-		const chartsRes = await fetch(`/api/chart?username=${user.name || user.username}`, {
-			method: 'GET',
-		});
-		let { data } = await chartsRes.json();
-		dispatch(initCharts({ charts: data }));
+		try {
+			const chartsRes = await fetch(`/api/chart?username=${user.name || user.username}`, {
+				method: 'GET',
+			});
+			let { data } = await chartsRes.json();
+			dispatch(initCharts({ charts: data }));
+		} catch (error) {
+			console.error('Error fetching charts data:', error);
+		}
 	};
 
 	// 刷新所有charts的option data
 	const refreshCharts = async () => {
-		await fetch('/api/chart', {
-			method: 'POST',
-			body: JSON.stringify({ username: user.name || user.username }),
-		});
+		try {
+			await fetch('/api/chart', {
+				method: 'POST',
+				body: JSON.stringify({ username: user.name || user.username }),
+			});
+		} catch (error) {
+      console.error('Error refreshing charts:', error);
+    }
 	};
+
 	useEffect(() => {
 		refreshCharts();
 		fetchScreenCards();

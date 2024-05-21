@@ -72,17 +72,20 @@ const ChartTags = () => {
 			queries = queries.filter((query) => query.tag !== selectValue);
 			queries.unshift(selectedQuery);
 		}
-
-		const promises = queries.map(async (query) => {
-			const res = await fetch('/api/dbTags', {
-				method: 'POST',
-				body: JSON.stringify(query),
+		try {
+			const promises = queries.map(async (query) => {
+				const res = await fetch('/api/dbTags', {
+					method: 'POST',
+					body: JSON.stringify(query),
+				});
+				const { data } = await res.json();
+				return { data, tag: query.tag };
 			});
-			const { data } = await res.json();
-			return { data, tag: query.tag };
-		});
-		const info = await Promise.all(promises);
-		dispatch(setOptionData(info));
+			const info = await Promise.all(promises);
+			dispatch(setOptionData(info));
+		} catch (error) {
+			console.error('Error clicking fill:', error);
+		}
 	};
 
 	useEffect(() => {

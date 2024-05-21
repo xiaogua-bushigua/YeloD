@@ -169,15 +169,19 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 	useEffect(() => {
 		// 进行静态更新数据
 		const interval = setInterval(async () => {
-			await fetch('/api/chart', {
-				method: 'POST',
-				body: JSON.stringify({ username: user.name || user.username }),
-			});
-			const res = await fetch(`/api/chart?username=${user.name || user.username}`, {
-				method: 'GET',
-			});
-			const { data } = await res.json();
-			dispatch(localRefreshOptionData(data));
+			try {
+				await fetch('/api/chart', {
+					method: 'POST',
+					body: JSON.stringify({ username: user.name || user.username }),
+				});
+				const res = await fetch(`/api/chart?username=${user.name || user.username}`, {
+					method: 'GET',
+				});
+				const { data } = await res.json();
+				dispatch(localRefreshOptionData(data));
+			} catch (error) {
+				console.log("Error updating charts' option data:", error);
+			}
 		}, staticInterval * 1000 * 60);
 		return () => clearInterval(interval);
 	}, []);

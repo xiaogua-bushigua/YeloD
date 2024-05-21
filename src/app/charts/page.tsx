@@ -29,47 +29,59 @@ export default function Charts() {
 		router.push('/charts/options?id=' + chart._id);
 	};
 	const handleChartDeleteClick = async (chartId: string) => {
-		const res = await fetch('/api/chart', {
-			method: 'DELETE',
-			body: JSON.stringify({ username: user.name || user.username, chartId }),
-		});
-		const { status } = await res.json();
-		if (status === 200) {
-			fetchData();
-			toast({
-				title: 'Success',
-				description: 'The chart has been removed.',
+		try {
+			const res = await fetch('/api/chart', {
+				method: 'DELETE',
+				body: JSON.stringify({ username: user.name || user.username, chartId }),
 			});
-			// 如果该chart被screen使用了，不让删除
-		} else if (status === 202) {
-			toast({
-				title: 'Suspend',
-				description: 'The chart has been used in a screen!',
-			});
-		} else {
-			toast({
-				title: 'Error',
-				description: 'Something went wrong. Please try again.',
-			});
+			const { status } = await res.json();
+			if (status === 200) {
+				fetchData();
+				toast({
+					title: 'Success',
+					description: 'The chart has been removed.',
+				});
+				// 如果该chart被screen使用了，不让删除
+			} else if (status === 202) {
+				toast({
+					title: 'Suspend',
+					description: 'The chart has been used in a screen!',
+				});
+			} else {
+				toast({
+					title: 'Error',
+					description: 'Something went wrong. Please try again.',
+				});
+			}
+		} catch (error) {
+			console.log('Error deleting chart:', error);
 		}
 	};
 	const fetchData = async () => {
-		const res = await fetch(`/api/chart?username=${user.name || user.username}`, {
-			method: 'GET',
-		});
-		const { data } = await res.json();
-		setCards(data);
+		try {
+			const res = await fetch(`/api/chart?username=${user.name || user.username}`, {
+				method: 'GET',
+			});
+			const { data } = await res.json();
+			setCards(data);
+		} catch (error) {
+			console.error('Error fetching data:', error);
+		}
 	};
 
-  // 刷新所有charts的option data
+	// 刷新所有charts的option data
 	const refreshCharts = async () => {
-		await fetch('/api/chart', {
-			method: 'POST',
-			body: JSON.stringify({ username: user.name || user.username }),
-		});
+		try {
+			await fetch('/api/chart', {
+				method: 'POST',
+				body: JSON.stringify({ username: user.name || user.username }),
+			});
+		} catch (error) {
+			console.error('Error refreshing charts:', error);
+		}
 	};
 	useEffect(() => {
-    refreshCharts();
+		refreshCharts();
 		fetchData();
 	}, []);
 	return (

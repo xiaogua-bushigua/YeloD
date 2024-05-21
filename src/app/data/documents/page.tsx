@@ -33,12 +33,16 @@ const Page = () => {
 		const collectionName = info[databaseIndex].collections[collectionIndex].name;
 		const str = childRef.current?.value;
 		const query = transferQuery(str);
-		const res = await fetch('/api/dbQuery', {
-			method: 'POST',
-			body: JSON.stringify({ uri, collectionName, query }),
-		});
-		const { data } = await res.json();
-		setCode({ data });
+		try {
+			const res = await fetch('/api/dbQuery', {
+				method: 'POST',
+				body: JSON.stringify({ uri, collectionName, query }),
+			});
+			const { data } = await res.json();
+			setCode({ data });
+		} catch (error) {
+			console.log('Error searching query:', error);
+		}
 	};
 
 	const handleSaveQuery = async () => {
@@ -49,16 +53,21 @@ const Page = () => {
 			query,
 		};
 		const username = user?.name || user?.username;
-		const res = await fetch('/api/dbQuery', {
-			method: 'PATCH',
-			body: JSON.stringify({ queryObj, username }),
-		});
-		const { status } = await res.json();
-		const description = status === 200 ? 'The query has been saved.' : 'Something went wrong. Please try again.';
-		toast({
-			title: 'Success',
-			description,
-		});
+		try {
+			const res = await fetch('/api/dbQuery', {
+				method: 'PATCH',
+				body: JSON.stringify({ queryObj, username }),
+			});
+			const { status } = await res.json();
+			const description =
+				status === 200 ? 'The query has been saved.' : 'Something went wrong. Please try again.';
+			toast({
+				title: 'Success',
+				description,
+			});
+		} catch (error) {
+      console.log('Error saving query:', error);
+    }
 	};
 
 	return (

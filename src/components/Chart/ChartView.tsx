@@ -32,28 +32,32 @@ const ChartView = () => {
 				img: base64,
 			};
 			const id = searchParams.get('id');
-			// 根据id更新数据库中的图表信息
-			const res = await fetch('/api/chart', {
-				method: 'PATCH',
-				body: JSON.stringify({ chartInfo, username: user.name || user.username, id }),
-			});
-			const { status } = await res.json();
-			if (status === 200) {
-				toast({
-					title: 'Success',
-					description: 'The chart has been saved.',
+			try {
+				// 根据id更新数据库中的图表信息
+				const res = await fetch('/api/chart', {
+					method: 'PATCH',
+					body: JSON.stringify({ chartInfo, username: user.name || user.username, id }),
 				});
-				router.push('/charts');
-			} else if (status === 202) {
-				toast({
-					title: 'Suspend',
-					description: 'The chart name should be unique.',
-				});
-			} else {
-				toast({
-					title: 'Error',
-					description: 'Something went wrong. Please try again.',
-				});
+				const { status } = await res.json();
+				if (status === 200) {
+					toast({
+						title: 'Success',
+						description: 'The chart has been saved.',
+					});
+					router.push('/charts');
+				} else if (status === 202) {
+					toast({
+						title: 'Suspend',
+						description: 'The chart name should be unique.',
+					});
+				} else {
+					toast({
+						title: 'Error',
+						description: 'Something went wrong. Please try again.',
+					});
+				}
+			} catch (error) {
+				console.log('Error in saving chart:', error);
 			}
 		});
 		return () => {

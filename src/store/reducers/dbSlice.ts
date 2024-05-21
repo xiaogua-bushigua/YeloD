@@ -23,28 +23,25 @@ export interface IDb {
 
 const initialState: IDb = {
 	database: [''],
-	info: [
-		// {
-		// 	collections: [],
-		// 	dbStats: {
-		// 		db: '',
-		// 		storageSize: 0,
-		// 	},
-		// },
-	],
+	info: [],
 	databaseIndex: 0,
 	collectionIndex: 0,
 };
 
 export const fetchDatabaseInfo = createAsyncThunk('dbInfo', async (uris: string[]) => {
-	const data = await fetch('/api/dbInfo', {
-		method: 'POST',
-		body: JSON.stringify({ uris }),
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	});
-	return data.json();
+	try {
+		const data = await fetch('/api/dbInfo', {
+			method: 'POST',
+			body: JSON.stringify({ uris }),
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		return data.json();
+	} catch (error) {
+		console.log('Error fetching database info:', error);
+		return { info: [] };
+	}
 });
 
 const dbSlice = createSlice({

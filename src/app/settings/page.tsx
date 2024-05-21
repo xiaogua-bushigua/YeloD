@@ -30,16 +30,20 @@ export default function Settings() {
 	const handleSave = async () => {
 		const lks: string[] = childRef.current.filter((child) => child).map((el) => el!.value);
 		dispatch(saveDbLinks(lks));
-		const res = await fetch('/api/dbLinks', {
-			method: 'PATCH',
-			body: JSON.stringify({ username: user.name || user.username, links: lks }),
-		});
-		const { status } = await res.json();
-		const description = status === 200 ? 'Links has been saved.' : 'Something went wrong. Please try again.';
-		toast({
-			title: 'Success',
-			description,
-		});
+		try {
+			const res = await fetch('/api/dbLinks', {
+				method: 'PATCH',
+				body: JSON.stringify({ username: user.name || user.username, links: lks }),
+			});
+			const { status } = await res.json();
+			const description = status === 200 ? 'Links has been saved.' : 'Something went wrong. Please try again.';
+			toast({
+				title: 'Success',
+				description,
+			});
+		} catch (error) {
+      console.error('Error saving links:', error);
+    }
 	};
 	return (
 		<>

@@ -32,11 +32,15 @@ const QueryTable = () => {
 
 	// 获取所有查询语句信息，并设置到rows中
 	const fetchData = async () => {
-		const res = await fetch(`/api/dbQuery?username=${user.name || user.username}`, {
-			method: 'GET',
-		});
-		const { queries } = await res.json();
-		setRows(queries.queries);
+		try {
+			const res = await fetch(`/api/dbQuery?username=${user.name || user.username}`, {
+				method: 'GET',
+			});
+			const { queries } = await res.json();
+			setRows(queries.queries);
+		} catch (error) {
+			console.log('Error fetching queries:', error);
+		}
 	};
 
 	const handleView = async (index: number) => {
@@ -44,17 +48,21 @@ const QueryTable = () => {
 		const collectionName = rows[index].collectionName;
 		const str = rows[index].query;
 		const query = transferQuery(str);
-		const res = await fetch('/api/dbQuery', {
-			method: 'POST',
-			body: JSON.stringify({ uri, collectionName, query }),
-		});
-		const { data } = await res.json();
-		// 如果表格里field空的，则渲染文档的所有信息；反之，只渲染对应field的信息
-		if (!rows[index].field) setCode({ data });
-		else {
-			const code = data.map((item: any) => item[rows[index].field!]);
-			setCode({ [rows[index].field!]: code });
-			if (rows[index].tag) setTag(rows[index].tag!);
+		try {
+			const res = await fetch('/api/dbQuery', {
+				method: 'POST',
+				body: JSON.stringify({ uri, collectionName, query }),
+			});
+			const { data } = await res.json();
+			// 如果表格里field空的，则渲染文档的所有信息；反之，只渲染对应field的信息
+			if (!rows[index].field) setCode({ data });
+			else {
+				const code = data.map((item: any) => item[rows[index].field!]);
+				setCode({ [rows[index].field!]: code });
+				if (rows[index].tag) setTag(rows[index].tag!);
+			}
+		} catch (error) {
+			console.log('Error fetching option data:', error);
 		}
 	};
 	const handleSave = async (index: number) => {
@@ -74,29 +82,33 @@ const QueryTable = () => {
 			username: user.name || user.username,
 			index,
 		};
-		const res = await fetch('/api/dbTags', {
-			method: 'PATCH',
-			body: JSON.stringify(queryBody),
-		});
-		const { status, data } = await res.json();
-		if (status === 200) {
-			setWarningRow([]);
-			toast({
-				title: 'Success',
-				description: 'The tag has been saved.',
+		try {
+			const res = await fetch('/api/dbTags', {
+				method: 'PATCH',
+				body: JSON.stringify(queryBody),
 			});
-			// 如果有冲突的两行，则保存它们的indexes
-		} else if (status === 202) {
-			setWarningRow(data);
-			toast({
-				title: 'Error',
-				description: 'The tag has existed!',
-			});
-		} else {
-			toast({
-				title: 'Error',
-				description: 'Something went wrong. Please try again.',
-			});
+			const { status, data } = await res.json();
+			if (status === 200) {
+				setWarningRow([]);
+				toast({
+					title: 'Success',
+					description: 'The tag has been saved.',
+				});
+				// 如果有冲突的两行，则保存它们的indexes
+			} else if (status === 202) {
+				setWarningRow(data);
+				toast({
+					title: 'Error',
+					description: 'The tag has existed!',
+				});
+			} else {
+				toast({
+					title: 'Error',
+					description: 'Something went wrong. Please try again.',
+				});
+			}
+		} catch (error) {
+			console.error('Error saving query:', error);
 		}
 	};
 	const handleDelete = async (index: number) => {
@@ -125,7 +137,7 @@ const QueryTable = () => {
 			return newRows;
 		});
 	};
-  // 应对表格中field和tag列改变的情况
+	// 应对表格中field和tag列改变的情况
 	const handleInputChange = (index: number, type: string, e: React.ChangeEvent<HTMLInputElement>) => {
 		const newRows = [...rows];
 		if (type === 'field') newRows[index].field = e.target.value;

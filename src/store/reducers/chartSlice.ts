@@ -35,10 +35,19 @@ const initialState: IinitialState = {
 
 // 获取所有的tag标签和该标签对应的查询信息
 export const fetchTagsInfo = createAsyncThunk('dbTags', async (username: string) => {
-	const res = await fetch(`/api/dbQuery?username=${username}`, {
-		method: 'GET',
-	});
-	return res.json();
+	try {
+		const res = await fetch(`/api/dbQuery?username=${username}`, {
+			method: 'GET',
+		});
+		return res.json();
+	} catch (error) {
+		console.log('Error fetching tags info:', error);
+		return {
+			queries: {
+				queries: [],
+			},
+		};
+	}
 });
 
 const chartSlice = createSlice({

@@ -67,22 +67,26 @@ const ScreenOperations = () => {
 				screenImg: base64Image,
 			};
 			const id = searchParams.get('id');
-			const res = await fetch('/api/screen', {
-				method: 'PATCH',
-				body: JSON.stringify({ screenInfo, username: user.name || user.username, id }),
-			});
-			const { status } = await res.json();
-			if (status === 200) {
-				toast({
-					title: 'Success',
-					description: 'The screen has been saved.',
+			try {
+				const res = await fetch('/api/screen', {
+					method: 'PATCH',
+					body: JSON.stringify({ screenInfo, username: user.name || user.username, id }),
 				});
-				router.push('/screens');
-			} else {
-				toast({
-					title: 'Error',
-					description: 'Something went wrong. Please try again.',
-				});
+				const { status } = await res.json();
+				if (status === 200) {
+					toast({
+						title: 'Success',
+						description: 'The screen has been saved.',
+					});
+					router.push('/screens');
+				} else {
+					toast({
+						title: 'Error',
+						description: 'Something went wrong. Please try again.',
+					});
+				}
+			} catch (error) {
+				console.log('Error saving screen:', error);
 			}
 		} catch (error) {
 			console.error('Error occurred during screen image capture:', error);
