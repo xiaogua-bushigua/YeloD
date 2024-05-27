@@ -112,30 +112,35 @@ const QueryTable = () => {
 		}
 	};
 	const handleDelete = async (index: number) => {
-		setRows(() => {
-			const newRows = [...rows];
-			newRows.splice(index, 1);
-			const queryBody = {
-				rows: newRows,
+		const res = await fetch('/api/dbTags', {
+			method: 'DELETE',
+			body: JSON.stringify({
+				tag: rows[index].tag,
 				username: user.name || user.username,
-			};
-			fetch('/api/dbTags', {
-				method: 'DELETE',
-				body: JSON.stringify(queryBody),
-			})
-				.then(() => {
-					toast({
-						description: 'The tag and query have been removed.',
-					});
-				})
-				.catch((error) => {
-					console.error('Error:', error);
-					toast({
-						description: 'Something went wrong. Please try again.',
-					});
-				});
-			return newRows;
+			}),
 		});
+		const { status, data } = await res.json();
+		if (status === 200) {
+			setRows(() => {
+				const newRows = [...rows];
+				newRows.splice(index, 1);
+				return newRows;
+			});
+			toast({
+				title: 'Success',
+				description: 'The tag and query have been removed.',
+			});
+		} else if (status === 202) {
+			toast({
+				title: 'Suspend',
+				description: `The tag has been used in chart [${data}]!`,
+			});
+		} else {
+			toast({
+				title: 'Error',
+				description: 'Something went wrong. Please try again.',
+			});
+		}
 	};
 	// 应对表格中field和tag列改变的情况
 	const handleInputChange = (index: number, type: string, e: React.ChangeEvent<HTMLInputElement>) => {

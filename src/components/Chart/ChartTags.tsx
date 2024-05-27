@@ -98,21 +98,26 @@ const ChartTags = () => {
 			<div className="flex">
 				<span className="font-mono mr-4 font-bold text-slate-600">Tags: </span>
 				<div className="flex flex-wrap gap-2">
-					{tags.map((tag) => (
-						<div key={tag.tag} className="checkboxItems flex items-center space-x-2 w-48">
-							<Checkbox
-								onCheckedChange={(checked: boolean) => handleTagCheckedChange(tag.tag, checked)}
-								id={tag.tag}
-								checked={selectedTags.findIndex((selectedTag) => selectedTag.tag === tag.tag) > -1}
-							/>
-							<label
-								htmlFor={tag.tag}
-								className="font-mono select-none cursor-pointer text-slate-800 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-							>
-								{tag.tag}
-							</label>
-						</div>
-					))}
+					{tags.map(
+						(tag) =>
+							tag.tag && (
+								<div key={tag.tag} className="checkboxItems flex items-center space-x-2 w-48">
+									<Checkbox
+										onCheckedChange={(checked: boolean) => handleTagCheckedChange(tag.tag, checked)}
+										id={tag.tag}
+										checked={
+											selectedTags.findIndex((selectedTag) => selectedTag.tag === tag.tag) > -1
+										}
+									/>
+									<label
+										htmlFor={tag.tag}
+										className="font-mono select-none cursor-pointer text-slate-800 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+									>
+										{tag.tag}
+									</label>
+								</div>
+							)
+					)}
 				</div>
 			</div>
 			<div

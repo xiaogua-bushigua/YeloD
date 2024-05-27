@@ -12,17 +12,15 @@ export const PATCH = async (req: NextRequest) => {
 		const user = await UserModel.findOne({ username });
 		let charts = user.charts || [];
 
-		if (charts.length > 0) {
+		if (charts.length) {
 			const i = charts.findIndex((chart: ICharts) => chart.chartName === chartInfo.chartName);
 			if (i > -1) return NextResponse.json({ status: 202 });
-		} else {
 			if (!id) charts.push(chartInfo);
 			else {
 				const index = charts.findIndex((chart: ICharts) => chart._id.toString() === id);
 				charts[index] = { ...charts[index], ...chartInfo, _id: charts[index]._id };
 			}
-		}
-		console.log(charts.length);
+		} else charts.push(chartInfo);
 
 		await UserModel.updateOne({ username }, { $set: { charts } });
 		return NextResponse.json({ status: 200 });

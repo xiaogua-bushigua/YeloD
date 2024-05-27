@@ -1,6 +1,6 @@
 import dbConnect from '@/lib/mongodb';
 import { NextResponse, NextRequest } from 'next/server';
-import { UserModel } from '@/lib/models';
+import { ICharts, UserModel } from '@/lib/models';
 import dbConnectPublic from '@/lib/mongodb_public';
 import { transferQuery } from '@/lib/transferQuery';
 
@@ -101,10 +101,22 @@ export const PATCH = async (req: NextRequest) => {
 
 // 删除某一查询语句信息
 export const DELETE = async (req: NextRequest) => {
-	const { rows, username } = await req.json();
+	const { tag, username } = await req.json();
 	try {
 		await dbConnect();
-		await UserModel.updateOne({ username }, { $set: { queries: rows } });
+		const user = await UserModel.findOne({ username });
+		let charts = user.charts || [];
+		if (charts.length) {
+			const chart = charts.filter((chart: ICharts) => {
+				if (chart.selectedTags.findIndex((item) => item.tag === tag) > -1) {
+					return true;
+				}
+			});
+			if (chart.length) {
+				return NextResponse.json({ data: chart[0].chartName, status: 202 });
+			}
+		}
+		await UserModel.updateOne({ username }, { $pull: { queries: { tag } } });
 		return NextResponse.json({ status: 200 });
 	} catch (error) {
 		console.log(error);
