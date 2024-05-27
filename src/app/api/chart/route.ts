@@ -7,20 +7,26 @@ import { transferQuery } from '@/lib/transferQuery';
 // 更新charts
 export const PATCH = async (req: NextRequest) => {
 	const { chartInfo, username, id } = await req.json();
+
 	try {
 		await dbConnect();
 		const user = await UserModel.findOne({ username });
 		let charts = user.charts || [];
 
-		if (charts.length) {
+		// 当新增chart时，如果名字和以前的重复了，返回202
+		if (charts.length && !id) {
 			const i = charts.findIndex((chart: ICharts) => chart.chartName === chartInfo.chartName);
 			if (i > -1) return NextResponse.json({ status: 202 });
-			if (!id) charts.push(chartInfo);
-			else {
-				const index = charts.findIndex((chart: ICharts) => chart._id.toString() === id);
-				charts[index] = { ...charts[index], ...chartInfo, _id: charts[index]._id };
-			}
-		} else charts.push(chartInfo);
+		}
+		// 当新增chart且名字不重复了，直接push
+		if (!id) {
+			charts.push(chartInfo);
+			await UserModel.updateOne({ username }, { $set: { charts } });
+			return NextResponse.json({ status: 200 });
+		}
+		// 当对原来的进行修改
+		const index = charts.findIndex((chart: ICharts) => chart._id.toString() === id);
+		charts[index] = { ...charts[index], ...chartInfo, _id: charts[index]._id };
 
 		await UserModel.updateOne({ username }, { $set: { charts } });
 		return NextResponse.json({ status: 200 });

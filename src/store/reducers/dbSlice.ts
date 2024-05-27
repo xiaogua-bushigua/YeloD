@@ -29,6 +29,8 @@ const initialState: IDb = {
 };
 
 export const fetchDatabaseInfo = createAsyncThunk('dbInfo', async (uris: string[]) => {
+  console.log(uris);
+  
 	try {
 		const data = await fetch('/api/dbInfo', {
 			method: 'POST',

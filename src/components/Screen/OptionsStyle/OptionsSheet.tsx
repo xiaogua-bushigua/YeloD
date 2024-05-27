@@ -46,8 +46,8 @@ const OptionsSheet = ({
 				body: JSON.stringify({ chartInfo, username: user.name || user.username, id: nowId }),
 			});
 		} catch (error) {
-      console.log('Error updating chart:', error);
-    }
+			console.log('Error updating chart:', error);
+		}
 	};
 
 	useEffect(() => {
