@@ -10,15 +10,20 @@ export const PATCH = async (req: NextRequest) => {
 	try {
 		await dbConnect();
 		const user = await UserModel.findOne({ username });
-		const charts = user.charts || [];
-		if (!id) charts.push(chartInfo);
-		if (charts.length) {
+		let charts = user.charts || [];
+
+		if (charts.length > 0) {
 			const i = charts.findIndex((chart: ICharts) => chart.chartName === chartInfo.chartName);
 			if (i > -1) return NextResponse.json({ status: 202 });
 		} else {
-			const index = charts.findIndex((chart: ICharts) => chart._id.toString() === id);
-			charts[index] = { ...charts[index], ...chartInfo, _id: charts[index]._id };
+			if (!id) charts.push(chartInfo);
+			else {
+				const index = charts.findIndex((chart: ICharts) => chart._id.toString() === id);
+				charts[index] = { ...charts[index], ...chartInfo, _id: charts[index]._id };
+			}
 		}
+		console.log(charts.length);
+
 		await UserModel.updateOne({ username }, { $set: { charts } });
 		return NextResponse.json({ status: 200 });
 	} catch (error) {

@@ -25,9 +25,18 @@ export const POST = async (req: NextRequest) => {
 		if (query.type === 'all') {
 			data = await collection.find().toArray();
 		} else if (query.type === 'filtered') {
-			let queryBuilder = collection.find(query.find);
-			if (query.sort) queryBuilder = queryBuilder.sort(query.sort);
-			if (query.limit) queryBuilder = queryBuilder.limit(query.limit);
+			let queryBuilder = collection.find();
+			// 检查操作的顺序，并逐个应用
+			for (const operation of query.orders) {
+				if (operation === 'find') {
+					queryBuilder = collection.find(query.find);
+				} else if (operation === 'sort') {
+					queryBuilder = queryBuilder.sort(query.sort);
+				} else if (operation === 'limit') {
+					queryBuilder = queryBuilder.limit(query.limit);
+				}
+			}
+			// queryBuilder = collection.find(query.find).limit(query.limit).sort(query.sort);
 			data = await queryBuilder.toArray();
 		}
 		client.close();
