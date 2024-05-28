@@ -11,12 +11,13 @@ const Page = () => {
 	const [cardsInfo, setCardsInfo] = useState([] as Array<ICardsInfo>);
 
 	useEffect(() => {
-		if (databaseIndex !== undefined) {
-			const databaseInfo = info[databaseIndex];
-			const newCardsInfo = databaseInfo.collections.map((collection) => ({
+		const databaseInfo = info[databaseIndex];
+		if (databaseInfo && Object.keys(databaseInfo).length && databaseInfo.collections) {
+			const newCardsInfo = databaseInfo.collections!.map((collection) => ({
 				name: collection.name,
 				size: collection.options.storageSize,
 				count: collection.options.count,
+				type: databaseInfo.type,
 			}));
 			setCardsInfo(newCardsInfo);
 		}

@@ -10,14 +10,9 @@ const DataLayout = ({
 }: Readonly<{
 	children: React.ReactNode;
 }>) => {
-	const bread_paths = [
-		{ name: 'Databases', path: '/databases' },
-		{ name: 'Collections', path: '/collections' },
-		{ name: 'Documents', path: '/documents' },
-	];
 	return (
 		<>
-			<Bread breads={bread_paths} />
+			<Bread />
 			{children}
 		</>
 	);

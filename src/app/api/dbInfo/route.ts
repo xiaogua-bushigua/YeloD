@@ -3,8 +3,7 @@ import dbConnectPublic from '@/lib/mongodb_public';
 import { Db } from 'mongodb';
 import { PrismaClient } from '@prisma/client';
 
-// 获取数据库集合信息
-async function getCollectionsInfo(db: Db) {
+async function getCollectionsInfoMongoDB(db: Db) {
 	const collections = [];
 	const cursor = db.listCollections();
 	for await (const collection of cursor) {
@@ -12,6 +11,66 @@ async function getCollectionsInfo(db: Db) {
 		collections.push({ name: collection.name, options });
 	}
 	return collections;
+}
+
+async function getCollectionsInfoMysql(uri: string) {
+	const dynamicDbConfig = {
+		datasources: {
+			db: {
+				url: uri,
+			},
+		},
+	};
+	const prisma = new PrismaClient(dynamicDbConfig);
+	// 获取数据库名称
+	const databaseNameResult = await prisma.$queryRaw<
+		Array<{
+			databaseName: string;
+		}>
+	>`SELECT DATABASE() AS databaseName`;
+	const databaseName = databaseNameResult[0].databaseName;
+	// 获取数据库体积
+	const databaseSizeResult = await prisma.$queryRaw<
+		Array<{
+			databaseSize: string;
+			databaseName: string;
+		}>
+	>`
+    SELECT table_schema AS databaseName, 
+    ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) AS databaseSize 
+    FROM information_schema.tables 
+    GROUP BY table_schema;
+  `;
+	const databaseSize = databaseSizeResult[0].databaseSize;
+	// 获取表信息
+	const tableInfoResult = await prisma.$queryRaw<
+		Array<{
+			tableName: string;
+			rowCount: number;
+			tableSize: number;
+		}>
+	>`
+    SELECT table_name AS tableName,
+    (data_length + index_length) / 1024 / 1024 AS tableSize,
+    table_rows AS rowCount
+    FROM information_schema.tables
+    WHERE table_schema = ${databaseName};
+	`;  
+	const tables = tableInfoResult.map((table) => ({
+		name: table.tableName,
+		options: {
+			count: Number(table.rowCount),
+			storageSize: table.tableSize,
+		},
+	}));
+	return {
+		dbStats: {
+			db: databaseName,
+			storageSize: databaseSize,
+		},
+		tables: tables,
+    type: 'mysql'
+	};
 }
 
 export const POST = async (req: NextRequest) => {
@@ -24,50 +83,19 @@ export const POST = async (req: NextRequest) => {
 				if (uri.split('://')[0] === 'mongodb') {
 					const { db, client } = await dbConnectPublic(uri);
 					const dbStats = await db.stats();
-					const collections = await getCollectionsInfo(db);
-					info.push({ dbStats, collections });
+					const collections = await getCollectionsInfoMongoDB(db);
+					info.push({ dbStats, collections, type: 'mongodb' });
 					client.close();
 				} else if (uri.split('://')[0] === 'mysql') {
-					try {
-						const dynamicDbConfig = {
-							datasources: {
-								db: {
-									url: uri,
-								},
-							},
-						};
-						const prisma = new PrismaClient(dynamicDbConfig);
-						// 获取数据库名称
-						const databaseNameQuery = await prisma.$queryRaw<
-							Array<{
-								databaseName: string;
-							}>
-						>`SELECT DATABASE() AS databaseName`;
-						const databaseName = databaseNameQuery[0].databaseName;
-						console.log('Database Name:', databaseName);
-					} catch (error) {
-						console.log(error);
-					}
-					info.push({
-						collections: [
-							{
-								name: 'string',
-								options: {
-									count: 'number',
-									storageSize: 'number',
-								},
-							},
-						],
-						dbStats: {
-							db: 'string',
-							storageSize: 'number',
-						},
-					});
+					const res = await getCollectionsInfoMysql(uri);
+					info.push(res);
 				}
 			})
 		);
+
 		return NextResponse.json({ info, status: 200 });
 	} catch (error) {
+		console.log(error, 123);
 		return NextResponse.json({ error, status: 500 });
 	}
 };

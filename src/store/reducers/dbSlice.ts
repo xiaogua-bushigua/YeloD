@@ -1,7 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export interface IDatabaseInfo {
-	collections: Array<{
+	collections?: Array<{
+		name: string;
+		options: {
+			count: number;
+			storageSize: number;
+		};
+	}>;
+	tables?: Array<{
 		name: string;
 		options: {
 			count: number;
@@ -12,25 +19,25 @@ export interface IDatabaseInfo {
 		db: string;
 		storageSize: number;
 	};
+	type: string;
 }
 
 export interface IDb {
 	database: string[];
 	info: Array<IDatabaseInfo>;
+	// 所处的数据库的下标
 	databaseIndex: number;
-	collectionIndex: number;
+	InnerIndex: number;
 }
 
 const initialState: IDb = {
 	database: [''],
 	info: [],
 	databaseIndex: 0,
-	collectionIndex: 0,
+	InnerIndex: 0,
 };
 
 export const fetchDatabaseInfo = createAsyncThunk('dbInfo', async (uris: string[]) => {
-  console.log(uris);
-  
 	try {
 		const data = await fetch('/api/dbInfo', {
 			method: 'POST',
@@ -54,10 +61,11 @@ const dbSlice = createSlice({
 		saveDbLinks: (state, { payload }) => {
 			state.database = payload;
 		},
-		// 保存数据库index，或者collection index
-		saveDataPath: (state, { payload }) => {
-			if (payload.databaseIndex) state.databaseIndex = payload.databaseIndex;
-			else state.collectionIndex = payload.collectionIndex;
+		setDatabaseIndex: (state, { payload }) => {
+			state.databaseIndex = payload;
+		},
+		setInnerIndex: (state, { payload }) => {
+			state.InnerIndex = payload;
 		},
 	},
 	extraReducers(builder) {
@@ -71,4 +79,4 @@ const dbSlice = createSlice({
 const dbReducer = dbSlice.reducer;
 
 export default dbReducer;
-export const { saveDbLinks, saveDataPath } = dbSlice.actions;
+export const { saveDbLinks, setDatabaseIndex, setInnerIndex } = dbSlice.actions;

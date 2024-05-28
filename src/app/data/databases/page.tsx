@@ -10,6 +10,7 @@ export interface ICardsInfo {
 	name: string;
 	size: number;
 	count: number;
+	type: string;
 }
 
 const Page = () => {
@@ -22,7 +23,8 @@ const Page = () => {
 			const newCardsInfo = info.map((i) => ({
 				name: i.dbStats.db,
 				size: i.dbStats.storageSize,
-				count: i.collections.length,
+				count: i.collections ? i.collections.length : i.tables!.length,
+				type: i.type,
 			}));
 			setCardsInfo(newCardsInfo);
 		}
@@ -41,7 +43,12 @@ const Page = () => {
 			) : (
 				<div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mt-4">
 					{cardsInfo.map((i, index) => (
-						<DatabaseCard key={i.name} info={i} index={index} content="collections" />
+						<DatabaseCard
+							key={i.name}
+							info={i}
+							index={index}
+							content={i.type === 'mongodb' ? 'collections' : 'tables'}
+						/>
 					))}
 				</div>
 			)}

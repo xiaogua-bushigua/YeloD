@@ -11,18 +11,11 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 
 const Page = () => {
-	const { info, databaseIndex, collectionIndex, database } = useAppSelector((state: RootState) => state.db);
+	const { info, databaseIndex, InnerIndex, database } = useAppSelector((state: RootState) => state.db);
 	const { user } = useAppSelector((state: RootState) => state.auth);
-	const [path, setPath] = useState('');
 	const [code, setCode] = useState({ data: [] } as { data: any[] });
 	const childRef = useRef<HTMLInputElement | null>(null);
 	const { toast } = useToast();
-
-	useEffect(() => {
-		const databaseName = info[databaseIndex].dbStats.db;
-		const collectionName = info[databaseIndex].collections[collectionIndex].name;
-		setPath(`${databaseName} / ${collectionName}`);
-	}, []);
 
 	useEffect(() => {
 		Prism.highlightAll();
@@ -30,7 +23,7 @@ const Page = () => {
 
 	const handleSearch = async () => {
 		const uri = database[databaseIndex];
-		const collectionName = info[databaseIndex].collections[collectionIndex].name;
+		const collectionName = info[databaseIndex].collections![InnerIndex].name;
 		const str = childRef.current?.value;
 		const query = transferQuery(str);
 		try {
@@ -49,7 +42,7 @@ const Page = () => {
 		const query = childRef.current?.value;
 		const queryObj = {
 			uri: database[databaseIndex],
-			collectionName: info[databaseIndex].collections[collectionIndex].name,
+			collectionName: info[databaseIndex].collections![InnerIndex].name,
 			query,
 		};
 		const username = user?.name || user?.username;
@@ -66,14 +59,13 @@ const Page = () => {
 				description,
 			});
 		} catch (error) {
-      console.log('Error saving query:', error);
-    }
+			console.log('Error saving query:', error);
+		}
 	};
 
 	return (
 		<div className="mt-4 flex flex-col">
-			<div className="flex flex-col items-start justify-between px-4 mb-2">
-				<span className="font-mono text-violet-600 mb-2">{'path: ' + path}</span>
+			<div className="flex flex-col items-start justify-between px-4 mb-4">
 				<div className="flex items-center justify-between w-full">
 					<div className="flex w-4/5 items-center">
 						<Input
@@ -102,7 +94,7 @@ const Page = () => {
 					<span className="font-mono text-slate-500">{code.data.length + ' documents'}</span>
 				</div>
 			</div>
-			<pre className="shadow-md border-2 border-t-slate-200 border-indigo-50 rounded-lg h-[calc(100vh-214px)]">
+			<pre className="shadow-md border-2 border-t-slate-200 border-indigo-50 rounded-lg h-[calc(100vh-194px)]">
 				<code className="language-js">{JSON.stringify(code, null, 2)}</code>
 			</pre>
 		</div>
