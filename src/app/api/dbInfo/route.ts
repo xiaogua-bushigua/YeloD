@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from 'next/server';
 import dbConnectPublic from '@/lib/mongodb_public';
 import { Db } from 'mongodb';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 
 async function getCollectionsInfoMongoDB(db: Db) {
 	const collections = [];
@@ -37,11 +37,14 @@ async function getCollectionsInfoMysql(uri: string) {
 		}>
 	>`
     SELECT table_schema AS databaseName, 
-    ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) AS databaseSize 
-    FROM information_schema.tables 
+    SUM(data_length + index_length) / 1024 / 1024 AS databaseSize 
+    FROM information_schema.tables
+    WHERE table_schema = ${databaseName}
     GROUP BY table_schema;
   `;
+
 	const databaseSize = databaseSizeResult[0].databaseSize;
+  const tableName1 = 'nextapp.consumer';
 	// 获取表信息
 	const tableInfoResult = await prisma.$queryRaw<
 		Array<{
@@ -52,10 +55,15 @@ async function getCollectionsInfoMysql(uri: string) {
 	>`
     SELECT table_name AS tableName,
     (data_length + index_length) / 1024 / 1024 AS tableSize,
-    table_rows AS rowCount
+    (
+        SELECT COUNT(*)
+        FROM ${Prisma.raw(tableName1)}
+    ) AS rowCount
     FROM information_schema.tables
-    WHERE table_schema = ${databaseName};
-	`;  
+    WHERE table_schema = ${databaseName}
+    AND table_type = 'BASE TABLE';
+	`;
+
 	const tables = tableInfoResult.map((table) => ({
 		name: table.tableName,
 		options: {
@@ -69,7 +77,7 @@ async function getCollectionsInfoMysql(uri: string) {
 			storageSize: databaseSize,
 		},
 		tables: tables,
-    type: 'mysql'
+		type: 'mysql',
 	};
 }
 
