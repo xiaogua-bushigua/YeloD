@@ -9,10 +9,10 @@ export const POST = async (req: NextRequest) => {
 		const body = await req.json();
 		const user = await UserModel.findOne({ username: body.username });
 		const links = user.databases.links;
-		return NextResponse.json({ data: links, status: 200 });
+		return NextResponse.json({ data: links, status: 200 }, { status: 200 });
 	} catch (error) {
 		console.log(error);
-		throw error;
+		return NextResponse.json({ error, status: 500 }, { status: 500 });
 	}
 };
 
@@ -22,9 +22,9 @@ export const PATCH = async (req: NextRequest) => {
 		await dbConnect();
 		const body = await req.json();
 		await UserModel.updateOne({ username: body.username }, { $set: { databases: { links: body.links } } });
-		return NextResponse.json({ status: 200 });
+		return NextResponse.json({ status: 200 }, { status: 200 });
 	} catch (error) {
 		console.log(error);
-		throw error;
+		return NextResponse.json({ error, status: 500 }, { status: 500 });
 	}
 };

@@ -1,26 +1,26 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
 import Input from '@/components/Input';
-import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
-import { transferQuery } from '@/lib/transferQuery';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
+import SqlSearchTable from '@/components/Data/SqlSearchTable';
 
 const Page = () => {
 	const { info, databaseIndex, InnerIndex, database } = useAppSelector((state: RootState) => state.db);
 	const { user } = useAppSelector((state: RootState) => state.auth);
 	const childRef = useRef<HTMLInputElement | null>(null);
 	const { toast } = useToast();
+	const [tableData, setTableData] = useState<any[]>([]);
 
 	const handleSaveQuery = async () => {
 		const query = childRef.current?.value;
 		const queryObj = {
 			uri: database[databaseIndex],
-			collectionName: info[databaseIndex].collections![InnerIndex].name,
+			tableName: info[databaseIndex].tables![InnerIndex].name,
 			query,
 		};
 		const username = user?.name || user?.username;
@@ -33,13 +33,30 @@ const Page = () => {
 			const description =
 				status === 200 ? 'The query has been saved.' : 'Something went wrong. Please try again.';
 			toast({
-				title: 'Success',
+				title: status === 200 ? 'Success' : 'Error',
 				description,
 			});
 		} catch (error) {
 			console.log('Error saving query:', error);
 		}
 	};
+
+	const handleSearch = async () => {
+		const uri = database[databaseIndex];
+		const innerName = info[databaseIndex].tables![InnerIndex].name;
+		const query = childRef.current?.value;
+		try {
+			const res = await fetch('/api/dbQuery', {
+				method: 'POST',
+				body: JSON.stringify({ uri, innerName, query, type: 'sql' }),
+			});
+			const { data } = await res.json();
+			setTableData(data);
+		} catch (error) {
+			console.log('Error searching query:', error);
+		}
+	};
+
 	return (
 		<div className="mt-4 flex flex-col">
 			<div className="flex flex-col items-start justify-between px-4 mb-4">
@@ -50,12 +67,12 @@ const Page = () => {
 							title="query"
 							name="queries"
 							type="type"
-							placeholder='such as: .find({ "age": { "$gt": 60 } }).sort({ "age": 1 }).limit(10)'
+							placeholder="such as: WHERE age > 40;"
 							className="bg-neutral-50 w-full font-mono border border-violet-200"
 						/>
 						<Button
 							variant="outline"
-							// onClick={handleSearch}
+							onClick={handleSearch}
 							className="font-mono w-24 ml-4 h-10 text-white hover:text-white bg-violet-400 hover:bg-violet-500 active:ring active:ring-violet-200 active:bg-violet-500"
 						>
 							Search
@@ -68,9 +85,10 @@ const Page = () => {
 							Save
 						</Button>
 					</div>
-					{/* <span className="font-mono text-slate-500">{code.data.length + ' rows'}</span> */}
+					<span className="font-mono text-slate-500">{tableData.length + ' rows'}</span>
 				</div>
 			</div>
+			<SqlSearchTable data={tableData} />
 		</div>
 	);
 };

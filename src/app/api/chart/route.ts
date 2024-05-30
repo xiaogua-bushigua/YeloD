@@ -16,23 +16,23 @@ export const PATCH = async (req: NextRequest) => {
 		// 当新增chart时，如果名字和以前的重复了，返回202
 		if (charts.length && !id) {
 			const i = charts.findIndex((chart: ICharts) => chart.chartName === chartInfo.chartName);
-			if (i > -1) return NextResponse.json({ status: 202 });
+			if (i > -1) return NextResponse.json({ status: 202 }, { status: 202 });
 		}
 		// 当新增chart且名字不重复了，直接push
 		if (!id) {
 			charts.push(chartInfo);
 			await UserModel.updateOne({ username }, { $set: { charts } });
-			return NextResponse.json({ status: 200 });
+			return NextResponse.json({ status: 200 }, { status: 200 });
 		}
 		// 当对原来的进行修改
 		const index = charts.findIndex((chart: ICharts) => chart._id.toString() === id);
 		charts[index] = { ...charts[index], ...chartInfo, _id: charts[index]._id };
 
 		await UserModel.updateOne({ username }, { $set: { charts } });
-		return NextResponse.json({ status: 200 });
+		return NextResponse.json({ status: 200 }, { status: 200 });
 	} catch (error) {
 		console.log(error);
-		return NextResponse.json({ status: 500 });
+		return NextResponse.json({ status: 500, error }, { status: 500 });
 	}
 };
 
@@ -43,10 +43,10 @@ export const GET = async (req: NextRequest) => {
 		await dbConnect();
 		const user = await UserModel.findOne({ username });
 		const charts = user.charts || [];
-		return NextResponse.json({ data: charts, status: 200 });
+		return NextResponse.json({ data: charts, status: 200 }, { status: 200 });
 	} catch (error) {
 		console.log(error);
-		return NextResponse.json({ status: 500 });
+		return NextResponse.json({ status: 500 }, { status: 500 });
 	}
 };
 
@@ -59,7 +59,8 @@ export const POST = async (req: NextRequest) => {
 		const data = queries.queries.map(async (query_: IQuery) => {
 			const { uri, collectionName, query, field } = query_;
 			const { db, client } = await dbConnectPublic(uri);
-			const collection = db.collection(collectionName);
+      // 这里要对tableName做兼容
+			const collection = db.collection(collectionName!);
 			const ql = transferQuery(query);
 			let array;
 			if (ql.type === 'all') {
@@ -90,7 +91,6 @@ export const POST = async (req: NextRequest) => {
 			);
 			if (chart.chartType !== 'pie') {
 				nonContainXAxis.forEach((t: { xAxis?: boolean; tag: string; queryIndex: number }, index: number) => {
-					// here!!
 					chart.option.series[index].data = res[t.queryIndex];
 				});
 			} else {
@@ -100,9 +100,9 @@ export const POST = async (req: NextRequest) => {
 			}
 		});
 		await UserModel.updateOne({ username }, { $set: { charts } });
-		return NextResponse.json({ status: 200 });
+		return NextResponse.json({ status: 200 }, { status: 200 });
 	} catch (error) {
-		return NextResponse.json({ error, status: 500 });
+		return NextResponse.json({ error, status: 500 }, { status: 500 });
 	}
 };
 

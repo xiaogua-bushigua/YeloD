@@ -23,13 +23,13 @@ const Page = () => {
 
 	const handleSearch = async () => {
 		const uri = database[databaseIndex];
-		const collectionName = info[databaseIndex].collections![InnerIndex].name;
+		const innerName = info[databaseIndex].collections![InnerIndex].name;
 		const str = childRef.current?.value;
 		const query = transferQuery(str);
 		try {
 			const res = await fetch('/api/dbQuery', {
 				method: 'POST',
-				body: JSON.stringify({ uri, collectionName, query }),
+				body: JSON.stringify({ uri, innerName, query, type: 'mongodb' }),
 			});
 			const { data } = await res.json();
 			setCode({ data });
@@ -94,7 +94,7 @@ const Page = () => {
 					<span className="font-mono text-slate-500">{code.data.length + ' documents'}</span>
 				</div>
 			</div>
-			<pre className="shadow-md border-2 border-t-slate-200 border-indigo-50 rounded-lg h-[calc(100vh-194px)]">
+			<pre className="shadow-md border border-slate-200 rounded-lg h-[calc(100vh-194px)]">
 				<code className="language-js">{JSON.stringify(code, null, 2)}</code>
 			</pre>
 		</div>

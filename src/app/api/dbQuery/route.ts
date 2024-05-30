@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from 'next/server';
 import dbConnectPublic from '@/lib/mongodb_public';
 import dbConnect from '@/lib/mongodb';
 import { UserModel } from '@/lib/models';
+import { PrismaClient, Prisma } from '@prisma/client';
 
 // 获取所有的查询语句信息
 export const GET = async (req: NextRequest) => {
@@ -9,19 +10,30 @@ export const GET = async (req: NextRequest) => {
 		await dbConnect();
 		const username = req.nextUrl.searchParams.get('username');
 		const queries = await UserModel.findOne({ username }, { queries: 1 });
-		return NextResponse.json({ queries, status: 200 });
+		return NextResponse.json({ queries, status: 200 }, { status: 200 });
 	} catch (error) {
-		return NextResponse.json({ error, status: 500 });
+		return NextResponse.json({ error, status: 500 }, { status: 500 });
 	}
 };
 
-// 获取查询语句对应的文档合集
-export const POST = async (req: NextRequest) => {
-	const { uri, collectionName, query } = await req.json();
+const postSql = async (uri: string, innerName: string, query: any) => {
+	const dynamicDbConfig = {
+		datasources: {
+			db: {
+				url: uri,
+			},
+		},
+	};
+	const prisma = new PrismaClient(dynamicDbConfig);
+	const data = await prisma.$queryRaw`SELECT * FROM ${Prisma.raw(innerName)} ${Prisma.raw(query)}`;
+	return data;
+};
+
+const postMongoDB = async (uri: string, innerName: string, query: any) => {
+	let data;
 	try {
 		const { db, client } = await dbConnectPublic(uri);
-		const collection = db.collection(collectionName);
-		let data;
+		const collection = db.collection(innerName);
 		if (query.type === 'all') {
 			data = await collection.find().toArray();
 		} else if (query.type === 'filtered') {
@@ -40,9 +52,23 @@ export const POST = async (req: NextRequest) => {
 			data = await queryBuilder.toArray();
 		}
 		client.close();
-		return NextResponse.json({ data, status: 200 });
+		return data;
 	} catch (error) {
-		return NextResponse.json({ error, status: 500 });
+		console.log(error);
+		return error;
+	}
+};
+
+// 获取查询语句对应的文档合集
+export const POST = async (req: NextRequest) => {
+	const { type, uri, innerName, query } = await req.json();
+	let data;
+	try {
+		if (type === 'mongodb') data = await postMongoDB(uri, innerName, query);
+		else if (type === 'sql') data = await postSql(uri, innerName, query);
+		return NextResponse.json({ data, status: 200 }, { status: 200 });
+	} catch (error) {
+		return NextResponse.json({ error, status: 500 }, { status: 500 });
 	}
 };
 
@@ -56,9 +82,9 @@ export const PATCH = async (req: NextRequest) => {
 		let { queries } = await UserModel.findOne({ username }, { queries: 1 });
 		queries = [...queries, queryObj];
 		await UserModel.updateOne({ username }, { $set: { queries } });
-		return NextResponse.json({ status: 200 });
+		return NextResponse.json({ status: 200 }, { status: 200 });
 	} catch (error) {
 		console.log(error);
-		throw error;
+		return NextResponse.json({ status: 500, error }, { status: 500 });
 	}
 };

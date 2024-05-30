@@ -44,39 +44,51 @@ async function getCollectionsInfoMysql(uri: string) {
   `;
 
 	const databaseSize = databaseSizeResult[0].databaseSize;
-  const tableName1 = 'nextapp.consumer';
-	// 获取表信息
-	const tableInfoResult = await prisma.$queryRaw<
+	// 获取所有的表名
+	const tablesNameResult = await prisma.$queryRaw<
 		Array<{
 			tableName: string;
-			rowCount: number;
-			tableSize: number;
 		}>
 	>`
-    SELECT table_name AS tableName,
-    (data_length + index_length) / 1024 / 1024 AS tableSize,
-    (
-        SELECT COUNT(*)
-        FROM ${Prisma.raw(tableName1)}
-    ) AS rowCount
+    SELECT table_name AS tableName
     FROM information_schema.tables
     WHERE table_schema = ${databaseName}
     AND table_type = 'BASE TABLE';
-	`;
-
-	const tables = tableInfoResult.map((table) => ({
-		name: table.tableName,
-		options: {
-			count: Number(table.rowCount),
-			storageSize: table.tableSize,
-		},
-	}));
+  `;
+	const tablesName = tablesNameResult.map((table) => table.tableName);
+	// 依次获取表的行数和大小
+	let Tables = [];
+	for (let i = 0; i < tablesName.length; i++) {
+		const tableName = databaseName + '.' + tablesName[i];
+		const tableInfoResult = await prisma.$queryRaw<
+			Array<{
+				rowCount: number;
+				tableSize: number;
+			}>
+		>`
+      SELECT (data_length + index_length) / 1024 / 1024 AS tableSize,
+      (
+          SELECT COUNT(*)
+          FROM ${Prisma.raw(tableName)}
+      ) AS rowCount
+      FROM information_schema.tables
+      WHERE table_schema = ${databaseName}
+      AND table_type = 'BASE TABLE';
+    `;
+		Tables.push({
+			name: tablesName[i],
+			options: {
+				count: Number(tableInfoResult[0].rowCount),
+				storageSize: Number(tableInfoResult[i].tableSize),
+			},
+		});
+	}
 	return {
 		dbStats: {
 			db: databaseName,
 			storageSize: databaseSize,
 		},
-		tables: tables,
+		tables: Tables,
 		type: 'mysql',
 	};
 }
@@ -87,23 +99,22 @@ export const POST = async (req: NextRequest) => {
 		const info: any = [];
 		// 并行处理多个数据库连接
 		await Promise.all(
-			uris.map(async (uri: string) => {
+			uris.map(async (uri: string, index: number) => {
 				if (uri.split('://')[0] === 'mongodb') {
 					const { db, client } = await dbConnectPublic(uri);
 					const dbStats = await db.stats();
 					const collections = await getCollectionsInfoMongoDB(db);
-					info.push({ dbStats, collections, type: 'mongodb' });
+					info[index] = { dbStats, collections, type: 'mongodb' };
 					client.close();
 				} else if (uri.split('://')[0] === 'mysql') {
 					const res = await getCollectionsInfoMysql(uri);
-					info.push(res);
+					info[index]= res;
 				}
 			})
 		);
-
-		return NextResponse.json({ info, status: 200 });
+		return NextResponse.json({ info, status: 200 }, { status: 200 });
 	} catch (error) {
-		console.log(error, 123);
-		return NextResponse.json({ error, status: 500 });
+		console.log(error);
+		return NextResponse.json({ error, status: 500 }, { status: 500 });
 	}
 };

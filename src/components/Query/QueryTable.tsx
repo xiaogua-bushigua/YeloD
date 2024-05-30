@@ -15,7 +15,8 @@ import Dialog from '../Dialog';
 interface Itags {
 	_id: string;
 	uri: string;
-	collectionName: string;
+	collectionName?: string;
+	tableName?: string;
 	query: string;
 	field?: string;
 	tag?: string;
@@ -28,7 +29,7 @@ const QueryTable = () => {
 	const [tag, setTag] = useState('');
 	const [warningRow, setWarningRow] = useState([] as number[]);
 	const { toast } = useToast();
-	const headers = ['Database uri', 'Query', 'Collection', 'Field', 'Query tag', 'Operations'];
+	const headers = ['Database uri', 'Query', 'Collection/Table', 'Field', 'Query tag', 'Operations'];
 
 	// 获取所有查询语句信息，并设置到rows中
 	const fetchData = async () => {
@@ -75,7 +76,7 @@ const QueryTable = () => {
 		}
 		const queryBody = {
 			uri: rows[index].uri,
-			collectionName: rows[index].collectionName,
+			collectionName: rows[index].collectionName || rows[index].tableName,
 			query: rows[index].query,
 			field: rows[index].field,
 			tag: rows[index].tag,

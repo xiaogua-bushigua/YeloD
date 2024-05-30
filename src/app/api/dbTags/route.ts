@@ -25,9 +25,9 @@ export const POST = async (req: NextRequest) => {
 		}
 		client.close();
 		array = array?.map((arr) => arr[field]);
-		return NextResponse.json({ data: array, status: 200 });
+		return NextResponse.json({ data: array, status: 200 }, { status: 200 });
 	} catch (error) {
-		return NextResponse.json({ error, status: 500 });
+		return NextResponse.json({ error, status: 500 }, { status: 500 });
 	}
 };
 
@@ -66,9 +66,10 @@ export const GET = async (req: NextRequest) => {
 				}
 			})
 		);
-		return NextResponse.json({ data, status: 200 });
+		return NextResponse.json({ data, status: 200 }, { status: 200 });
 	} catch (error) {
-		return NextResponse.json({ error, status: 500 });
+    console.log(error);
+		return NextResponse.json({ error, status: 500 }, { status: 500 });
 	}
 };
 
@@ -82,7 +83,7 @@ export const PATCH = async (req: NextRequest) => {
 		const hasExistedIndex = queries.findIndex((q: any) => q.tag === tag);
 		// 如果有相同的查询tag提示无法更新，保证tag名称的唯一性
 		if (hasExistedIndex > -1 && hasExistedIndex !== index) {
-			return NextResponse.json({ status: 202, data: [hasExistedIndex, index] });
+			return NextResponse.json({ status: 202, data: [hasExistedIndex, index] }, { status: 202 });
 		}
 		queries[index] = {
 			uri,
@@ -92,10 +93,10 @@ export const PATCH = async (req: NextRequest) => {
 			tag,
 		};
 		await UserModel.updateOne({ username }, { $set: { queries } });
-		return NextResponse.json({ status: 200 });
+		return NextResponse.json({ status: 200 }, { status: 200 });
 	} catch (error) {
 		console.log(error);
-		throw error;
+		return NextResponse.json({ error, status: 500 }, { status: 500 });
 	}
 };
 
@@ -113,13 +114,13 @@ export const DELETE = async (req: NextRequest) => {
 				}
 			});
 			if (chart.length) {
-				return NextResponse.json({ data: chart[0].chartName, status: 202 });
+				return NextResponse.json({ data: chart[0].chartName, status: 202 }, { status: 202 });
 			}
 		}
 		await UserModel.updateOne({ username }, { $pull: { queries: { tag } } });
-		return NextResponse.json({ status: 200 });
+		return NextResponse.json({ status: 200 }, { status: 200 });
 	} catch (error) {
 		console.log(error);
-		throw error;
+		return NextResponse.json({ error, status: 500 }, { status: 500 });
 	}
 };

@@ -36,7 +36,8 @@ export interface IScreens {
 
 export interface IQuery {
 	uri: string;
-	collectionName: string;
+	collectionName?: string;
+	tableName?: string;
 	query: string;
 	field?: string;
 	tag?: string;
@@ -63,7 +64,8 @@ const userSchema = new Schema<IUser>({
 	queries: [
 		{
 			uri: { type: String, required: true },
-			collectionName: { type: String, required: true },
+			collectionName: { type: String, required: false },
+			tableName: { type: String, required: false },
 			query: { type: String, required: true },
 			field: { type: String },
 			tag: { type: String },
