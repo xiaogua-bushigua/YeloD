@@ -17,6 +17,8 @@ export const GET = async (req: NextRequest) => {
 };
 
 const postSql = async (uri: string, innerName: string, query: any) => {
+	console.log(uri, innerName, query);
+
 	const dynamicDbConfig = {
 		datasources: {
 			db: {
@@ -65,7 +67,7 @@ export const POST = async (req: NextRequest) => {
 	let data;
 	try {
 		if (type === 'mongodb') data = await postMongoDB(uri, innerName, query);
-		else if (type === 'sql') data = await postSql(uri, innerName, query);
+		else if (type === 'mysql') data = await postSql(uri, innerName, query);
 		return NextResponse.json({ data, status: 200 }, { status: 200 });
 	} catch (error) {
 		return NextResponse.json({ error, status: 500 }, { status: 500 });

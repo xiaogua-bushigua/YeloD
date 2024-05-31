@@ -11,20 +11,11 @@ import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 import { useToast } from '@/components/ui/use-toast';
 import Dialog from '../Dialog';
-
-interface Itags {
-	_id: string;
-	uri: string;
-	collectionName?: string;
-	tableName?: string;
-	query: string;
-	field?: string;
-	tag?: string;
-}
+import { IQuery } from '@/lib/models';
 
 const QueryTable = () => {
 	const { user } = useAppSelector((state: RootState) => state.auth);
-	const [rows, setRows] = useState([] as Itags[]);
+	const [rows, setRows] = useState([] as IQuery[]);
 	const [code, setCode] = useState({} as any);
 	const [tag, setTag] = useState('');
 	const [warningRow, setWarningRow] = useState([] as number[]);
@@ -46,13 +37,16 @@ const QueryTable = () => {
 
 	const handleView = async (index: number) => {
 		const uri = rows[index].uri;
-		const collectionName = rows[index].collectionName;
+		const innerName = rows[index].collectionName || rows[index].tableName;
 		const str = rows[index].query;
-		const query = transferQuery(str);
+		const type = uri.split('://')[0];
+		let query;
+		if (type === 'mongodb') query = transferQuery(str);
+		else query = str;
 		try {
 			const res = await fetch('/api/dbQuery', {
 				method: 'POST',
-				body: JSON.stringify({ uri, collectionName, query }),
+				body: JSON.stringify({ uri, innerName, query, type: uri.split('://')[0] }),
 			});
 			const { data } = await res.json();
 			// 如果表格里field空的，则渲染文档的所有信息；反之，只渲染对应field的信息
@@ -74,15 +68,25 @@ const QueryTable = () => {
 			});
 			return;
 		}
-		const queryBody = {
+		let queryBody = {
 			uri: rows[index].uri,
-			collectionName: rows[index].collectionName || rows[index].tableName,
 			query: rows[index].query,
 			field: rows[index].field,
 			tag: rows[index].tag,
 			username: user.name || user.username,
 			index,
+		} as {
+			uri: string;
+			query: string;
+			field: string;
+			tag: string;
+			username: string;
+			index: number;
+			tableName?: string;
+			collectionName?: string;
 		};
+		if (queryBody.uri.split('://')[0] === 'mongodb') queryBody.collectionName = rows[index].collectionName;
+		else queryBody.tableName = rows[index].tableName;
 		try {
 			const res = await fetch('/api/dbTags', {
 				method: 'PATCH',
@@ -180,7 +184,7 @@ const QueryTable = () => {
 							<span className="font-mono text-slate-800">{row.query}</span>
 						</TableCell>
 						<TableCell>
-							<span className="font-mono text-slate-800">{row.collectionName}</span>
+							<span className="font-mono text-slate-800">{row.collectionName || row.tableName}</span>
 						</TableCell>
 						<TableCell>
 							<Input

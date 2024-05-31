@@ -1,6 +1,6 @@
 import dbConnect from '@/lib/mongodb';
 import { NextResponse, NextRequest } from 'next/server';
-import { ICharts, UserModel } from '@/lib/models';
+import { ICharts, IQuery, UserModel } from '@/lib/models';
 import dbConnectPublic from '@/lib/mongodb_public';
 import { transferQuery } from '@/lib/transferQuery';
 
@@ -68,14 +68,14 @@ export const GET = async (req: NextRequest) => {
 		);
 		return NextResponse.json({ data, status: 200 }, { status: 200 });
 	} catch (error) {
-    console.log(error);
+		console.log(error);
 		return NextResponse.json({ error, status: 500 }, { status: 500 });
 	}
 };
 
 // 更新某一查询语句信息
 export const PATCH = async (req: NextRequest) => {
-	const { uri, collectionName, query, field, tag, username, index } = await req.json();
+	const { uri, query, field, tag, username, index, collectionName, tableName } = await req.json();
 	try {
 		await dbConnect();
 		const user = await UserModel.findOne({ username });
@@ -87,11 +87,12 @@ export const PATCH = async (req: NextRequest) => {
 		}
 		queries[index] = {
 			uri,
-			collectionName,
 			query,
 			field,
 			tag,
-		};
+		} as IQuery;
+		if (uri.split('://')[0] === 'mongodb') queries[index].collectionName = collectionName;
+		else queries[index].tableName = tableName;
 		await UserModel.updateOne({ username }, { $set: { queries } });
 		return NextResponse.json({ status: 200 }, { status: 200 });
 	} catch (error) {

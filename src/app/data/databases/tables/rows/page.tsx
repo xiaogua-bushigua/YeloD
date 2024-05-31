@@ -48,7 +48,7 @@ const Page = () => {
 		try {
 			const res = await fetch('/api/dbQuery', {
 				method: 'POST',
-				body: JSON.stringify({ uri, innerName, query, type: 'sql' }),
+				body: JSON.stringify({ uri, innerName, query, type: 'mysql' }),
 			});
 			const { data } = await res.json();
 			setTableData(data);
