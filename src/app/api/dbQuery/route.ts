@@ -17,8 +17,6 @@ export const GET = async (req: NextRequest) => {
 };
 
 const postSql = async (uri: string, innerName: string, query: any) => {
-	console.log(uri, innerName, query);
-
 	const dynamicDbConfig = {
 		datasources: {
 			db: {

@@ -27,8 +27,8 @@ const ChartTags = () => {
 
 	const handleTagCheckedChange = async (value: string, checked: boolean) => {
 		if (checked) {
-			const queryIndex = tags.findIndex((tag) => tag.tag === value);
-			dispatch(setSelectedTags({ xAxis: false, tag: value, queryIndex, type: 'checked' }));
+			const queryId = tags.filter((tag) => tag.tag === value)[0]._id;
+			dispatch(setSelectedTags({ xAxis: false, tag: value, queryId, type: 'checked' }));
 		} else {
 			dispatch(setSelectedTags({ tag: value, type: 'unchecked' }));
 		}
@@ -66,6 +66,7 @@ const ChartTags = () => {
 			const index = tags.findIndex((tag) => tag.tag === selectedTag.tag);
 			if (index > -1) queries.push(tags[index]);
 		});
+    // 如果有选中x轴，将选中的tag的query放在首位
 		if (chartType === 'line' || chartType === 'bar') {
 			const selectedQueryIndex = queries.findIndex((query) => query.tag === selectValue);
 			const selectedQuery = queries[selectedQueryIndex];

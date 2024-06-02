@@ -15,10 +15,11 @@ interface IinitialState {
 		query: string;
 		uri: string;
 		collectionName: string;
+    _id: string;
 	}>;
 	selectedTags: Array<{
 		tag: string;
-		queryIndex: number;
+		queryId: string;
 		xAxis: boolean;
 	}>;
 }
@@ -140,7 +141,7 @@ const chartSlice = createSlice({
 				case 'checked':
 					state.selectedTags.push({
 						tag: action.payload.tag,
-						queryIndex: action.payload.queryIndex,
+						queryId: action.payload.queryId,
 						xAxis: action.payload.xAxis,
 					});
 					break;

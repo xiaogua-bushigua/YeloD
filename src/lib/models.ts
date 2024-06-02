@@ -5,8 +5,9 @@ export interface ICharts {
 	chartType: string;
 	option: any;
 	selectedTags: Array<{
-		queryIndex: number;
+		queryId: string;
 		tag: string;
+		xAxis: boolean;
 	}>;
 	img: string;
 	_id: string;

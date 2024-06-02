@@ -3,6 +3,7 @@ import { NextResponse, NextRequest } from 'next/server';
 import { ICharts, UserModel, IScreens, IChartsInfo, IQuery } from '@/lib/models';
 import dbConnectPublic from '@/lib/mongodb_public';
 import { transferQuery } from '@/lib/transferQuery';
+import { PrismaClient, Prisma } from '@prisma/client';
 
 // 更新charts
 export const PATCH = async (req: NextRequest) => {
@@ -57,51 +58,68 @@ export const POST = async (req: NextRequest) => {
 		await dbConnect();
 		const queries = await UserModel.findOne({ username }, { queries: 1 });
 		const data = queries.queries.map(async (query_: IQuery) => {
-			const { uri, collectionName, query, field } = query_;
-			const { db, client } = await dbConnectPublic(uri);
-      // 这里要对tableName做兼容
-			const collection = db.collection(collectionName!);
-			const ql = transferQuery(query);
-			let array;
-			if (ql.type === 'all') {
-				array = await collection
-					.find()
-					.project({ _id: 0, [field as string]: 1 })
-					.toArray();
-			} else if (ql.type === 'filtered') {
-				let queryBuilder = collection.find(ql.find);
-				if (ql.sort) queryBuilder = queryBuilder.sort(ql.sort);
-				if (ql.limit) queryBuilder = queryBuilder.limit(ql.limit);
-				array = await queryBuilder.project({ _id: 0, [field as string]: 1 }).toArray();
+			// here
+			const { uri, collectionName, query, field, tableName, _id } = query_;
+			if (collectionName) {
+				const { db, client } = await dbConnectPublic(uri);
+				const collection = db.collection(collectionName!);
+				const ql = transferQuery(query);
+				let array;
+				if (ql.type === 'all') {
+					array = await collection
+						.find()
+						.project({ _id: 0, [field as string]: 1 })
+						.toArray();
+				} else if (ql.type === 'filtered') {
+					let queryBuilder = collection.find(ql.find);
+					if (ql.sort) queryBuilder = queryBuilder.sort(ql.sort);
+					if (ql.limit) queryBuilder = queryBuilder.limit(ql.limit);
+					array = await queryBuilder.project({ _id: 0, [field as string]: 1 }).toArray();
+				}
+				client.close();
+				array = array?.map((arr) => arr[field as string]);
+				return { array, _id };
+			} else {
+				const dynamicDbConfig = {
+					datasources: {
+						db: {
+							url: uri,
+						},
+					},
+				};
+				const prisma = new PrismaClient(dynamicDbConfig);
+				const array = await prisma.$queryRaw`SELECT * FROM ${Prisma.raw(tableName!)} ${Prisma.raw(query)}`;
+				return { array, _id };
 			}
-			client.close();
-			array = array?.map((arr) => arr[field as string]);
-			return array;
 		});
 		const res = await Promise.all(data);
 		const user = await UserModel.findOne({ username });
 		const charts = user.charts || [];
 		charts.forEach((chart: ICharts) => {
 			const containXAxis = chart.selectedTags.filter(
-				(t: { xAxis?: boolean; tag: string; queryIndex: number }) => t.xAxis
+				(t: { xAxis?: boolean; tag: string; queryId: string }) => t.xAxis
 			);
-			if (containXAxis.length) chart.option.xAxis[0].data = res[containXAxis[0].queryIndex];
+			if (containXAxis.length)
+				chart.option.xAxis[0].data = res.filter((r) => r._id.toString() === containXAxis[0].queryId)[0].array;
 			const nonContainXAxis = chart.selectedTags.filter(
-				(t: { xAxis?: boolean; tag: string; queryIndex: number }) => !t.xAxis
+				(t: { xAxis?: boolean; tag: string; queryId: string }) => !t.xAxis
 			);
 			if (chart.chartType !== 'pie') {
-				nonContainXAxis.forEach((t: { xAxis?: boolean; tag: string; queryIndex: number }, index: number) => {
-					chart.option.series[index].data = res[t.queryIndex];
+				nonContainXAxis.forEach((t: { xAxis?: boolean; tag: string; queryId: string }, index: number) => {
+					chart.option.series[index].data = res.filter((r) => r._id.toString() === t.queryId)[0].array;
 				});
 			} else {
-				nonContainXAxis.forEach((t: { xAxis?: boolean; tag: string; queryIndex: number }, index: number) => {
-					chart.option.series[0].data[index].value = res[t.queryIndex].length;
+				nonContainXAxis.forEach((t: { xAxis?: boolean; tag: string; queryId: string }, index: number) => {
+					chart.option.series[0].data[index].value = res.filter(
+						(r) => r._id.toString() === t.queryId
+					)[0].array.length;
 				});
 			}
 		});
 		await UserModel.updateOne({ username }, { $set: { charts } });
 		return NextResponse.json({ status: 200 }, { status: 200 });
 	} catch (error) {
+		console.log(error);
 		return NextResponse.json({ error, status: 500 }, { status: 500 });
 	}
 };

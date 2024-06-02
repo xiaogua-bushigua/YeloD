@@ -68,7 +68,6 @@ export default function Charts() {
 			console.error('Error fetching data:', error);
 		}
 	};
-
 	// 刷新所有charts的option data
 	const refreshCharts = async () => {
 		try {
