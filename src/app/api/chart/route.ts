@@ -58,7 +58,6 @@ export const POST = async (req: NextRequest) => {
 		await dbConnect();
 		const queries = await UserModel.findOne({ username }, { queries: 1 });
 		const data = queries.queries.map(async (query_: IQuery) => {
-			// here
 			const { uri, collectionName, query, field, tableName, _id } = query_;
 			if (collectionName) {
 				const { db, client } = await dbConnectPublic(uri);
@@ -143,14 +142,14 @@ export const DELETE = async (req: NextRequest) => {
 			});
 		}
 		checkedIds = Array.from(new Set(checkedIds));
-		if (checkedIds.includes(chartId)) return NextResponse.json({ status: 202 });
+		if (checkedIds.includes(chartId)) return NextResponse.json({ status: 202 }, { status: 202 });
 		else {
 			const newCharts = charts.filter((chart: ICharts) => chart._id.toString() !== chartId);
 			await UserModel.updateOne({ username }, { $set: { charts: newCharts } });
-			return NextResponse.json({ status: 200 });
+			return NextResponse.json({ status: 200 }, { status: 200 });
 		}
 	} catch (error) {
 		console.log(error);
-		throw error;
+		return NextResponse.json({ status: 500, error }, { status: 500 });
 	}
 };

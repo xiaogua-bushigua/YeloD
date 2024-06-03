@@ -8,9 +8,9 @@ import { PrismaClient, Prisma } from '@prisma/client';
 // 获取查询语句对应文档的某一字段合集
 export const POST = async (req: NextRequest) => {
 	let array;
-	const { uri, collectionName, tableName, query, field } = await req.json();
+	const { uri, collectionName, tableName, query, field } = await req.json();  
 	try {
-		if (query.uri.split('://')[0] === 'mongodb') {
+		if (uri.split('://')[0] === 'mongodb') {
 			const { db, client } = await dbConnectPublic(uri);
 			const collection = db.collection(collectionName);
 			const ql = transferQuery(query);
