@@ -98,8 +98,8 @@ export default function Screens() {
 				body: JSON.stringify({ username: user.name || user.username }),
 			});
 		} catch (error) {
-      console.error('Error refreshing charts:', error);
-    }
+			console.error('Error refreshing charts:', error);
+		}
 	};
 
 	useEffect(() => {

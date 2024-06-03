@@ -17,10 +17,10 @@ export const PATCH = async (req: NextRequest) => {
 			screens[index] = screenInfo;
 		}
 		await UserModel.updateOne({ username }, { $set: { screens } });
-		return NextResponse.json({ status: 200 });
+		return NextResponse.json({ status: 200 }, { status: 200 });
 	} catch (error) {
 		console.log(error);
-		return NextResponse.json({ status: 500 });
+		return NextResponse.json({ status: 500, error }, { status: 500 });
 	}
 };
 
@@ -31,10 +31,10 @@ export const GET = async (req: NextRequest) => {
 		await dbConnect();
 		const user = await UserModel.findOne({ username });
 		const screens = user.screens || [];
-		return NextResponse.json({ data: screens, status: 200 });
+		return NextResponse.json({ data: screens, status: 200 }, { status: 200 });
 	} catch (error) {
 		console.log(error);
-		return NextResponse.json({ status: 500 });
+		return NextResponse.json({ status: 500, error }, { status: 500 });
 	}
 };
 
@@ -75,9 +75,9 @@ export const POST = async (req: NextRequest) => {
 				}
 			}
 		});
-		return NextResponse.json({ data, status: 200 });
+		return NextResponse.json({ data, status: 200 }, { status: 200 });
 	} catch (error) {
-		return NextResponse.json({ status: 500 });
+		return NextResponse.json({ status: 500, error }, { status: 500 });
 	}
 };
 
@@ -90,9 +90,9 @@ export const DELETE = async (req: NextRequest) => {
 		const screens = user.screens;
 		const newScreens = screens.filter((screen: IScreens) => screen._id.toString() !== screenId);
 		await UserModel.updateOne({ username }, { $set: { screens: newScreens } });
-		return NextResponse.json({ status: 200 });
+		return NextResponse.json({ status: 200 }, { status: 200 });
 	} catch (error) {
 		console.log(error);
-		throw error;
+		NextResponse.json({ status: 500, error }, { status: 500 });
 	}
 };

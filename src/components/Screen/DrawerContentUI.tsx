@@ -1,7 +1,7 @@
 import ChartCheck from './ChartCheck';
 import { useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
 	Select,
 	SelectContent,

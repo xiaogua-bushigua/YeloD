@@ -57,6 +57,7 @@ const OptionsSheet = ({
 			setOption(option);
 		}
 	}, [chartRef]);
+  
 	useEffect(() => {
 		if (open && chartId) {
 			setNowId(chartId);

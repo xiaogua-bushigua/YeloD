@@ -7,7 +7,7 @@ import ScreenCharts from './ScreenCharts';
 const Screen = () => {
 	const wrapRef = useRef<HTMLDivElement>(null);
 	const screenRef = useRef<HTMLDivElement>(null);
-	const { background, title, ratio, charts } = useAppSelector((state: RootState) => state.screen);
+	const { background, title, ratio } = useAppSelector((state: RootState) => state.screen);
 
 	const handleResizeScreen = () => {
 		const [w, h] = ratio.split(':').map(Number);

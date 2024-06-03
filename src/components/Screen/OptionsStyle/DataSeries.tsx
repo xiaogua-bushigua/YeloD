@@ -8,7 +8,7 @@ const DataSeries = ({ chartId, option, chartType }: { chartId: string; option: a
 	const colors = option.color;
 
 	useEffect(() => {
-    console.log(option.series);
+    // console.log(option.series);
   }, [option.series]);
 
 	return (
