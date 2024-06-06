@@ -13,18 +13,16 @@ const PieSerie = ({
 	index,
 	serie,
 	scolor,
-  chartType
+	chartType,
 }: {
 	chartId: string;
 	index: number;
 	serie: any;
 	scolor: string;
-  chartType: string;
+	chartType: string;
 }) => {
 	const dispatch = useAppDispatch();
-	const [color, setColor] = useColor(
-		serie.itemStyle ? (serie.itemStyle.color ? serie.itemStyle.color : scolor) : scolor
-	);
+	const [color, setColor] = useColor(serie.itemStyle.color || scolor);
 	const [serieName, setSerieName] = useState(serie.name);
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
@@ -34,7 +32,9 @@ const PieSerie = ({
 	};
 	useEffect(() => {
 		if (!popoverOpen) {
-			dispatch(changeChartOption({ type: 'series', prop: 'color', value: color.hex, id: chartId, index, chartType }));
+			dispatch(
+				changeChartOption({ type: 'series', prop: 'color', value: color.hex, id: chartId, index, chartType })
+			);
 		}
 	}, [popoverOpen]);
 	return (

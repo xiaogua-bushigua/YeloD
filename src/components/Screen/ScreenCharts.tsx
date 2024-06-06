@@ -186,8 +186,14 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 	}, []);
 
 	const handleSheetOpenChange = (open: boolean, id: string) => {
-		if (!open) setChartId('');
-		else setChartId(id);
+		setChartId(id);
+		const panes = document.querySelectorAll('.panes') as NodeListOf<HTMLElement>;
+		const borderStyle = open ? '2px solid rgb(251, 153, 210)' : '2px solid transparent';
+		panes.forEach((pane: HTMLElement) => {
+			if (pane.id === id) {
+				pane.style.border = borderStyle;
+			}
+		});
 	};
 
 	return (
@@ -212,7 +218,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 								background === 'light' ? 'bg-violet-600 opacity-20' : 'bg-slate-50 opacity-20'
 							}`}
 						></div>
-						<div className="corners cursor-nwse-resize w-[30px] h-[30px] absolute bottom-1 right-1 hidden">
+						<div className="corners cursor-nwse-resize w-[30px] h-[30px] absolute bottom-1 right-1 hidden select-none">
 							<Image src={'/imgs/zoom.png'} width={40} height={40} alt="zoom" />
 						</div>
 						<OptionsSheet
@@ -221,7 +227,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 							chartType={chart.chartType}
 							chartRef={childRef.current[index]!}
 						>
-							<div className="editIcon cursor-pointer w-[30px] h-[30px] absolute bottom-1 left-1 hidden ">
+							<div className="editIcon cursor-pointer w-[30px] h-[30px] absolute bottom-1 left-1 hidden select-none">
 								<Image src={'/imgs/edit.png'} width={30} height={40} alt="edit" />
 							</div>
 						</OptionsSheet>

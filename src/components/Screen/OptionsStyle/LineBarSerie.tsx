@@ -24,16 +24,22 @@ const LineBarSerie = ({
 	const { charts } = useAppSelector((state: RootState) => state.screen);
 	const serie = charts.filter((c) => c._id === chartId)[0].option.series[seriesIndex];
 	const dispatch = useAppDispatch();
-	const [color, setColor] = useColor(
-		serie.itemStyle ? (serie.itemStyle.color ? serie.itemStyle.color : scolor) : scolor
-	);
+	const [color, setColor] = useColor(serie.lineStyle.color || scolor);
 	const [serieName, setSerieName] = useState(serie.name);
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
 	const handleInputChange = (value: string) => {
 		setSerieName(value);
 		dispatch(
-			changeChartOption({ type: 'series', prop: 'name', value, id: chartId, index: seriesIndex, chartType, defaultColor: color.hex })
+			changeChartOption({
+				type: 'series',
+				prop: 'name',
+				value,
+				id: chartId,
+				index: seriesIndex,
+				chartType,
+				defaultColor: color.hex,
+			})
 		);
 	};
 	useEffect(() => {
@@ -46,7 +52,7 @@ const LineBarSerie = ({
 					id: chartId,
 					index: seriesIndex,
 					chartType,
-          defaultName: serieName
+					defaultName: serieName,
 				})
 			);
 		}

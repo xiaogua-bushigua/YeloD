@@ -44,7 +44,7 @@ const Screen = () => {
 			>
 				{title && (
 					<p
-						className={`text-center font-mono font-bold text-3xl mt-4 ${
+						className={`text-center font-mono font-bold text-3xl mt-4 select-none ${
 							background === 'light' ? 'text-slate-700' : 'text-slate-50'
 						}`}
 					>

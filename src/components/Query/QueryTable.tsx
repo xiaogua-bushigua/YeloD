@@ -20,7 +20,11 @@ const QueryTable = () => {
 	const [tag, setTag] = useState('');
 	const [warningRow, setWarningRow] = useState([] as number[]);
 	const { toast } = useToast();
-	const headers = ['Database uri', 'Query', 'Collection/Table', 'Field', 'Query tag', 'Operations'];
+	const headers = ['Database', 'Query', 'Collection/Table', 'Field', 'Query tag', 'Operations'];
+  const dbDist = {
+    mongodb: 'MongoDB',
+    mysql: 'MySQL'
+  } as any;
 
 	// 获取所有查询语句信息，并设置到rows中
 	const fetchData = async () => {
@@ -178,7 +182,7 @@ const QueryTable = () => {
 				{rows.map((row, index) => (
 					<TableRow key={row._id}>
 						<TableCell>
-							<span className="font-mono text-slate-800">{row.uri}</span>
+							<span className="font-mono text-slate-800">{dbDist[row.uri.split('://')[0]]}</span>
 						</TableCell>
 						<TableCell>
 							<span className="font-mono text-slate-800">{row.query}</span>
