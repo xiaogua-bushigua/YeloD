@@ -8,7 +8,7 @@ import { PrismaClient, Prisma } from '@prisma/client';
 // 获取查询语句对应文档的某一字段合集
 export const POST = async (req: NextRequest) => {
 	let array;
-	const { uri, collectionName, tableName, query, field } = await req.json();  
+	const { uri, collectionName, tableName, query, field } = await req.json();
 	try {
 		if (uri.split('://')[0] === 'mongodb') {
 			const { db, client } = await dbConnectPublic(uri);
@@ -36,7 +36,8 @@ export const POST = async (req: NextRequest) => {
 				},
 			};
 			const prisma = new PrismaClient(dynamicDbConfig);
-			array = await prisma.$queryRaw`SELECT * FROM ${Prisma.raw(tableName!)} ${Prisma.raw(query)}`;
+			array = (await prisma.$queryRaw`SELECT * FROM ${Prisma.raw(tableName!)} ${Prisma.raw(query)}`) as any[];
+			array = array.map((arr) => arr[field]);
 		}
 		return NextResponse.json({ data: array, status: 200 }, { status: 200 });
 	} catch (error) {
@@ -84,9 +85,10 @@ export const GET = async (req: NextRequest) => {
 							},
 						};
 						const prisma = new PrismaClient(dynamicDbConfig);
-						const array = await prisma.$queryRaw`SELECT * FROM ${Prisma.raw(query.tableName!)} ${Prisma.raw(
+						let array = (await prisma.$queryRaw`SELECT * FROM ${Prisma.raw(query.tableName!)} ${Prisma.raw(
 							query
-						)}`;
+						)}`) as any[];
+						array = array?.map((arr) => arr[query.field]);
 						return {
 							tag: query.tag,
 							data: array,

@@ -19,8 +19,8 @@ app.prepare().then(() => {
 			res.on('finish', () => {
 				const endTime = Date.now();
 				const duration = endTime - startTime;
-				const startTimeInBeijing = new Date(startTime).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
-				console.log(`${req.method} ${req.url} ${res.statusCode} in ${duration}ms at ${startTimeInBeijing}`);
+				const startTimeLocal = new Date(startTime).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+				console.log(`${req.method} ${req.url} ${res.statusCode} in ${duration}ms at ${startTimeLocal}`);
 			});
 		}
 

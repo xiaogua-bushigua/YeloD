@@ -66,7 +66,7 @@ const ChartTags = () => {
 			const index = tags.findIndex((tag) => tag.tag === selectedTag.tag);
 			if (index > -1) queries.push(tags[index]);
 		});
-    // 如果有选中x轴，将选中的tag的query放在首位
+		// 如果有选中x轴，将选中的tag的query放在首位
 		if (chartType === 'line' || chartType === 'bar') {
 			const selectedQueryIndex = queries.findIndex((query) => query.tag === selectValue);
 			const selectedQuery = queries[selectedQueryIndex];
@@ -83,6 +83,7 @@ const ChartTags = () => {
 				return { data, tag: query.tag };
 			});
 			const info = await Promise.all(promises);
+			console.log(info);
 			dispatch(setOptionData(info));
 		} catch (error) {
 			console.error('Error clicking fill:', error);

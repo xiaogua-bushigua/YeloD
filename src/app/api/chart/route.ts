@@ -87,7 +87,10 @@ export const POST = async (req: NextRequest) => {
 					},
 				};
 				const prisma = new PrismaClient(dynamicDbConfig);
-				const array = await prisma.$queryRaw`SELECT * FROM ${Prisma.raw(tableName!)} ${Prisma.raw(query)}`;
+				let array = (await prisma.$queryRaw`SELECT * FROM ${Prisma.raw(tableName!)} ${Prisma.raw(
+					query
+				)}`) as any[];
+				array = array?.map((arr) => arr[field as string]);
 				return { array, _id };
 			}
 		});

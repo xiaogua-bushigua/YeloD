@@ -86,7 +86,7 @@ const DrawerContentUI = () => {
 					/>
 				</div>
 			</div>
-			<div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 gap-y-8">
+			<div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 gap-y-8 overflow-y-scroll w-full">
 				{charts.map((card) => (
 					<ChartCheck key={card._id} info={card} />
 				))}
