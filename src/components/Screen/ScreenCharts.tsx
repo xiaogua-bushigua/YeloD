@@ -20,6 +20,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 		corner.style.display = style;
 		edit.style.display = style;
 	};
+
 	// 全屏前后保持图表相对于大屏背景的寸尺和位置不变
 	useEffect(() => {
 		const panes = document.querySelectorAll('.panes') as NodeListOf<HTMLElement>;
@@ -82,7 +83,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 		let z = 1;
 		const panes = document.querySelectorAll('.panes') as NodeListOf<HTMLElement>;
 
-		panes.forEach((pane: HTMLElement, index: number) => {
+		panes.forEach((pane: HTMLElement) => {
 			const title = pane.querySelector('.titles') as HTMLElement;
 			const corner = pane.querySelector('.corners') as HTMLElement;
 			const edit = pane.querySelector('.editIcon') as HTMLElement;
@@ -120,15 +121,13 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 
 					pane.style.left = l + (event.pageX - startX) + 'px';
 					pane.style.top = t + (event.pageY - startY) + 'px';
-
-					dispatch(setGeometry({ type: 'left', value: pane.style.left, id: pane.id }));
-					dispatch(setGeometry({ type: 'top', value: pane.style.top, id: pane.id }));
 				};
 
 				// 鼠标抬起时候的事件
 				const mouseup = () => {
 					pane.classList.remove('is-dragging-pane');
-
+					dispatch(setGeometry({ type: 'left', value: pane.style.left, id: pane.id }));
+					dispatch(setGeometry({ type: 'top', value: pane.style.top, id: pane.id }));
 					document.removeEventListener('mousemove', drag);
 					document.removeEventListener('mouseup', mouseup);
 				};
@@ -151,11 +150,11 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 
 					pane.style.width = w + (event.pageX - startX) + 'px';
 					pane.style.height = h + (event.pageY - startY) + 'px';
-					dispatch(setGeometry({ type: 'width', value: pane.style.width, id: pane.id }));
-					dispatch(setGeometry({ type: 'height', value: pane.style.height, id: pane.id }));
 				};
 
 				const mouseup = () => {
+					dispatch(setGeometry({ type: 'width', value: pane.style.width, id: pane.id }));
+					dispatch(setGeometry({ type: 'height', value: pane.style.height, id: pane.id }));
 					document.removeEventListener('mousemove', drag);
 					document.removeEventListener('mouseup', mouseup);
 				};
@@ -187,7 +186,8 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 	}, []);
 
 	const handleSheetOpenChange = (open: boolean, id: string) => {
-		setChartId(id);
+		if (!open) setChartId('');
+		else setChartId(id);
 	};
 
 	return (
