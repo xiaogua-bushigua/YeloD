@@ -4,11 +4,12 @@ import { ICharts, IQuery, UserModel } from '@/lib/models';
 import dbConnectPublic from '@/lib/mongodb_public';
 import { transferQuery } from '@/lib/transferQuery';
 import { PrismaClient, Prisma } from '@prisma/client';
+import { postProcessing } from '@/lib/post-processing';
 
 // 获取查询语句对应文档的某一字段合集
 export const POST = async (req: NextRequest) => {
 	let array;
-	const { uri, collectionName, tableName, query, field } = await req.json();
+	const { uri, collectionName, tableName, query, field, method } = await req.json();
 	try {
 		if (uri.split('://')[0] === 'mongodb') {
 			const { db, client } = await dbConnectPublic(uri);
@@ -39,6 +40,7 @@ export const POST = async (req: NextRequest) => {
 			array = (await prisma.$queryRaw`SELECT * FROM ${Prisma.raw(tableName!)} ${Prisma.raw(query)}`) as any[];
 			array = array.map((arr) => arr[field]);
 		}
+		array = postProcessing(array!, method);
 		return NextResponse.json({ data: array, status: 200 }, { status: 200 });
 	} catch (error) {
 		return NextResponse.json({ error, status: 500 }, { status: 500 });
@@ -108,7 +110,7 @@ export const GET = async (req: NextRequest) => {
 
 // 更新某一查询语句信息
 export const PATCH = async (req: NextRequest) => {
-	const { uri, query, field, tag, username, index, collectionName, tableName } = await req.json();
+	const { uri, query, field, tag, username, index, collectionName, tableName, method } = await req.json();
 	try {
 		await dbConnect();
 		const user = await UserModel.findOne({ username });
@@ -123,6 +125,7 @@ export const PATCH = async (req: NextRequest) => {
 			query,
 			field,
 			tag,
+			method,
 		} as IQuery;
 		if (uri.split('://')[0] === 'mongodb') queries[index].collectionName = collectionName;
 		else queries[index].tableName = tableName;

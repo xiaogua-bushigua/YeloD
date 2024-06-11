@@ -83,7 +83,6 @@ const ChartTags = () => {
 				return { data, tag: query.tag };
 			});
 			const info = await Promise.all(promises);
-			console.log(info);
 			dispatch(setOptionData(info));
 		} catch (error) {
 			console.error('Error clicking fill:', error);

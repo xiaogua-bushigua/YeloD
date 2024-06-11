@@ -4,6 +4,7 @@ import { ICharts, UserModel, IScreens, IChartsInfo, IQuery } from '@/lib/models'
 import dbConnectPublic from '@/lib/mongodb_public';
 import { transferQuery } from '@/lib/transferQuery';
 import { PrismaClient, Prisma } from '@prisma/client';
+import { postProcessing } from '@/lib/post-processing';
 
 // 更新charts
 export const PATCH = async (req: NextRequest) => {
@@ -58,7 +59,7 @@ export const POST = async (req: NextRequest) => {
 		await dbConnect();
 		const queries = await UserModel.findOne({ username }, { queries: 1 });
 		const data = queries.queries.map(async (query_: IQuery) => {
-			const { uri, collectionName, query, field, tableName, _id } = query_;
+			const { uri, collectionName, query, field, tableName, _id, method } = query_;
 			if (collectionName) {
 				const { db, client } = await dbConnectPublic(uri);
 				const collection = db.collection(collectionName!);
@@ -77,6 +78,7 @@ export const POST = async (req: NextRequest) => {
 				}
 				client.close();
 				array = array?.map((arr) => arr[field as string]);
+				array = postProcessing(array!, method);
 				return { array, _id };
 			} else {
 				const dynamicDbConfig = {
@@ -91,6 +93,7 @@ export const POST = async (req: NextRequest) => {
 					query
 				)}`) as any[];
 				array = array?.map((arr) => arr[field as string]);
+				array = postProcessing(array!, method);
 				return { array, _id };
 			}
 		});
@@ -114,7 +117,7 @@ export const POST = async (req: NextRequest) => {
 				nonContainXAxis.forEach((t: { xAxis?: boolean; tag: string; queryId: string }, index: number) => {
 					chart.option.series[0].data[index].value = res.filter(
 						(r) => r._id.toString() === t.queryId
-					)[0].array.length;
+					)[0].array[0];
 				});
 			}
 		});

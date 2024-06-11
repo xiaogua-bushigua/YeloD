@@ -3,6 +3,7 @@ import dbConnectPublic from '@/lib/mongodb_public';
 import dbConnect from '@/lib/mongodb';
 import { UserModel } from '@/lib/models';
 import { PrismaClient, Prisma } from '@prisma/client';
+import { postProcessing } from '@/lib/post-processing';
 
 // 获取所有的查询语句信息
 export const GET = async (req: NextRequest) => {
@@ -61,11 +62,11 @@ const postMongoDB = async (uri: string, innerName: string, query: any) => {
 
 // 获取查询语句对应的文档合集
 export const POST = async (req: NextRequest) => {
-	const { type, uri, innerName, query } = await req.json();
-	let data;
+	const { type, uri, innerName, query, method } = await req.json();
+	let data = [] as any[];
 	try {
-		if (type === 'mongodb') data = await postMongoDB(uri, innerName, query);
-		else if (type === 'mysql') data = await postSql(uri, innerName, query);
+		if (type === 'mongodb') data = (await postMongoDB(uri, innerName, query)) as any[];
+		else if (type === 'mysql') data = (await postSql(uri, innerName, query)) as any[];
 		return NextResponse.json({ data, status: 200 }, { status: 200 });
 	} catch (error) {
 		return NextResponse.json({ error, status: 500 }, { status: 500 });
@@ -79,6 +80,7 @@ export const PATCH = async (req: NextRequest) => {
 		let { queryObj, username } = await req.json();
 		queryObj.field = '';
 		queryObj.tag = '';
+		queryObj.method = 'none';
 		let { queries } = await UserModel.findOne({ username }, { queries: 1 });
 		queries = [...queries, queryObj];
 		await UserModel.updateOne({ username }, { $set: { queries } });

@@ -6,6 +6,7 @@ import PieBasicOption from '@/assets/charts/pie.json';
 interface IinitialState {
 	chartName: string;
 	chartType: string;
+	updateMode: string;
 	option: any;
 	tempOption: string;
 	optionData: Array<string[] | number[]>;
@@ -15,7 +16,8 @@ interface IinitialState {
 		query: string;
 		uri: string;
 		collectionName: string;
-    _id: string;
+		_id: string;
+		method: string;
 	}>;
 	selectedTags: Array<{
 		tag: string;
@@ -27,6 +29,7 @@ interface IinitialState {
 const initialState: IinitialState = {
 	chartName: 'chart-name',
 	chartType: 'line',
+	updateMode: 'static',
 	option: lineBasicOption,
 	tempOption: '',
 	optionData: [lineBasicOption.xAxis[0].data, lineBasicOption.series[0].data],
@@ -64,6 +67,7 @@ const chartSlice = createSlice({
 			state.optionData = [lineBasicOption.xAxis[0].data, lineBasicOption.series[0].data];
 			state.tags = [];
 			state.selectedTags = [];
+			state.updateMode = 'static';
 		},
 		// 在option页面点击reset时，仅仅重置option
 		resetOption(state) {
@@ -81,11 +85,12 @@ const chartSlice = createSlice({
 			}
 		},
 		// 点击图表卡片时，把图表的信息储存在状态里，以便于带到下一个页面
-		initChart(state, action) {
-			state.chartName = action.payload.chartName;
-			state.chartType = action.payload.chartType;
-			state.option = action.payload.option;
-			state.selectedTags = action.payload.selectedTags;
+		initChart(state, { payload }) {
+			state.chartName = payload.chartName;
+			state.chartType = payload.chartType;
+			state.option = payload.option;
+			state.selectedTags = payload.selectedTags;
+			state.updateMode = payload.updateMode;
 		},
 		changeChartType(state, action) {
 			state.chartType = action.payload;
@@ -108,6 +113,9 @@ const chartSlice = createSlice({
 		changeChartName(state, action) {
 			state.chartName = action.payload;
 		},
+		changeUpdateMode(state, action) {
+			state.updateMode = action.payload;
+		},
 		setOptionData(state, action) {
 			const data = action.payload.map((d: { data: Array<string[] | number[]>; tag: string }) => d.data);
 			const tags = action.payload.map((d: { data: Array<string[] | number[]>; tag: string }) => d.tag);
@@ -124,7 +132,7 @@ const chartSlice = createSlice({
 				}
 			} else if (state.chartType === 'pie') {
 				state.option.series[0].data = state.optionData.map((data, index) => ({
-					value: data.length,
+					value: data[0],
 					name: tags[index],
 					tagName: tags[index],
 				}));
@@ -180,4 +188,5 @@ export const {
 	setSelectedTags,
 	initChart,
 	resetOption,
+	changeUpdateMode,
 } = chartSlice.actions;

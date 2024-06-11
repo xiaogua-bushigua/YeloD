@@ -21,7 +21,7 @@ const ChartView = () => {
 
 	// 订阅点击保存按钮的指令
 	useEffect(() => {
-		const token = PubSub.subscribe('saveChartThumbnail', async () => {
+		const token = PubSub.subscribe('saveChartThumbnail', async (msg, { updateMode }) => {
 			const echartInstance = echartRef.current!.getEchartsInstance();
 			const base64 = echartInstance.getDataURL();
 			const chartInfo = {
@@ -30,6 +30,7 @@ const ChartView = () => {
 				option: realOption,
 				selectedTags,
 				img: base64,
+				updateMode,
 			};
 			const id = searchParams.get('id');
 			try {

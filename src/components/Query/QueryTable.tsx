@@ -1,6 +1,15 @@
 'use client';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectLabel,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
 import { transferQuery } from '@/lib/transferQuery';
 import { Input } from '@/components/ui/input';
 import { useEffect, useState } from 'react';
@@ -12,6 +21,7 @@ import 'prismjs/themes/prism.css';
 import { useToast } from '@/components/ui/use-toast';
 import Dialog from '../Dialog';
 import { IQuery } from '@/lib/models';
+import { postProcessing } from '@/lib/post-processing';
 
 const QueryTable = () => {
 	const { user } = useAppSelector((state: RootState) => state.auth);
@@ -20,11 +30,12 @@ const QueryTable = () => {
 	const [tag, setTag] = useState('');
 	const [warningRow, setWarningRow] = useState([] as number[]);
 	const { toast } = useToast();
-	const headers = ['Database', 'Query', 'Collection/Table', 'Field', 'Query tag', 'Operations'];
-  const dbDist = {
-    mongodb: 'MongoDB',
-    mysql: 'MySQL'
-  } as any;
+	const headers = ['Database', 'Query', 'Collection/Table', 'Field', 'Query tag', 'Post-Processing', 'Operations'];
+	const operations = ['none', 'length', 'sum', 'odd', 'even', 'max', 'min', 'average'];
+	const dbDist = {
+		mongodb: 'MongoDB',
+		mysql: 'MySQL',
+	} as any;
 
 	// 获取所有查询语句信息，并设置到rows中
 	const fetchData = async () => {
@@ -38,9 +49,9 @@ const QueryTable = () => {
 			console.log('Error fetching queries:', error);
 		}
 	};
-
 	const handleView = async (index: number) => {
 		const uri = rows[index].uri;
+		const method = rows[index].method;
 		const innerName = rows[index].collectionName || rows[index].tableName;
 		const str = rows[index].query;
 		const type = uri.split('://')[0];
@@ -50,13 +61,14 @@ const QueryTable = () => {
 		try {
 			const res = await fetch('/api/dbQuery', {
 				method: 'POST',
-				body: JSON.stringify({ uri, innerName, query, type: uri.split('://')[0] }),
+				body: JSON.stringify({ method, uri, innerName, query, type: uri.split('://')[0] }),
 			});
 			const { data } = await res.json();
 			// 如果表格里field空的，则渲染文档的所有信息；反之，只渲染对应field的信息
 			if (!rows[index].field) setCode({ data });
 			else {
-				const code = data.map((item: any) => item[rows[index].field!]);
+				let code = data.map((item: any) => item[rows[index].field!]);
+				code = postProcessing(code, method);
 				setCode({ [rows[index].field!]: code });
 				if (rows[index].tag) setTag(rows[index].tag!);
 			}
@@ -79,6 +91,7 @@ const QueryTable = () => {
 			tag: rows[index].tag,
 			username: user.name || user.username,
 			index,
+			method: rows[index].method,
 		} as {
 			uri: string;
 			query: string;
@@ -88,6 +101,7 @@ const QueryTable = () => {
 			index: number;
 			tableName?: string;
 			collectionName?: string;
+			method: string;
 		};
 		if (queryBody.uri.split('://')[0] === 'mongodb') queryBody.collectionName = rows[index].collectionName;
 		else queryBody.tableName = rows[index].tableName;
@@ -158,6 +172,12 @@ const QueryTable = () => {
 		if (type === 'tag') newRows[index].tag = e.target.value;
 		setRows(newRows);
 	};
+	// 应对表格中post-processing列改变的情况
+	const handleMethodChange = (index: number, value: string) => {
+		const newRows = [...rows];
+		newRows[index].method = value;
+		setRows(newRows);
+	};
 
 	useEffect(() => {
 		fetchData();
@@ -209,6 +229,22 @@ const QueryTable = () => {
 								value={row.tag || ''}
 								onChange={(e) => handleInputChange(index, 'tag', e)}
 							/>
+						</TableCell>
+						<TableCell>
+							<Select value={row.method} onValueChange={(value) => handleMethodChange(index, value)}>
+								<SelectTrigger className="w-[140px] font-mono">
+									<SelectValue placeholder="Select a method" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectGroup>
+										{operations.map((operation) => (
+											<SelectItem key={operation} value={operation} className="font-mono">
+												{operation}
+											</SelectItem>
+										))}
+									</SelectGroup>
+								</SelectContent>
+							</Select>
 						</TableCell>
 						<TableCell>
 							<div className="flex">

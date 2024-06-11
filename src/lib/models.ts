@@ -11,6 +11,7 @@ export interface ICharts {
 	}>;
 	img: string;
 	_id: string;
+	updateMode: string;
 }
 
 export interface IChartsInfo {
@@ -43,6 +44,7 @@ export interface IQuery {
 	field?: string;
 	tag?: string;
 	_id?: string;
+	method: string;
 }
 
 interface IUser {
@@ -70,6 +72,7 @@ const userSchema = new Schema<IUser>({
 			query: { type: String, required: true },
 			field: { type: String },
 			tag: { type: String },
+			method: { type: String, required: true },
 		},
 	],
 	charts: [
@@ -79,6 +82,7 @@ const userSchema = new Schema<IUser>({
 			option: { type: Object, required: true },
 			selectedTags: { type: Array, required: true },
 			img: { type: String, required: true },
+			updateMode: { type: String, required: true },
 		},
 	],
 	screens: [
