@@ -19,11 +19,16 @@ import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { IQuery } from '@/lib/models';
 
+interface Message {
+	message: string;
+}
+
 const ChartTags = () => {
-	const { tags, selectedTags, chartType } = useAppSelector((state: RootState) => state.chart);
+	const { tags, selectedTags, chartType, updateMode, chartName } = useAppSelector((state: RootState) => state.chart);
 	const [selectValue, setSelectValue] = useState<string | undefined>(undefined);
 	const dispatch = useAppDispatch();
 	const { toast } = useToast();
+	const [updateFlag, setUpdateFlag] = useState(false);
 
 	const handleTagCheckedChange = async (value: string, checked: boolean) => {
 		if (checked) {
@@ -32,20 +37,22 @@ const ChartTags = () => {
 		} else {
 			dispatch(setSelectedTags({ tag: value, type: 'unchecked' }));
 		}
+		setUpdateFlag(false);
 	};
-
 	const handleXAxisTagSelected = (value: string) => {
 		setSelectValue(value);
 		dispatch(setSelectedTags({ xAxis: true, tag: value, type: 'xAxis' }));
+		setUpdateFlag(false);
 	};
-
+	// 点击重置
 	const handleClickReset = () => {
 		setSelectValue(undefined);
 		dispatch(resetOption());
 		dispatch(setSelectedTags({ type: 'reset' }));
+		setUpdateFlag(false);
 	};
-
-	const handleClickFill = async () => {
+	// 整理请求data的query
+	const getQueries = (): IQuery[] | undefined => {
 		if (selectedTags.length < 2) {
 			toast({
 				title: 'Error',
@@ -73,8 +80,13 @@ const ChartTags = () => {
 			queries = queries.filter((query) => query.tag !== selectValue);
 			queries.unshift(selectedQuery);
 		}
+		return queries;
+	};
+	// 点击填充数据
+	const handleClickFill = async () => {
+		const queries = getQueries();
 		try {
-			const promises = queries.map(async (query) => {
+			const promises = queries!.map(async (query) => {
 				const res = await fetch('/api/dbTags', {
 					method: 'POST',
 					body: JSON.stringify(query),
@@ -84,7 +96,9 @@ const ChartTags = () => {
 			});
 			const info = await Promise.all(promises);
 			dispatch(setOptionData(info));
+			setUpdateFlag(true);
 		} catch (error) {
+			setUpdateFlag(false);
 			console.error('Error clicking fill:', error);
 		}
 	};
@@ -93,7 +107,29 @@ const ChartTags = () => {
 		setSelectValue(
 			selectedTags.filter((tag) => tag.xAxis)[0] ? selectedTags.filter((tag) => tag.xAxis)[0].tag : ''
 		);
+		if (chartName) setUpdateFlag(true);
 	}, []);
+
+	useEffect(() => {
+		const eventSource = new EventSource('/api/events');
+		const handleEventSourceMessage = (event: any) => {
+			console.log(JSON.parse(event.data));
+		};
+		const handleEventSourceError = () => {
+			eventSource.close();
+		};
+
+		if (updateFlag && updateMode === 'dynamic') {
+			eventSource.addEventListener('message', handleEventSourceMessage);
+			eventSource.onerror = handleEventSourceError;
+		}
+
+		return () => {
+			eventSource.removeEventListener('message', handleEventSourceMessage);
+			eventSource.close();
+		};
+	}, [updateMode, updateFlag]);
+
 	return (
 		<div className="p-6 pt-0 h-1/4 w-full overflow-y-scroll">
 			<div className="flex">

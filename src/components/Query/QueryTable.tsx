@@ -31,7 +31,7 @@ const QueryTable = () => {
 	const [warningRow, setWarningRow] = useState([] as number[]);
 	const { toast } = useToast();
 	const headers = ['Database', 'Query', 'Collection/Table', 'Field', 'Query tag', 'Post-Processing', 'Operations'];
-	const operations = ['none', 'length', 'sum', 'odd', 'even', 'max', 'min', 'average'];
+	const operations = ['none', 'length', 'sum', 'odd', 'even', 'max', 'min', 'average', 'limit(7)', 'limit(30)'];
 	const dbDist = {
 		mongodb: 'MongoDB',
 		mysql: 'MySQL',

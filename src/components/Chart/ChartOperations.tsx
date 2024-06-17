@@ -33,7 +33,6 @@ const ChartOperations = ({
 	const dispatch = useAppDispatch();
 	const router = useRouter();
 	const { toast } = useToast();
-	const [updateModeDynamic, setUpdateModeDynamic] = useState(false);
 
 	const handleChartTypeSelectChange = (value: string) => {
 		dispatch(changeChartType(value));

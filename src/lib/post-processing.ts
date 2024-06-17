@@ -9,10 +9,15 @@ export const postProcessing = (data: any[], method: string) => {
 				return data.filter((d, index) => index % 2 == 0);
 			case 'length':
 				return [data.length];
+			case 'limit(7)':
+				return data.slice(-7);
+			case 'limit(30)':
+				return data.slice(-30);
 			default:
 				return data;
 		}
 	} else {
+		// 需要确实为数字的才能做数学计算
 		const result = isNumericArray(data);
 		if (!result) return data;
 		const newData = data.map((d) => parseFloat(String(d)));
@@ -29,7 +34,6 @@ export const postProcessing = (data: any[], method: string) => {
 				return data;
 		}
 	}
-
 };
 
 const isNumericArray = (arr: any[]) => {
