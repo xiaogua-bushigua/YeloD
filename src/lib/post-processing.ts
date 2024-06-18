@@ -1,7 +1,7 @@
 export const postProcessing = (data: any[], method: string) => {
 	if (!data.length || method === 'none') return data;
 
-	if (['odd', 'even', 'length'].includes(method)) {
+	if (['odd', 'even', 'length', 'limit(7)', 'limit(30)'].includes(method)) {
 		switch (method) {
 			case 'odd':
 				return data.filter((d, index) => index % 2 !== 0);

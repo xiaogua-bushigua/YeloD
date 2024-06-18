@@ -123,12 +123,13 @@ const chartSlice = createSlice({
 			if (state.chartType === 'line' || state.chartType === 'bar') {
 				state.option.xAxis[0].data = state.optionData[0];
 				for (let i = 1; i < state.optionData.length; i++) {
-					state.option.series[i - 1] = {
-						data: state.optionData[i],
-						type: state.chartType,
-						name: tags[i],
-						tagName: tags[i],
-					};
+					// state.option.series[i - 1] = {
+					// 	data: state.optionData[i],
+					// 	type: state.chartType,
+					// 	name: tags[i],
+					// 	tagName: tags[i],
+					// };
+					state.option.series[i - 1].data = state.optionData[i];
 				}
 			} else if (state.chartType === 'pie') {
 				state.option.series[0].data = state.optionData.map((data, index) => ({

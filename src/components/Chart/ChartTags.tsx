@@ -111,22 +111,34 @@ const ChartTags = () => {
 	}, []);
 
 	useEffect(() => {
-		const eventSource = new EventSource('/api/events');
+		let eventSource: EventSource | undefined;
 		const handleEventSourceMessage = (event: any) => {
-			console.log(JSON.parse(event.data));
-		};
-		const handleEventSourceError = () => {
-			eventSource.close();
+			const { info } = JSON.parse(event.data);
+			console.log(info);
+			dispatch(setOptionData(info));
 		};
 
+		const handleEventSourceError = () => {
+			if (eventSource) {
+				eventSource.close();
+			}
+		};
 		if (updateFlag && updateMode === 'dynamic') {
+			eventSource = new EventSource(`/api/events?params=${JSON.stringify(getQueries())}`);
 			eventSource.addEventListener('message', handleEventSourceMessage);
 			eventSource.onerror = handleEventSourceError;
+		} else {
+			if (eventSource) {
+				eventSource.removeEventListener('message', handleEventSourceMessage);
+				eventSource.close();
+				eventSource = undefined;
+			}
 		}
-
 		return () => {
-			eventSource.removeEventListener('message', handleEventSourceMessage);
-			eventSource.close();
+			if (eventSource) {
+				eventSource.removeEventListener('message', handleEventSourceMessage);
+				eventSource.close();
+			}
 		};
 	}, [updateMode, updateFlag]);
 

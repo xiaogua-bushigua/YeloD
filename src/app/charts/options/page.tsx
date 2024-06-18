@@ -15,7 +15,7 @@ import dynamic from 'next/dynamic';
 const ChartOptions = dynamic(() => import('@/components/Chart/ChartOptions'), { ssr: false });
 
 const Page = () => {
-	const { option, chartName, chartType, updateMode } = useAppSelector((state: RootState) => state.chart);
+	const { chartName, chartType, updateMode } = useAppSelector((state: RootState) => state.chart);
 	const dispatchAsync: ThunkDispatch<RootState, any, any> = useDispatch();
 	const { user } = useAppSelector((state: RootState) => state.auth);
 	useEffect(() => {
@@ -27,7 +27,7 @@ const Page = () => {
 			<ChartOperations chartName={chartName} chartType={chartType} updateMode={updateMode} />
 			<div className="flex gap-4 w-full mt-2 h-[calc(100vh-144px)]">
 				<div className="w-1/2 rounded-lg">
-					<ChartOptions option={option} />
+					<ChartOptions />
 				</div>
 				<div className="w-1/2 bg-white rounded-lg shadow-md">
 					<div className="w-full h-3/4">

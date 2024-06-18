@@ -54,7 +54,8 @@ const DatabaseCard = ({ info, content, index }: Props) => {
 			onClick={handleClick}
 		>
 			<div className="flex flex-col justify-around">
-				<h3 className="font-mono font-bold text-slate-700 text-xl">{info.name}</h3>
+				{info.name && <h3 className="font-mono font-bold text-slate-700 text-xl">{info.name}</h3>}
+				{!info.name && <h3 className="font-mono font-bold text-red-700 text-xl">connection error</h3>}
 				<p>
 					<span className="text-xl text-violet-700 font-bold">{info.count}</span>
 					<span className="font-mono text-slate-400 ml-2">{content}</span>

@@ -69,8 +69,8 @@ const ChartView = () => {
 
 	useEffect(() => {
 		const echartInstance = echartRef.current!.getEchartsInstance();
-		echartInstance.clear();
-		echartInstance.setOption(option);
+		// echartInstance.clear();
+		echartInstance.setOption(option, { notMerge: false });
 		setRealOption(echartInstance.getOption());
 	}, [option]);
 

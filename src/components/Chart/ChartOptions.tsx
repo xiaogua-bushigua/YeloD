@@ -5,8 +5,12 @@ import EditorJS from '@editorjs/editorjs';
 import editorjsCodeflask from '@calumk/editorjs-codeflask';
 import { setTempOption } from '@/store/reducers/chartSlice';
 import { useAppDispatch } from '@/store/hooks';
+import { useAppSelector } from '@/store/hooks';
+import { RootState } from '@/store/store';
 
-const ChartOptions = ({ option }: { option: any }) => {
+const ChartOptions = () => {
+	const { option } = useAppSelector((state: RootState) => state.chart);
+
 	const ejInstance = useRef<any>(null);
 	const dispatch = useAppDispatch();
 	const DEFAULT_INITIAL_DATA = {
