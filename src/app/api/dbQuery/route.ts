@@ -3,7 +3,6 @@ import dbConnectPublic from '@/lib/mongodb_public';
 import dbConnect from '@/lib/mongodb';
 import { UserModel } from '@/lib/models';
 import { PrismaClient, Prisma } from '@prisma/client';
-import { postProcessing } from '@/lib/post-processing';
 
 // 获取所有的查询语句信息
 export const GET = async (req: NextRequest) => {

@@ -124,7 +124,7 @@ const ChartTags = () => {
 			}
 		};
 		if (updateFlag && updateMode === 'dynamic') {
-			eventSource = new EventSource(`/api/events?params=${JSON.stringify(getQueries())}`);
+			eventSource = new EventSource(`/api/events?params=${JSON.stringify(getQueries())}&interval=1000`);
 			eventSource.addEventListener('message', handleEventSourceMessage);
 			eventSource.onerror = handleEventSourceError;
 		} else {

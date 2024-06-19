@@ -2,11 +2,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { RootState } from '@/store/store';
-import { localRefreshOptionData, setFullScreen, setGeometry } from '@/store/reducers/screenSlice';
+import { localRefreshOptionData, newICharts, setFullScreen, setGeometry } from '@/store/reducers/screenSlice';
 import Image from 'next/image';
 import ScreenChart from './ScreenChart';
 import OptionsSheet from './OptionsStyle/OptionsSheet';
 import EChartsReact from 'echarts-for-react';
+import { IQuery } from '@/lib/models';
 
 const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement> }) => {
 	const dispatch = useAppDispatch();
@@ -79,6 +80,7 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 		}
 	}, [fullScreen]);
 
+	// 表的拖拽和缩放
 	useEffect(() => {
 		let z = 1;
 		const panes = document.querySelectorAll('.panes') as NodeListOf<HTMLElement>;
@@ -166,22 +168,47 @@ const ScreenCharts = ({ screenRef }: { screenRef: React.RefObject<HTMLDivElement
 	}, [charts]);
 
 	useEffect(() => {
-		// 进行静态更新数据
-		const interval = setInterval(async () => {
-			try {
-				await fetch('/api/chart', {
-					method: 'POST',
-					body: JSON.stringify({ username: user.name || user.username }),
-				});
-				const res = await fetch(`/api/chart?username=${user.name || user.username}`, {
-					method: 'GET',
-				});
-				const { data } = await res.json();
-				dispatch(localRefreshOptionData(data));
-			} catch (error) {
-				console.log("Error updating charts' option data:", error);
+		let interval: NodeJS.Timeout;
+		// console.log(charts[0]);
+		charts.forEach(async (chart: newICharts) => {
+			if (chart.checked) {
+				if (chart.updateMode === 'static') {
+					// 进行静态更新数据
+					interval = setInterval(async () => {
+						try {
+							await fetch('/api/chart', {
+								method: 'POST',
+								body: JSON.stringify({ username: user.name || user.username }),
+							});
+							const res = await fetch(`/api/chart/${chart._id}?username=${user.name || user.username}`, {
+								method: 'GET',
+							});
+							const { data } = await res.json();
+							dispatch(localRefreshOptionData(data));
+						} catch (error) {
+							console.log("Error updating charts' option data:", error);
+						}
+					}, staticInterval * 1000 * 60);
+				} else {
+					let queryIds = [] as string[];
+					queryIds = chart.selectedTags
+						.filter((selectedTag) => !selectedTag.xAxis)
+						.map((selectedTag) => selectedTag.queryId);
+					if (chart.chartType === 'line' || chart.chartType === 'bar') {
+						const xAxisQueryId = chart.selectedTags.filter((selectedTag) => selectedTag.xAxis)[0].queryId;
+						queryIds.unshift(xAxisQueryId);
+					}
+					// 根据queryIds请求获取IQuery格式的queries
+					const res = await fetch(`/api/dbQuery?username=${user.name || user.username}`, {
+						method: 'GET',
+					});
+					let { queries } = await res.json();
+					queries = queryIds.map((id) => queries.queries.find((query: IQuery) => query._id === id));
+					// 根据queries发起sse
+				}
 			}
-		}, staticInterval * 1000 * 60);
+		});
+
 		return () => clearInterval(interval);
 	}, []);
 

@@ -66,7 +66,7 @@ const DrawerContentUI = () => {
 					</Select>
 				</div>
 				<div className="flex gap-2 items-center my-2">
-					<span className="text-sm font-mono w-[160px] text-end">Static Interval</span>
+					<span className="text-sm font-mono w-[160px] text-end">{'Static Update(min)'}</span>
 					<Input
 						type="text"
 						value={staticInterval}
@@ -76,7 +76,7 @@ const DrawerContentUI = () => {
 					/>
 				</div>
 				<div className="flex gap-2 items-center my-2">
-					<span className="text-sm font-mono w-[160px] text-end">Dynamic Interval</span>
+					<span className="text-sm font-mono w-[160px] text-end">{'Dynamic Update(s)'}</span>
 					<Input
 						type="text"
 						value={dynamicInterval}

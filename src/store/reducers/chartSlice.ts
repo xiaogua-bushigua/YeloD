@@ -8,7 +8,6 @@ interface IinitialState {
 	chartType: string;
 	updateMode: string;
 	option: any;
-	tempOption: string;
 	optionData: Array<string[] | number[]>;
 	tags: Array<{
 		tag: string;
@@ -31,7 +30,6 @@ const initialState: IinitialState = {
 	chartType: 'line',
 	updateMode: 'static',
 	option: lineBasicOption,
-	tempOption: '',
 	optionData: [lineBasicOption.xAxis[0].data, lineBasicOption.series[0].data],
 	tags: [],
 	selectedTags: [],
@@ -63,7 +61,6 @@ const chartSlice = createSlice({
 			state.chartName = 'chart-name';
 			state.chartType = 'line';
 			state.option = lineBasicOption;
-			state.tempOption = '';
 			state.optionData = [lineBasicOption.xAxis[0].data, lineBasicOption.series[0].data];
 			state.tags = [];
 			state.selectedTags = [];
@@ -139,9 +136,6 @@ const chartSlice = createSlice({
 				}));
 			}
 		},
-		setTempOption(state, action) {
-			state.tempOption = action.payload;
-		},
 		setOption(state, action) {
 			state.option = action.payload;
 		},
@@ -184,7 +178,6 @@ export const {
 	changeChartName,
 	resetChart,
 	setOptionData,
-	setTempOption,
 	setOption,
 	setSelectedTags,
 	initChart,

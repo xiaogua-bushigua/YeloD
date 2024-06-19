@@ -54,7 +54,7 @@ const screenSlice = createSlice({
 			state.ratio = '1:1';
 			state.fullScreen = false;
 			state.staticInterval = 5;
-			state.dynamicInterval = 5;
+			state.dynamicInterval = 1;
 		},
 		// 点击新建screen卡片时，初始化states里的charts
 		initCharts(state, { payload }) {
@@ -108,8 +108,7 @@ const screenSlice = createSlice({
 		// 局部刷新更新的option data
 		localRefreshOptionData: (state, { payload }) => {
 			state.charts.forEach((chart: newICharts) => {
-				const chartIndex = payload.findIndex((p: newICharts) => p._id === chart._id);
-				if (chartIndex > -1) chart.option = payload[chartIndex].option;
+				if (chart._id === payload._id) chart.option = payload.option;
 			});
 		},
 		changeChartOption: (state, { payload }) => {

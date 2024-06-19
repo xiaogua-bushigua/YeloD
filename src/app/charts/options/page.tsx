@@ -9,10 +9,6 @@ import { useEffect } from 'react';
 import { fetchTagsInfo } from '@/store/reducers/chartSlice';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
-import dynamic from 'next/dynamic';
-
-// EditorJS不支持服务端渲染，这里使用客户端渲染
-const ChartOptions = dynamic(() => import('@/components/Chart/ChartOptions'), { ssr: false });
 
 const Page = () => {
 	const { chartName, chartType, updateMode } = useAppSelector((state: RootState) => state.chart);
@@ -26,9 +22,6 @@ const Page = () => {
 		<div className="w-full h-full overflow-hidden">
 			<ChartOperations chartName={chartName} chartType={chartType} updateMode={updateMode} />
 			<div className="flex gap-4 w-full mt-2 h-[calc(100vh-144px)]">
-				<div className="w-1/2 rounded-lg">
-					<ChartOptions />
-				</div>
 				<div className="w-1/2 bg-white rounded-lg shadow-md">
 					<div className="w-full h-3/4">
 						<ChartView />
