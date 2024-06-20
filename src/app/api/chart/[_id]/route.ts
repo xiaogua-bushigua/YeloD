@@ -5,7 +5,6 @@ import { ICharts, UserModel } from '@/lib/models';
 export const GET = async (req: NextRequest, { params }: { params: { _id: string } }) => {
 	const username = req.nextUrl.searchParams.get('username');
 	const _id = params._id;
-  console.log(_id);
 	try {
 		await dbConnect();
 		const user = await UserModel.findOne({ username });

@@ -107,8 +107,9 @@ const screenSlice = createSlice({
 		},
 		// 局部刷新更新的option data
 		localRefreshOptionData: (state, { payload }) => {
+			console.log('static update ', payload.index);
 			state.charts.forEach((chart: newICharts) => {
-				if (chart._id === payload._id) chart.option = payload.option;
+				if (chart._id === payload._id) chart.option = payload.data.option;
 			});
 		},
 		changeChartOption: (state, { payload }) => {
