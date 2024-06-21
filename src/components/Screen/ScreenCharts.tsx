@@ -122,7 +122,7 @@ const ScreenCharts = React.memo(() => {
 					<div
 						key={chart._id}
 						id={chart._id}
-						className={`panes absolute rounded-lg border-2 border-transparent`}
+						className={"panes absolute rounded-lg border-2 border-transparent"}
 						style={{
 							width: chart.width || '300px',
 							height: chart.height || '240px',
