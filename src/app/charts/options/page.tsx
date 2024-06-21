@@ -19,13 +19,15 @@ const Page = () => {
 		dispatchAsync(fetchTagsInfo(user.name || user.username));
 	}, []);
 	return (
-		<div className="w-full h-full overflow-hidden">
+		<div className="w-full h-full overflow-hidden pt-2">
 			<ChartOperations chartName={chartName} chartType={chartType} updateMode={updateMode} />
 			<div className="flex gap-4 w-full mt-2 h-[calc(100vh-144px)]">
-				<div className="w-1/2 bg-white rounded-lg shadow-md">
-					<div className="w-full h-3/4">
+				<div className="w-4/6 bg-white rounded-lg shadow-md">
+					<div className="w-full h-full py-8">
 						<ChartView />
 					</div>
+				</div>
+				<div className="bg-white rounded-lg shadow-md w-2/6">
 					<ChartTags />
 				</div>
 			</div>

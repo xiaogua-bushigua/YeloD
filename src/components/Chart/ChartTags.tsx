@@ -123,7 +123,7 @@ const ChartTags = () => {
 				eventSource.close();
 			}
 		};
-		if (updateFlag && updateMode === 'dynamic') {
+		if (updateFlag && updateMode === 'dynamic' && selectedTags.length) {
 			eventSource = new EventSource(`/api/events?params=${JSON.stringify(getQueries())}&interval=1000`);
 			eventSource.addEventListener('message', handleEventSourceMessage);
 			eventSource.onerror = handleEventSourceError;
@@ -143,7 +143,7 @@ const ChartTags = () => {
 	}, [updateMode, updateFlag]);
 
 	return (
-		<div className="p-6 pt-0 h-1/4 w-full overflow-y-scroll">
+		<div className="p-6 h-full w-full overflow-y-scroll">
 			<div className="flex">
 				<span className="font-mono mr-4 font-bold text-slate-600">Tags: </span>
 				<div className="flex flex-wrap gap-2">
@@ -169,47 +169,43 @@ const ChartTags = () => {
 					)}
 				</div>
 			</div>
-			<div
-				className={`flex h-12 w-full items-center mt-4 ${
-					chartType === 'line' || chartType === 'bar' ? 'justify-between' : 'justify-end'
-				}`}
-			>
-				{(chartType === 'line' || chartType === 'bar') && (
-					<div className="flex items-center">
-						<span className="mr-4 font-bold text-slate-600 font-mono">x Axis Tag: </span>
-						<Select
-							key={'selected x axis tag'}
-							value={selectValue}
-							onValueChange={(value) => handleXAxisTagSelected(value)}
-						>
-							<SelectTrigger className="w-[180px] font-mono">
-								<SelectValue placeholder="Select a tag" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectGroup>
-									<SelectLabel className="font-mono">data tags</SelectLabel>
-									{selectedTags.map((tag) => (
-										<SelectItem key={tag.tag + 'select'} className="font-mono" value={tag.tag}>
-											{tag.tag}
-										</SelectItem>
-									))}
-								</SelectGroup>
-							</SelectContent>
-						</Select>
-					</div>
-				)}
-				<div>
+			<div className={'w-full my-4'}>
+				<div className="flex items-center">
+					<span className="mr-4 font-bold text-slate-600 font-mono">x Axis Tag: </span>
+					<Select
+						key={'selected x axis tag'}
+						value={selectValue}
+						onValueChange={(value) => handleXAxisTagSelected(value)}
+						disabled={chartType === 'pie'}
+					>
+						<SelectTrigger className="w-[180px] font-mono">
+							<SelectValue placeholder="Select a tag" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectGroup>
+								<SelectLabel className="font-mono">data tags</SelectLabel>
+								{selectedTags.map((tag) => (
+									<SelectItem key={tag.tag + 'select'} className="font-mono" value={tag.tag}>
+										{tag.tag}
+									</SelectItem>
+								))}
+							</SelectGroup>
+						</SelectContent>
+					</Select>
+				</div>
+
+				<div className='mt-4 w-1/2'>
 					<Button
 						onClick={handleClickReset}
 						variant="outline"
-						className="font-mono w-1/3 ml-4 h-8 text-slate-700 hover:text-slate-50 bg-slate-50 hover:bg-slate-500 active:ring active:ring-slate-200 active:bg-slate-500"
+						className="font-mono w-1/3 mr-4 h-8 text-slate-700 hover:text-slate-50 bg-slate-50 hover:bg-slate-500 active:ring active:ring-slate-200 active:bg-slate-500"
 					>
 						Reset
 					</Button>
 					<Button
 						variant="outline"
 						onClick={handleClickFill}
-						className="font-mono w-1/3 ml-4 h-8 text-slate-50 hover:text-slate-900 bg-slate-600 hover:bg-slate-50 active:ring active:ring-slate-200 active:bg-slate-100"
+						className="font-mono w-1/3 mr-4 h-8 text-slate-50 hover:text-slate-900 bg-slate-600 hover:bg-slate-50 active:ring active:ring-slate-200 active:bg-slate-100"
 					>
 						Fill
 					</Button>

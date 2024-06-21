@@ -12,7 +12,7 @@ import { useSearchParams } from 'next/navigation';
 
 const ChartView = () => {
 	const echartRef = useRef<EChartsReact>(null);
-	const { chartName, chartType, selectedTags, option } = useAppSelector((state: RootState) => state.chart);
+	const { chartName, chartType, selectedTags, option, updateMode } = useAppSelector((state: RootState) => state.chart);
 	const { user } = useAppSelector((state: RootState) => state.auth);
 	const { toast } = useToast();
 	const router = useRouter();
@@ -69,7 +69,7 @@ const ChartView = () => {
 
 	useEffect(() => {
 		const echartInstance = echartRef.current!.getEchartsInstance();
-		// echartInstance.clear();
+		if(updateMode !== 'dynamic') echartInstance.clear();
 		echartInstance.setOption(option, { notMerge: false });
 		setRealOption(echartInstance.getOption());
 	}, [option]);
