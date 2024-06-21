@@ -4,7 +4,8 @@ import { getFieldData } from '../dbTags/route';
 
 export async function GET(request: NextRequest) {
 	const queries = JSON.parse(request.nextUrl.searchParams.get('params')!) as IQuery[];
-  const interval = JSON.parse(request.nextUrl.searchParams.get('interval')!) as string
+	const interval = JSON.parse(request.nextUrl.searchParams.get('interval')!) as string;
+
 	let responseStream = new TransformStream();
 	const writer = responseStream.writable.getWriter();
 	const encoder = new TextEncoder();
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
 				query.field || '',
 				query.method
 			);
-			return { data, tag: query.tag };
+			return { data, tag: query.tag, queryId: query._id };
 		});
 		const info = await Promise.all(promises);
 		const formattedData = `data: ${JSON.stringify({ info })}\n\n`;

@@ -1,31 +1,23 @@
 'use client';
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { RootState } from '@/store/store';
-import { localRefreshOptionData, newICharts } from '@/store/reducers/screenSlice';
+import { staticRefreshOptionData, newICharts, dynamicRefreshOptionData } from '@/store/reducers/screenSlice';
 import Image from 'next/image';
-import ScreenChart from './ScreenChart';
 import OptionsSheet from './OptionsStyle/OptionsSheet';
 import EChartsReact from 'echarts-for-react';
 import { IQuery } from '@/lib/models';
+import ReactECharts from 'echarts-for-react';
 
 const ScreenCharts = React.memo(() => {
 	const dispatch = useAppDispatch();
-	const { charts, background, staticInterval, dynamicInterval } = useAppSelector((state: RootState) => state.screen);
+	const { charts, background, staticInterval, dynamicInterval, drawCloseFlag } = useAppSelector(
+		(state: RootState) => state.screen
+	);
 	const { user } = useAppSelector((state: RootState) => state.auth);
 	const [chartId, setChartId] = useState('');
 	const childRef = useRef<EChartsReact[] | null[]>([]);
 	const eventSourcesRef = useRef<EventSource[]>([]);
-
-	const handleEventSourceMessage = (event: any) => {
-		const { info } = JSON.parse(event.data);
-		console.log(info);
-		// dispatch(setOptionData(info));
-	};
-
-	const handleEventSourceError = (eventSource: EventSource) => {
-		eventSource.close();
-	};
 
 	const setupStaticUpdate = async (chart: newICharts, index: number) => {
 		try {
@@ -37,12 +29,19 @@ const ScreenCharts = React.memo(() => {
 				method: 'GET',
 			});
 			const { data } = await res.json();
-			dispatch(localRefreshOptionData({ data, index }));
+			dispatch(staticRefreshOptionData({ data, index }));
 		} catch (error) {
 			console.log("Error updating charts' option data:", error);
 		}
 	};
 
+	const handleEventSourceError = (eventSource: EventSource) => {
+		eventSource.close();
+	};
+	const handleEventSourceMessage = (event: any) => {
+		const { info } = JSON.parse(event.data);
+		dispatch(dynamicRefreshOptionData(info));
+	};
 	const setupEventSource = async (chart: newICharts) => {
 		let queryIds: string[] = chart.selectedTags
 			.filter((selectedTag) => !selectedTag.xAxis)
@@ -74,7 +73,6 @@ const ScreenCharts = React.memo(() => {
 			console.log('Error setting up event source:', error);
 		}
 	};
-
 	useEffect(() => {
 		const intervals: NodeJS.Timeout[] = [];
 
@@ -101,7 +99,7 @@ const ScreenCharts = React.memo(() => {
 			});
 			eventSourcesRef.current = [];
 		};
-	}, [charts, dynamicInterval]);
+	}, []);
 
 	const handleSheetOpenChange = (open: boolean, id: string) => {
 		setChartId(id);
@@ -114,6 +112,8 @@ const ScreenCharts = React.memo(() => {
 		});
 	};
 
+  useEffect(() => {}, [drawCloseFlag, dynamicInterval, staticInterval]);
+
 	return (
 		<>
 			{charts.map((chart, index) => {
@@ -122,7 +122,7 @@ const ScreenCharts = React.memo(() => {
 					<div
 						key={chart._id}
 						id={chart._id}
-						className={"panes absolute rounded-lg border-2 border-transparent"}
+						className={'panes absolute rounded-lg border-2 border-transparent'}
 						style={{
 							width: chart.width || '300px',
 							height: chart.height || '240px',
@@ -149,11 +149,12 @@ const ScreenCharts = React.memo(() => {
 								<Image src={'/imgs/edit.png'} width={30} height={40} alt="edit" />
 							</div>
 						</OptionsSheet>
-						<ScreenChart
+						<ReactECharts
 							ref={(ref) => {
 								childRef.current[index] = ref;
 							}}
-							chart={chart}
+							option={chart.option}
+							style={{ height: '100%', width: '100%' }}
 						/>
 					</div>
 				);

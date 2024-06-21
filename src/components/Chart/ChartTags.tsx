@@ -19,10 +19,6 @@ import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { IQuery } from '@/lib/models';
 
-interface Message {
-	message: string;
-}
-
 const ChartTags = () => {
 	const { tags, selectedTags, chartType, updateMode, chartName } = useAppSelector((state: RootState) => state.chart);
 	const [selectValue, setSelectValue] = useState<string | undefined>(undefined);
@@ -85,6 +81,7 @@ const ChartTags = () => {
 	// 点击填充数据
 	const handleClickFill = async () => {
 		const queries = getQueries();
+		if (!queries) return;
 		try {
 			const promises = queries!.map(async (query) => {
 				const res = await fetch('/api/dbTags', {
@@ -92,7 +89,7 @@ const ChartTags = () => {
 					body: JSON.stringify(query),
 				});
 				const { data } = await res.json();
-				return { data, tag: query.tag };
+				return { data, tag: query.tag, queryId: query._id };
 			});
 			const info = await Promise.all(promises);
 			dispatch(setOptionData(info));
@@ -114,7 +111,8 @@ const ChartTags = () => {
 		let eventSource: EventSource | undefined;
 		const handleEventSourceMessage = (event: any) => {
 			const { info } = JSON.parse(event.data);
-			console.log(info);
+			console.log('info', info);
+
 			dispatch(setOptionData(info));
 		};
 
@@ -194,7 +192,7 @@ const ChartTags = () => {
 					</Select>
 				</div>
 
-				<div className='mt-4 w-1/2'>
+				<div className="mt-4 w-1/2">
 					<Button
 						onClick={handleClickReset}
 						variant="outline"

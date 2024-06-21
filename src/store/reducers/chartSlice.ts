@@ -113,26 +113,28 @@ const chartSlice = createSlice({
 		changeUpdateMode(state, action) {
 			state.updateMode = action.payload;
 		},
-		setOptionData(state, action) {
-			const data = action.payload.map((d: { data: Array<string[] | number[]>; tag: string }) => d.data);
-			const tags = action.payload.map((d: { data: Array<string[] | number[]>; tag: string }) => d.tag);
+		setOptionData(state, { payload }) {
+			const data = payload.map((d: { data: Array<string[] | number[]>; tag: string; queryId: string }) => d.data);
+			const tags = payload.map((d: { data: Array<string[] | number[]>; tag: string; queryId: string }) => d.tag);
 			state.optionData = data;
 			if (state.chartType === 'line' || state.chartType === 'bar') {
 				state.option.xAxis[0].data = state.optionData[0];
+				state.option.xAxis[0].queryId = payload[0].queryId;
 				for (let i = 1; i < state.optionData.length; i++) {
-					// state.option.series[i - 1] = {
-					// 	data: state.optionData[i],
-					// 	type: state.chartType,
-					// 	name: tags[i],
-					// 	tagName: tags[i],
-					// };
-					state.option.series[i - 1].data = state.optionData[i];
+					state.option.series[i - 1] = {
+						data: state.optionData[i],
+						type: state.chartType,
+						name: tags[i],
+						tagName: tags[i],
+						queryId: payload[i].queryId,
+					};
 				}
 			} else if (state.chartType === 'pie') {
 				state.option.series[0].data = state.optionData.map((data, index) => ({
 					value: data[0],
 					name: tags[index],
 					tagName: tags[index],
+					queryId: payload[index].queryId,
 				}));
 			}
 		},
@@ -152,6 +154,9 @@ const chartSlice = createSlice({
 					state.selectedTags = state.selectedTags.filter((tag) => tag.tag !== action.payload.tag);
 					break;
 				case 'xAxis':
+					state.selectedTags.forEach((tag) => {
+						tag.xAxis = false;
+					});
 					state.selectedTags.forEach((tag) => {
 						if (tag.tag === action.payload.tag) tag.xAxis = true;
 					});

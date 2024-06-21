@@ -18,6 +18,7 @@ export interface IScreen {
 	fullScreen: boolean;
 	staticInterval: number;
 	dynamicInterval: number;
+	drawCloseFlag: boolean;
 }
 
 const initialState: IScreen = {
@@ -28,7 +29,8 @@ const initialState: IScreen = {
 	ratio: '1:1',
 	fullScreen: false,
 	staticInterval: 5,
-	dynamicInterval: 5,
+	dynamicInterval: 1,
+	drawCloseFlag: true,
 };
 
 const screenSlice = createSlice({
@@ -105,11 +107,35 @@ const screenSlice = createSlice({
 					break;
 			}
 		},
-		// 局部刷新更新的option data
-		localRefreshOptionData: (state, { payload }) => {
-			console.log('static update ', payload.index);
+		// 静态更新option data
+		staticRefreshOptionData: (state, { payload }) => {
 			state.charts.forEach((chart: newICharts) => {
-				if (chart._id === payload._id) chart.option = payload.data.option;
+				if (chart._id === payload.data._id) chart.option = payload.data.option;
+			});
+		},
+		// 动态更新option data
+		dynamicRefreshOptionData: (state, { payload }) => {
+			state.charts.forEach((chart: newICharts) => {
+				if (chart.checked && chart.updateMode === 'dynamic') {
+					if (chart.chartType === 'line' || chart.chartType === 'bar') {
+						chart.option.xAxis[0].data = payload.filter(
+							(item: { data: any[]; tag: string; queryId: string }) =>
+								item.queryId === chart.option.xAxis[0].queryId
+						)[0].data;
+						chart.option.series.forEach((se: any) => {
+							const data = payload.filter(
+								(item: { data: any[]; tag: string; queryId: string }) => item.queryId === se.queryId
+							);
+							if (data.length) se.data = data[0].data;
+						});
+					} else if (chart.chartType === 'pie') {
+						chart.option.series[0].data.forEach((se: any) => {
+							se.value = payload.filter(
+								(item: { data: any[]; tag: string; queryId: string }) => item.queryId === se.queryId
+							)[0].data[0];
+						});
+					}
+				}
 			});
 		},
 		changeChartOption: (state, { payload }) => {
@@ -237,6 +263,9 @@ const screenSlice = createSlice({
 					break;
 			}
 		},
+		setDrawCloseFlag: (state) => {
+			state.drawCloseFlag = !state.drawCloseFlag;
+		},
 	},
 });
 
@@ -254,7 +283,9 @@ export const {
 	initScreen,
 	setGeometry,
 	setScreenName,
-	localRefreshOptionData,
+	staticRefreshOptionData,
+	dynamicRefreshOptionData,
 	resetScreen,
 	changeChartOption,
+	setDrawCloseFlag,
 } = screenSlice.actions;

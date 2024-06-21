@@ -20,7 +20,7 @@ const DrawerContentUI = () => {
 	const { background, charts, title, ratio, staticInterval, dynamicInterval } = useAppSelector(
 		(state: RootState) => state.screen
 	);
-  
+
 	return (
 		<div className="w-full h-full flex">
 			<div className="w-64 border-r flex flex-col border-slate-300 p-4">

@@ -6,16 +6,15 @@ import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 import DrawerContentUI from './DrawerContentUI';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { setFullScreen, setScreenName } from '@/store/reducers/screenSlice';
+import { setFullScreen, setScreenName, setDrawCloseFlag } from '@/store/reducers/screenSlice';
 import html2canvas from 'html2canvas';
 import { RootState } from '@/store/store';
 import { useSearchParams } from 'next/navigation';
 import { useToast } from '@/components/ui/use-toast';
 
 const ScreenOperations = () => {
-	const { screenName, background, title, ratio, staticInterval, dynamicInterval, charts } = useAppSelector(
-		(state: RootState) => state.screen
-	);
+	const { screenName, background, title, ratio, staticInterval, dynamicInterval, charts, drawCloseFlag } =
+		useAppSelector((state: RootState) => state.screen);
 	const { user } = useAppSelector((state: RootState) => state.auth);
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -124,7 +123,7 @@ const ScreenOperations = () => {
 				>
 					<img src="/imgs/fullScreen.svg" alt="left" className="rotate-180 w-6 select-none" />
 				</Button>
-				<Drawer>
+				<Drawer onClose={() => dispatch(setDrawCloseFlag())}>
 					<DrawerTrigger className="rounded-md px-2 font-mono ml-4 h-10 text-white hover:text-white bg-pink-400 hover:bg-pink-500 active:ring active:ring-pink-200 active:bg-pink-500">
 						Configurations
 					</DrawerTrigger>

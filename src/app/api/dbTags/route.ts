@@ -55,39 +55,8 @@ export const getFieldData = async (
 
 // 获取查询语句对应文档的某一字段合集
 export const POST = async (req: NextRequest) => {
-	let array;
 	const { uri, collectionName, tableName, query, field, method } = await req.json();
 	try {
-		// if (uri.split('://')[0] === 'mongodb') {
-		// 	const { db, client } = await dbConnectPublic(uri);
-		// 	const collection = db.collection(collectionName);
-		// 	const ql = transferQuery(query);
-		// 	if (ql.type === 'all') {
-		// 		array = await collection
-		// 			.find()
-		// 			.project({ _id: 0, [field]: 1 })
-		// 			.toArray();
-		// 	} else if (ql.type === 'filtered') {
-		// 		let queryBuilder = collection.find(ql.find);
-		// 		if (ql.sort) queryBuilder = queryBuilder.sort(ql.sort);
-		// 		if (ql.limit) queryBuilder = queryBuilder.limit(ql.limit);
-		// 		array = await queryBuilder.project({ _id: 0, [field]: 1 }).toArray();
-		// 	}
-		// 	client.close();
-		// 	array = array?.map((arr) => arr[field]);
-		// } else {
-		// 	const dynamicDbConfig = {
-		// 		datasources: {
-		// 			db: {
-		// 				url: uri,
-		// 			},
-		// 		},
-		// 	};
-		// 	const prisma = new PrismaClient(dynamicDbConfig);
-		// 	array = (await prisma.$queryRaw`SELECT * FROM ${Prisma.raw(tableName!)} ${Prisma.raw(query)}`) as any[];
-		// 	array = array.map((arr) => arr[field]);
-		// }
-		// array = postProcessing(array!, method);
 		const array = await getFieldData(uri, collectionName, tableName, query, field, method);
 		return NextResponse.json({ data: array, status: 200 }, { status: 200 });
 	} catch (error) {
@@ -95,7 +64,7 @@ export const POST = async (req: NextRequest) => {
 	}
 };
 
-// 获取所有的tag标签和该标签对应的查询信息
+// 获取所有的tag标签和该标签对应的查询信息S
 export const GET = async (req: NextRequest) => {
 	try {
 		await dbConnect();
