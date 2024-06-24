@@ -30,7 +30,7 @@ export default function Charts() {
 	};
 	const handleChartDeleteClick = async (chartId: string) => {
 		try {
-			const res = await fetch('/api/chart', {
+			const res = await fetch('/api/charts', {
 				method: 'DELETE',
 				body: JSON.stringify({ username: user.name || user.username, chartId }),
 			});
@@ -59,7 +59,7 @@ export default function Charts() {
 	};
 	const fetchData = async () => {
 		try {
-			const res = await fetch(`/api/chart?username=${user.name || user.username}`, {
+			const res = await fetch(`/api/charts?username=${user.name || user.username}`, {
 				method: 'GET',
 			});
 			const { data } = await res.json();
@@ -71,7 +71,7 @@ export default function Charts() {
 	// 刷新所有charts的option data
 	const refreshCharts = async () => {
 		try {
-			await fetch('/api/chart', {
+			await fetch('/api/charts', {
 				method: 'POST',
 				body: JSON.stringify({ username: user.name || user.username }),
 			});

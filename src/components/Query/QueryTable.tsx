@@ -40,7 +40,7 @@ const QueryTable = () => {
 	// 获取所有查询语句信息，并设置到rows中
 	const fetchData = async () => {
 		try {
-			const res = await fetch(`/api/dbQuery?username=${user.name || user.username}`, {
+			const res = await fetch(`/api/dbQueries?username=${user.name || user.username}`, {
 				method: 'GET',
 			});
 			const { queries } = await res.json();
@@ -58,10 +58,10 @@ const QueryTable = () => {
 		let query;
 		if (type === 'mongodb') query = transferQuery(str);
 		else query = str;
+		const param = encodeURIComponent(JSON.stringify({ method, uri, innerName, query, type: uri.split('://')[0] }));
 		try {
-			const res = await fetch('/api/dbQuery', {
-				method: 'POST',
-				body: JSON.stringify({ method, uri, innerName, query, type: uri.split('://')[0] }),
+			const res = await fetch(`/api/data?param=${param}`, {
+				method: 'GET',
 			});
 			const { data } = await res.json();
 			// 如果表格里field空的，则渲染文档的所有信息；反之，只渲染对应field的信息

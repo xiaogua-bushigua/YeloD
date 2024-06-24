@@ -27,7 +27,7 @@ export default function Screens() {
 	// 点击已有卡片时，填入对应信息
 	const handleScreenClick = async (screen: IScreens) => {
 		try {
-			const res = await fetch('/api/screen', {
+			const res = await fetch('/api/screens', {
 				method: 'POST',
 				body: JSON.stringify({ username: user.name || user.username, chartsInfo: screen.chartsInfo }),
 			});
@@ -41,7 +41,7 @@ export default function Screens() {
 
 	const handleScreenDeleteClick = async (screenId: string) => {
 		try {
-			fetch('/api/screen', {
+			fetch('/api/screens', {
 				method: 'DELETE',
 				body: JSON.stringify({ username: user.name || user.username, screenId }),
 			})
@@ -67,7 +67,7 @@ export default function Screens() {
 	// 初始化所有的屏幕卡片
 	const fetchScreenCards = async () => {
 		try {
-			const res = await fetch(`/api/screen?username=${user.name || user.username}`, {
+			const res = await fetch(`/api/screens?username=${user.name || user.username}`, {
 				method: 'GET',
 			});
 			const { data } = await res.json();
@@ -80,7 +80,7 @@ export default function Screens() {
 	// 初始化抽屉里待勾选的图表
 	const fetchCharts = async () => {
 		try {
-			const chartsRes = await fetch(`/api/chart?username=${user.name || user.username}`, {
+			const chartsRes = await fetch(`/api/charts?username=${user.name || user.username}`, {
 				method: 'GET',
 			});
 			let { data } = await chartsRes.json();
@@ -93,7 +93,7 @@ export default function Screens() {
 	// 刷新所有charts的option data
 	const refreshCharts = async () => {
 		try {
-			await fetch('/api/chart', {
+			await fetch('/api/charts', {
 				method: 'POST',
 				body: JSON.stringify({ username: user.name || user.username }),
 			});

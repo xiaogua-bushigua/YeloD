@@ -52,7 +52,7 @@ export const GET = async (req: NextRequest) => {
 	}
 };
 
-// 原地根据queries对chart的option的series数据进行更新
+// 原地根据queries对chart.option.series数据进行更新
 export const POST = async (req: NextRequest) => {
 	const { username } = await req.json();
 	try {

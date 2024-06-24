@@ -1,6 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server';
 import dbConnectPublic from '@/lib/mongodb_public';
-import { Db } from 'mongodb';
 import { PrismaClient, Prisma } from '@prisma/client';
 
 async function getCollectionsInfoMongoDB(uri: string) {
@@ -122,10 +121,14 @@ async function getCollectionsInfoMysql(uri: string) {
 	}
 }
 
-export const POST = async (req: NextRequest) => {
-	const { uris } = await req.json();
+export const GET = async (req: NextRequest) => {
+	const urisString = req.nextUrl.searchParams.get('uris');
+	if (!urisString) {
+		return NextResponse.json({ info: [], status: 400, error: 'No URIs provided' }, { status: 400 });
+	}
 	try {
 		const info: any = [];
+		const uris: string[] = JSON.parse(decodeURIComponent(urisString));
 		// 并行处理多个数据库连接
 		await Promise.all(
 			uris.map(async (uri: string, index: number) => {

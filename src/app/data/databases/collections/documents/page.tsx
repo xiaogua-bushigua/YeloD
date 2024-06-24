@@ -26,10 +26,10 @@ const Page = () => {
 		const innerName = info[databaseIndex].collections![InnerIndex].name;
 		const str = childRef.current?.value;
 		const query = transferQuery(str);
+		const param = encodeURIComponent(JSON.stringify({ uri, innerName, query, type: 'mongodb' }));
 		try {
-			const res = await fetch('/api/dbQuery', {
-				method: 'POST',
-				body: JSON.stringify({ uri, innerName, query, type: 'mongodb' }),
+			const res = await fetch(`/api/data?param=${param}`, {
+				method: 'GET',
 			});
 			const { data } = await res.json();
 			setCode({ data });
@@ -47,7 +47,7 @@ const Page = () => {
 		};
 		const username = user?.name || user?.username;
 		try {
-			const res = await fetch('/api/dbQuery', {
+			const res = await fetch('/api/dbQueries', {
 				method: 'PATCH',
 				body: JSON.stringify({ queryObj, username }),
 			});

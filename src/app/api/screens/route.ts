@@ -56,7 +56,7 @@ export const POST = async (req: NextRequest) => {
 				img: chart.img,
 				_id: chart._id,
 				checked: false,
-        updateMode: chart.updateMode,
+				updateMode: chart.updateMode,
 				left: 0,
 				top: 0,
 				width: '300px',

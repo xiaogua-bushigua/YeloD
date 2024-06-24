@@ -67,7 +67,7 @@ const ScreenOperations = () => {
 			};
 			const id = searchParams.get('id');
 			try {
-				const res = await fetch('/api/screen', {
+				const res = await fetch('/api/screens', {
 					method: 'PATCH',
 					body: JSON.stringify({ screenInfo, username: user.name || user.username, id }),
 				});

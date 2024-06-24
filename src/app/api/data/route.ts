@@ -1,20 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server';
 import dbConnectPublic from '@/lib/mongodb_public';
-import dbConnect from '@/lib/mongodb';
-import { UserModel } from '@/lib/models';
 import { PrismaClient, Prisma } from '@prisma/client';
-
-// 获取所有的查询语句信息
-export const GET = async (req: NextRequest) => {
-	try {
-		await dbConnect();
-		const username = req.nextUrl.searchParams.get('username');
-		const queries = await UserModel.findOne({ username }, { queries: 1 });
-		return NextResponse.json({ queries, status: 200 }, { status: 200 });
-	} catch (error) {
-		return NextResponse.json({ error, status: 500 }, { status: 500 });
-	}
-};
 
 const postSql = async (uri: string, innerName: string, query: any) => {
 	const dynamicDbConfig = {
@@ -60,32 +46,18 @@ const postMongoDB = async (uri: string, innerName: string, query: any) => {
 };
 
 // 获取查询语句对应的文档合集
-export const POST = async (req: NextRequest) => {
-	const { type, uri, innerName, query, method } = await req.json();
-	let data = [] as any[];
+export const GET = async (req: NextRequest) => {
+	const paramString = req.nextUrl.searchParams.get('param');
+	if (!paramString) {
+		return NextResponse.json({ info: [], status: 400, error: 'No parameters provided' }, { status: 400 });
+	}
 	try {
+		const { type, uri, innerName, query } = JSON.parse(decodeURIComponent(paramString));
+		let data = [] as any[];
 		if (type === 'mongodb') data = (await postMongoDB(uri, innerName, query)) as any[];
 		else if (type === 'mysql') data = (await postSql(uri, innerName, query)) as any[];
 		return NextResponse.json({ data, status: 200 }, { status: 200 });
 	} catch (error) {
 		return NextResponse.json({ error, status: 500 }, { status: 500 });
-	}
-};
-
-// 向管理员数据库更新用户保存的查询语句
-export const PATCH = async (req: NextRequest) => {
-	try {
-		await dbConnect();
-		let { queryObj, username } = await req.json();
-		queryObj.field = '';
-		queryObj.tag = '';
-		queryObj.method = 'none';
-		let { queries } = await UserModel.findOne({ username }, { queries: 1 });
-		queries = [...queries, queryObj];
-		await UserModel.updateOne({ username }, { $set: { queries } });
-		return NextResponse.json({ status: 200 }, { status: 200 });
-	} catch (error) {
-		console.log(error);
-		return NextResponse.json({ status: 500, error }, { status: 500 });
 	}
 };

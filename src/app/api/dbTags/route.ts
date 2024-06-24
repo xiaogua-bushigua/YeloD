@@ -53,7 +53,7 @@ export const getFieldData = async (
 	}
 };
 
-// 获取查询语句对应文档的某一字段合集
+// 获取查询语句对应文档的某一字段data
 export const POST = async (req: NextRequest) => {
 	const { uri, collectionName, tableName, query, field, method } = await req.json();
 	try {
@@ -64,7 +64,7 @@ export const POST = async (req: NextRequest) => {
 	}
 };
 
-// 获取所有的tag标签和该标签对应的查询信息S
+// 获取所有的tag标签和该标签对应的data
 export const GET = async (req: NextRequest) => {
 	try {
 		await dbConnect();

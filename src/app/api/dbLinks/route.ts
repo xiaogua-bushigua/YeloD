@@ -3,11 +3,15 @@ import dbConnect from '@/lib/mongodb';
 import { NextResponse, NextRequest } from 'next/server';
 
 // 访问管理员数据库，获取对应用户的公共数据库链接
-export const POST = async (req: NextRequest) => {
+export const GET = async (req: NextRequest) => {
+	const usernameString = req.nextUrl.searchParams.get('username');
+	if (!usernameString) {
+		return NextResponse.json({ info: [], status: 400, error: 'No username provided' }, { status: 400 });
+	}
 	try {
+		const username = JSON.parse(decodeURIComponent(usernameString));
 		await dbConnect();
-		const body = await req.json();
-		const user = await UserModel.findOne({ username: body.username });
+		const user = await UserModel.findOne(username);
 		const links = user.databases.links;
 		return NextResponse.json({ data: links, status: 200 }, { status: 200 });
 	} catch (error) {

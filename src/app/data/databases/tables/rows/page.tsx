@@ -25,7 +25,7 @@ const Page = () => {
 		};
 		const username = user?.name || user?.username;
 		try {
-			const res = await fetch('/api/dbQuery', {
+			const res = await fetch('/api/dbQueries', {
 				method: 'PATCH',
 				body: JSON.stringify({ queryObj, username }),
 			});
@@ -45,10 +45,10 @@ const Page = () => {
 		const uri = database[databaseIndex];
 		const innerName = info[databaseIndex].tables![InnerIndex].name;
 		const query = childRef.current?.value;
+		const param = encodeURIComponent(JSON.stringify({ uri, innerName, query, type: 'mysql' }));
 		try {
-			const res = await fetch('/api/dbQuery', {
-				method: 'POST',
-				body: JSON.stringify({ uri, innerName, query, type: 'mysql' }),
+			const res = await fetch(`/api/data?param=${param}`, {
+				method: 'GET',
 			});
 			const { data } = await res.json();
 			setTableData(data);

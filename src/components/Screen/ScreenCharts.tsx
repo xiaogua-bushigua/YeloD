@@ -21,11 +21,11 @@ const ScreenCharts = React.memo(() => {
 
 	const setupStaticUpdate = async (chart: newICharts, index: number) => {
 		try {
-			await fetch('/api/chart', {
+			await fetch('/api/charts', {
 				method: 'POST',
 				body: JSON.stringify({ username: user.name || user.username }),
 			});
-			const res = await fetch(`/api/chart/${chart._id}?username=${user.name || user.username}`, {
+			const res = await fetch(`/api/charts/${chart._id}?username=${user.name || user.username}`, {
 				method: 'GET',
 			});
 			const { data } = await res.json();
@@ -55,7 +55,7 @@ const ScreenCharts = React.memo(() => {
 		}
 
 		try {
-			const res = await fetch(`/api/dbQuery?username=${user.name || user.username}`, {
+			const res = await fetch(`/api/dbQueries?username=${user.name || user.username}`, {
 				method: 'GET',
 			});
 			let { queries } = await res.json();

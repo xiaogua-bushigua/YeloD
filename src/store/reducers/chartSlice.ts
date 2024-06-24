@@ -38,7 +38,7 @@ const initialState: IinitialState = {
 // 获取所有的tag标签和该标签对应的查询信息
 export const fetchTagsInfo = createAsyncThunk('dbTags', async (username: string) => {
 	try {
-		const res = await fetch(`/api/dbQuery?username=${username}`, {
+		const res = await fetch(`/api/dbQueries?username=${username}`, {
 			method: 'GET',
 		});
 		return res.json();

@@ -41,7 +41,7 @@ const OptionsSheet = ({
 	const updateChart = async (chartInfo: any) => {
 		try {
 			// 根据id更新数据库中的图表信息
-			await fetch('/api/chart', {
+			await fetch('/api/charts', {
 				method: 'PATCH',
 				body: JSON.stringify({ chartInfo, username: user.name || user.username, id: nowId }),
 			});

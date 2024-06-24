@@ -17,10 +17,10 @@ export default function Data() {
 	const [loading, setLoading] = useState(true);
 
 	const getLinks = async () => {
+		const username = encodeURIComponent(JSON.stringify({ username: user.name || user.username }));
 		try {
-			const res = await fetch('/api/dbLinks', {
-				method: 'POST',
-				body: JSON.stringify({ username: user.name || user.username }),
+			const res = await fetch(`/api/dbLinks?username=${username}`, {
+				method: 'GET'
 			});
 			const { data } = await res.json();
 			if (data.length === 1 && data[0] === '') return;
@@ -39,5 +39,5 @@ export default function Data() {
 	useEffect(() => {
 		setLoading(Boolean(info.length));
 	}, [info]);
-	return <div className='w-full h-full flex items-center justify-center'>{loading && <LoadingIcon size={72} />}</div>;
+	return <div className="w-full h-full flex items-center justify-center">{loading && <LoadingIcon size={72} />}</div>;
 }

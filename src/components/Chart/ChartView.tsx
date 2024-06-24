@@ -35,7 +35,7 @@ const ChartView = () => {
 			const id = searchParams.get('id');
 			try {
 				// 根据id更新数据库中的图表信息
-				const res = await fetch('/api/chart', {
+				const res = await fetch('/api/charts', {
 					method: 'PATCH',
 					body: JSON.stringify({ chartInfo, username: user.name || user.username, id }),
 				});
