@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk, current } from '@reduxjs/toolkit';
-import { ICharts, IChartsInfo } from '@/lib/models';
+import { createSlice } from '@reduxjs/toolkit';
+import { ICharts } from '@/lib/models';
 
 export interface newICharts extends ICharts {
 	checked: boolean;

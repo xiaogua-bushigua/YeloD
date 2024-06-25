@@ -3,16 +3,16 @@ import { Session, User } from 'next-auth';
 
 const initialState: Session = {
 	user: { username: '', password: '', _id: '' } as User,
-  expires: '',
+	expires: '',
 };
 
 const authSlice = createSlice({
 	name: 'auth',
 	initialState,
 	reducers: {
-    // 保存登录信息
+		// 保存登录信息
 		setSessionState: (state, { payload }) => {
-			if(payload) state.user = payload;
+			if (payload) state.user = payload;
 		},
 	},
 });
