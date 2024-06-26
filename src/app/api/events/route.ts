@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { IQuery } from '@/lib/models';
-import { getFieldData } from '../dbTags/route';
+import { getFieldData } from '@/lib/getFieldData';
 
 export async function GET(request: NextRequest) {
 	const queries = JSON.parse(request.nextUrl.searchParams.get('params')!) as IQuery[];
