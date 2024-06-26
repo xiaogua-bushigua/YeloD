@@ -16,10 +16,10 @@ const SqlSearchTable = ({ data }: { data: any[] }) => {
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{data.map((row) => (
+					{data.map((row, rowIndex) => (
 						<TableRow key={row.id + '_sqlSearchTable'}>
 							{Object.values(row).map((value: any, index: number) => (
-								<TableCell className="font-mono" key={row.id + value + index}>
+								<TableCell className="font-mono" key={rowIndex + row[Object.keys(row)[index]]}>
 									{value}
 								</TableCell>
 							))}

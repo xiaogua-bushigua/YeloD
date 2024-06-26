@@ -100,6 +100,7 @@ async function getCollectionsInfoMysql(uri: string) {
 				},
 			});
 		}
+    await prisma.$disconnect();
 		return {
 			dbStats: {
 				db: databaseName,

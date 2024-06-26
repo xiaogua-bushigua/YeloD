@@ -44,6 +44,7 @@ export const getFieldData = async (
 			const prisma = new PrismaClient(dynamicDbConfig);
 			array = (await prisma.$queryRaw`SELECT * FROM ${Prisma.raw(tableName!)} ${Prisma.raw(query)}`) as any[];
 			array = array.map((arr) => arr[field]);
+			await prisma.$disconnect();
 		}
 		array = postProcessing(array!, method);
 		return array;
@@ -108,6 +109,7 @@ export const GET = async (req: NextRequest) => {
 							query
 						)}`) as any[];
 						array = array?.map((arr) => arr[query.field]);
+            await prisma.$disconnect();
 						return {
 							tag: query.tag,
 							data: array,

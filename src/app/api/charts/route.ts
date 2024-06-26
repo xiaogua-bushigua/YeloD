@@ -94,6 +94,7 @@ export const POST = async (req: NextRequest) => {
 				)}`) as any[];
 				array = array?.map((arr) => arr[field as string]);
 				array = postProcessing(array!, method);
+				await prisma.$disconnect();
 				return { array, _id };
 			}
 		});
@@ -115,9 +116,12 @@ export const POST = async (req: NextRequest) => {
 				});
 			} else {
 				nonContainXAxis.forEach((t: { xAxis?: boolean; tag: string; queryId: string }, index: number) => {
-					chart.option.series[0].data[index].value = res.filter(
-						(r) => r._id.toString() === t.queryId
-					)[0].array[0];
+					const seriesData = res.filter((r) => r._id.toString() === t.queryId)[0];
+					// if (seriesData) {
+					chart.option.series[0].data[index].value = seriesData.array[0];
+					// } else {
+					// 	console.warn(`No data found for queryId: ${JSON.stringify(t)}`);
+					// }
 				});
 			}
 		});

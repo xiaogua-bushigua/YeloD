@@ -12,6 +12,7 @@ const postSql = async (uri: string, innerName: string, query: any) => {
 	};
 	const prisma = new PrismaClient(dynamicDbConfig);
 	const data = await prisma.$queryRaw`SELECT * FROM ${Prisma.raw(innerName)} ${Prisma.raw(query)}`;
+  await prisma.$disconnect();
 	return data;
 };
 
