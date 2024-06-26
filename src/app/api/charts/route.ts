@@ -89,8 +89,8 @@ export const POST = async (req: NextRequest) => {
 					},
 				};
 				const prisma = new PrismaClient(dynamicDbConfig);
-				let array = (await prisma.$queryRaw`SELECT * FROM ${Prisma.raw(tableName!)} ${Prisma.raw(
-					query
+				let array = (await prisma.$queryRaw`SELECT * FROM ${Prisma.sql([tableName!])} ${Prisma.sql(
+					[query]
 				)}`) as any[];
 				array = array?.map((arr) => arr[field as string]);
 				array = postProcessing(array!, method);

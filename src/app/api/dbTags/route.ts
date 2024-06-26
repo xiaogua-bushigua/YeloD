@@ -57,11 +57,11 @@ export const GET = async (req: NextRequest) => {
 							},
 						};
 						const prisma = new PrismaClient(dynamicDbConfig);
-						let array = (await prisma.$queryRaw`SELECT * FROM ${Prisma.raw(query.tableName!)} ${Prisma.raw(
-							query
-						)}`) as any[];
+						let array = (await prisma.$queryRaw`SELECT * FROM ${Prisma.sql([
+							query.tableName!,
+						])} ${Prisma.sql([query])}`) as any[];
 						array = array?.map((arr) => arr[query.field]);
-            await prisma.$disconnect();
+						await prisma.$disconnect();
 						return {
 							tag: query.tag,
 							data: array,

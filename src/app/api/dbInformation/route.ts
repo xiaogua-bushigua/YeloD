@@ -86,7 +86,7 @@ async function getCollectionsInfoMysql(uri: string) {
       SELECT (data_length + index_length) / 1024 / 1024 AS tableSize,
       (
           SELECT COUNT(*)
-          FROM \`${Prisma.raw(tablesName[i])}\`
+          FROM \`${Prisma.sql([tablesName[i]])}\`
       ) AS rowCount
       FROM information_schema.tables
       WHERE table_schema = ${databaseName}
