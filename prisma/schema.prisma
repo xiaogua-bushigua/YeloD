@@ -12,3 +12,7 @@ datasource db {
   provider = "mysql"
   url      = ""
 }
+
+model Temp {
+  id    Int     @id @default(autoincrement())
+}
