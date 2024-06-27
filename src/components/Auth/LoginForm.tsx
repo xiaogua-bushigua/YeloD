@@ -24,21 +24,21 @@ const formProps = [
 
 const LoginForm = () => {
 	const handleLogin = async (preState: any, formData: FormData) => {
-    const { username, password } = Object.fromEntries(formData) as IStringKeyValueObject;
-    if(!username || !password) return { error: 'Please complete the form' };
+		const { username, password } = Object.fromEntries(formData) as IStringKeyValueObject;
+		if (!username || !password) return { error: 'Please complete the form' };
 		const res = await login(username, password);
 		if (res.error) return res;
 		const credentialsValid = await signIn('credentials', {
 			username,
 			password,
-			callbackUrl: '/',
+			callbackUrl: '/data',
 		});
 		if (credentialsValid?.error) return { error: 'Invalid credentials' };
 		return { success: true };
 	};
 
 	const [state, formAction] = useFormState(handleLogin, undefined);
-  
+
 	return (
 		<form className="flex flex-col items-center gap-4 w-full" action={formAction}>
 			<h1 className="text-4xl font-mono mb-4 font-bold">Login</h1>
