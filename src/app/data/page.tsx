@@ -33,7 +33,7 @@ export default function Data() {
 
 	useEffect(() => {
 		getLinks();
-		router.push('/data/databases');
+		// router.push('/data/databases');
 	}, [user]);
 
 	useEffect(() => {
