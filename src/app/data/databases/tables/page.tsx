@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { RootState } from '@/store/store';
 import { useAppSelector } from '@/store/hooks';
 import DatabaseCard from '@/components/Data/DatabaseCard';
-import { ICardsInfo } from '@/app/data/databases/page';
+import { ICardsInfo } from '@/app/data/page';
 
 const Page = () => {
 	const { info, databaseIndex } = useAppSelector((state: RootState) => state.db);

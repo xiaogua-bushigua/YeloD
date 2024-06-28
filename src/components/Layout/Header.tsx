@@ -64,7 +64,7 @@ const Header = () => {
 						text="Sign out"
 						src="/imgs/logout.svg"
 						iconSize={16}
-						className="w-full bg-slate-200 text-zinc-800 hover:text-slate-100 hover:bg-violet-500 py-1 text-md gap-4"
+						className="w-full bg-slate-200 text-zinc-800 py-1 text-md gap-4"
 						onClick={() => {
 							localStorage.removeItem('persist:root');
 							signOut();

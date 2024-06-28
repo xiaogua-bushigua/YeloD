@@ -1,10 +1,10 @@
 'use client';
 
-import { ICardsInfo } from '@/app/data/databases/page';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch } from '@/store/hooks';
 import { setDatabaseIndex, setInnerIndex } from '@/store/reducers/dbSlice';
+import { ICardsInfo } from '@/app/data/page';
 
 interface Props {
 	info: ICardsInfo;
