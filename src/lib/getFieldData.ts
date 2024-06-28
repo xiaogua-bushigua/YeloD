@@ -13,7 +13,7 @@ export const getFieldData = async (
 ) => {
 	let array;
 	try {
-		if (uri.split('://')[0] === 'mongodb') {
+		if (uri.includes('mongodb')) {
 			const { db, client } = await dbConnectPublic(uri);
 			const collection = db.collection(collectionName);
 			const ql = transferQuery(query);
@@ -30,7 +30,7 @@ export const getFieldData = async (
 			}
 			client.close();
 			array = array?.map((arr) => arr[field]);
-		} else {
+		} else if (uri.includes('mysql')) {
 			const dynamicDbConfig = {
 				datasources: {
 					db: {

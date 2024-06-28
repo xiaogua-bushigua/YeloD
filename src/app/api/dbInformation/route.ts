@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from 'next/server';
 import dbConnectPublic from '@/lib/mongodb_public';
 import { PrismaClient, Prisma } from '@prisma/client';
 
-async function getCollectionsInfoMongoDB(uri: string) {
+async function getCollectionsInfoMongoDB(uri: string) {  
 	try {
 		const { db } = await dbConnectPublic(uri);
 		const dbStats = await db.stats();
@@ -133,12 +133,12 @@ export const GET = async (req: NextRequest) => {
 		// 并行处理多个数据库连接
 		await Promise.all(
 			uris.map(async (uri: string, index: number) => {
-				if (uri.split('://')[0] === 'mongodb') {
+				if (uri.includes('mongodb')) {
 					const { client } = await dbConnectPublic(uri);
 					const res = await getCollectionsInfoMongoDB(uri);
 					info[index] = res;
 					client.close();
-				} else if (uri.split('://')[0] === 'mysql') {
+				} else if (uri.includes('mysql')) {
 					const res = await getCollectionsInfoMysql(uri);
 					info[index] = res;
 				}

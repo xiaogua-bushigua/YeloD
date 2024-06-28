@@ -54,11 +54,10 @@ const QueryTable = () => {
 		const method = rows[index].method;
 		const innerName = rows[index].collectionName || rows[index].tableName;
 		const str = rows[index].query;
-		const type = uri.split('://')[0];
 		let query;
-		if (type === 'mongodb') query = transferQuery(str);
+		if (uri.includes('mongodb')) query = transferQuery(str);
 		else query = str;
-		const param = encodeURIComponent(JSON.stringify({ method, uri, innerName, query, type: uri.split('://')[0] }));
+		const param = encodeURIComponent(JSON.stringify({ method, uri, innerName, query }));
 		try {
 			const res = await fetch(`/api/data?param=${param}`, {
 				method: 'GET',
@@ -103,8 +102,8 @@ const QueryTable = () => {
 			collectionName?: string;
 			method: string;
 		};
-		if (queryBody.uri.split('://')[0] === 'mongodb') queryBody.collectionName = rows[index].collectionName;
-		else queryBody.tableName = rows[index].tableName;
+		if (queryBody.uri.includes('mongodb')) queryBody.collectionName = rows[index].collectionName;
+		else if (queryBody.uri.includes('mysql')) queryBody.tableName = rows[index].tableName;
 		try {
 			const res = await fetch('/api/dbTags', {
 				method: 'PATCH',

@@ -54,10 +54,10 @@ export const GET = async (req: NextRequest) => {
 		return NextResponse.json({ info: [], status: 400, error: 'No parameters provided' }, { status: 400 });
 	}
 	try {
-		const { type, uri, innerName, query } = JSON.parse(decodeURIComponent(paramString));
+		const { uri, innerName, query } = JSON.parse(decodeURIComponent(paramString));
 		let data = [] as any[];
-		if (type === 'mongodb') data = (await postMongoDB(uri, innerName, query)) as any[];
-		else if (type === 'mysql') data = (await postSql(uri, innerName, query)) as any[];
+		if (uri.includes('mongodb')) data = (await postMongoDB(uri, innerName, query)) as any[];
+		else if (uri.includes('mysql')) data = (await postSql(uri, innerName, query)) as any[];
 		return NextResponse.json({ data, status: 200 }, { status: 200 });
 	} catch (error) {
 		return NextResponse.json({ error, status: 500 }, { status: 500 });

@@ -26,7 +26,7 @@ export const GET = async (req: NextRequest) => {
 		const data = await Promise.all(
 			queries.queries.map(async (query: any) => {
 				try {
-					if (query.uri.split('://')[0] === 'mongodb') {
+					if (query.uri.includes('mongodb')) {
 						const { db, client } = await dbConnectPublic(query.uri);
 						const collection = db.collection(query.collectionName);
 						const ql = transferQuery(query.query);
@@ -48,7 +48,7 @@ export const GET = async (req: NextRequest) => {
 							tag: query.tag,
 							data: array,
 						};
-					} else {
+					} else if (query.uri.includes('mysql')) {
 						const dynamicDbConfig = {
 							datasources: {
 								db: {
@@ -98,8 +98,8 @@ export const PATCH = async (req: NextRequest) => {
 			tag,
 			method,
 		} as IQuery;
-		if (uri.split('://')[0] === 'mongodb') queries[index].collectionName = collectionName;
-		else queries[index].tableName = tableName;
+		if (uri.includes('mongodb')) queries[index].collectionName = collectionName;
+		else if (uri.includes('mysql')) queries[index].tableName = tableName;
 		await UserModel.updateOne({ username }, { $set: { queries } });
 		return NextResponse.json({ status: 200 }, { status: 200 });
 	} catch (error) {
