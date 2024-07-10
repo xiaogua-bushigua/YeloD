@@ -39,13 +39,20 @@ const Header = () => {
 
 	return (
 		<div className="relative h-12 bg-zinc-50 border-b border-slate-200 flex items-center justify-end pr-12">
-			<Image
+			<img
 				onClick={() => setHover(!hover)}
 				src={sessionData?.user?.image || '/imgs/userDefault.svg'}
 				alt="userDefaultImg"
 				width={30}
 				height={30}
 				className="cursor-pointer mr-2 rounded-full"
+				// onError={(e) => {
+				// 	const target = e.target as HTMLImageElement;
+				// 	if (target.src !== window.location.origin + '/imgs/userDefault.svg') {
+				// 		target.onerror = null; // 防止无限循环
+				// 		target.src = '/imgs/userDefault.svg';
+				// 	}
+				// }}
 			/>
 			<div className="min-w-20 h-full flex justify-center items-center">
 				{sessionData?.user?.username || sessionData?.user?.name ? (
