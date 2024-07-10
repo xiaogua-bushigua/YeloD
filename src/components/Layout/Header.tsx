@@ -45,6 +45,11 @@ const Header = () => {
 				width={30}
 				height={30}
 				className="cursor-pointer mr-2 rounded-full"
+				onError={(e) => {
+					const target = e.target as HTMLImageElement;
+					target.onerror = null; // 防止无限循环
+					target.src = '/imgs/userDefault.svg';
+				}}
 			/>
 			<div className="min-w-20 h-full flex justify-center items-center">
 				{sessionData?.user?.username || sessionData?.user?.name ? (
