@@ -39,7 +39,6 @@ const initialState: IDb = {
 
 export const fetchDatabaseInfo = createAsyncThunk('dbInfo', async (uris: string[]) => {
 	const urisParam = encodeURIComponent(JSON.stringify(uris));
-	console.log(uris);
 	try {
 		const data = await fetch(`/api/dbInformation?uris=${urisParam}`, {
 			method: 'GET',

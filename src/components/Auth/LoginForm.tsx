@@ -23,18 +23,12 @@ const formProps = [
 	},
 ];
 
-const LoginForm = () => {
-	const [wait, setWait] = useState(false);
-
-	useEffect(() => {
-		setWait(false);
-	}, []);
-
+const LoginForm = ({ isLogining, onChangeLogin }: { isLogining: boolean; onChangeLogin: () => void }) => {
 	const handleLogin = async (preState: any, formData: FormData) => {
+		if (isLogining) return;
+		onChangeLogin();
 		const { username, password } = Object.fromEntries(formData) as IStringKeyValueObject;
 		if (!username || !password) return { error: 'Please complete the form' };
-		if (wait) return;
-		setWait(true);
 		const res = await login(username, password);
 		if (res.error) return res;
 		const credentialsValid = await signIn('credentials', {
@@ -61,7 +55,7 @@ const LoginForm = () => {
 					className="bg-neutral-100 w-full"
 				/>
 			))}
-			<Button text={wait ? 'Logging in...' : 'Login'} className="w-full bg-violet-500" />
+			<Button text={isLogining ? 'Logging in...' : 'Login'} className="w-full bg-violet-500" />
 			<p className="font-mono mt-[-10px] text-red-700 h-6">{state?.error || ' '}</p>
 		</form>
 	);

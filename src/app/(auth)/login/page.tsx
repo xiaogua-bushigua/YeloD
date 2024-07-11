@@ -1,16 +1,29 @@
+'use client';
+
 import ExtraLoginForm from '@/components/Auth/ExtraLoginForm';
 import LoginForm from '@/components/Auth/LoginForm';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 const Page = () => {
+	const [isLogining, setIsLogining] = useState(false);
+
+	useEffect(() => {
+		setIsLogining(false);
+	}, []);
+
+	const handleChangeLogin = () => {
+		setIsLogining(true);
+	};
+
 	return (
 		<section className="flex h-screen flex-col items-center justify-center w-full bg-neutral-50">
 			<div className="w-1/2 mt-2">
-				<LoginForm />
+				<LoginForm isLogining={isLogining} onChangeLogin={handleChangeLogin} />
 				<span className="font-mono text-slate-700 self-start">or sign in with: </span>
-				<ExtraLoginForm />
+				<ExtraLoginForm isLogining={isLogining} onChangeLogin={handleChangeLogin} />
 				<Link href="/register" className="font-mono text-slate-700 cursor-pointer">
-					{'Don\'t have an account? Register Now!'}
+					{"Don't have an account? Register Now!"}
 				</Link>
 			</div>
 		</section>

@@ -7,10 +7,6 @@ import LineBarSerie from './LineBarSerie';
 const DataSeries = ({ chartId, option, chartType }: { chartId: string; option: any; chartType: string }) => {
 	const colors = option.color;
 
-	useEffect(() => {
-    // console.log(option.series);
-  }, [option.series]);
-
 	return (
 		<div className="my-2">
 			<p className="font-mono font-bold select-none">- Data series</p>
