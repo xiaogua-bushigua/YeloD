@@ -17,7 +17,7 @@ export const authOptions: AuthOptions = {
 			clientSecret: process.env.GITHUB_SECRET as string,
 			httpOptions: {
 				timeout: 20000,
-			}
+			},
 		}),
 		GoogleProvider({
 			clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -44,7 +44,7 @@ export const authOptions: AuthOptions = {
 	callbacks: {
 		async signIn(params: { account: Account | null; profile?: Profile | undefined }) {
 			const { account, profile } = params;
-      console.log(account, profile)
+			alert(JSON.stringify({ account, profile }));
 			if (account && account?.provider === 'github') {
 				await dbConnect();
 				try {
