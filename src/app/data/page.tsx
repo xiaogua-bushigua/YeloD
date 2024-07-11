@@ -41,7 +41,7 @@ export default function Data() {
 	};
 
 	useEffect(() => {
-		getLinks();
+		if(user.name || user.username) getLinks();
 	}, [user]);
 
 	useEffect(() => {
