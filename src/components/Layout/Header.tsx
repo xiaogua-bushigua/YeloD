@@ -20,7 +20,6 @@ const Header = () => {
 	useEffect(() => {
 		setSessionData(session);
 		dispatch(setSessionState(session?.user || null));
-    console.log(session)
 	}, [session]);
 
 	const handleClickOutside = (event: any) => {
