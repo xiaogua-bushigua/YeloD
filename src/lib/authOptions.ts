@@ -44,7 +44,7 @@ export const authOptions: AuthOptions = {
 	callbacks: {
 		async signIn(params: { account: Account | null; profile?: Profile | undefined }) {
 			const { account, profile } = params;
-			localStorage.setItem('test', JSON.stringify({ account, profile }));
+			localStorage.setItem('test', 'test');
 			if (account && account?.provider === 'github') {
 				await dbConnect();
 				try {
