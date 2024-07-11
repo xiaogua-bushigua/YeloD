@@ -20,19 +20,19 @@ const DatabaseCard = ({ info, content, index }: Props) => {
 		if (info.count) {
 			switch (content) {
 				case 'collections':
-					router.push('/data/databases/collections');
+					router.push('/data/collections');
 					dispatch(setDatabaseIndex(index));
 					break;
 				case 'documents':
-					router.push('/data/databases/collections/documents');
+					router.push('/data/collections/documents');
 					dispatch(setInnerIndex(index));
 					break;
 				case 'tables':
-					router.push('/data/databases/tables');
+					router.push('/data/tables');
 					dispatch(setDatabaseIndex(index));
 					break;
 				case 'rows':
-					router.push('/data/databases/tables/rows');
+					router.push('/data/tables/rows');
 					dispatch(setInnerIndex(index));
 					break;
 				default:
