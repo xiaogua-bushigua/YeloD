@@ -43,8 +43,8 @@ export const authOptions: AuthOptions = {
 	],
 	callbacks: {
 		async signIn(params: { account: Account | null; profile?: Profile | undefined }) {
+			console.log(params, 123);
 			const { account, profile } = params;
-			localStorage.setItem('test', 'test');
 			if (account && account?.provider === 'github') {
 				await dbConnect();
 				try {
@@ -63,6 +63,8 @@ export const authOptions: AuthOptions = {
 					console.log(err);
 					return false;
 				}
+			} else if (account && account?.provider === 'google') {
+				console.log(params);
 			}
 			return true;
 		},
