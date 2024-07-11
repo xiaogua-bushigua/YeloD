@@ -44,6 +44,7 @@ export const authOptions: AuthOptions = {
 	callbacks: {
 		async signIn(params: { account: Account | null; profile?: Profile | undefined }) {
 			const { account, profile } = params;
+      console.log(account, profile)
 			if (account && account?.provider === 'github') {
 				await dbConnect();
 				try {
