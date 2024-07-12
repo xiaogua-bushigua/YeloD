@@ -10,6 +10,8 @@ import { initScreen, resetScreen } from '@/store/reducers/screenSlice';
 import { useToast } from '@/components/ui/use-toast';
 import { initCharts } from '@/store/reducers/screenSlice';
 
+import LoadingIcon from '@/components/Icons/LoadingIcon';
+
 export default function Screens() {
 	const [hover, setHover] = useState(false);
 	const [cards, setCards] = useState<Array<IScreens>>();
@@ -109,24 +111,32 @@ export default function Screens() {
 	}, []);
 
 	return (
-		<div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 gap-y-8">
-			{cards?.map((screen: IScreens) => (
-				<ScreenCard
-					onClick={() => handleScreenClick(screen)}
-					onDeleteClick={() => handleScreenDeleteClick(screen._id)}
-					key={screen._id}
-					title={screen.screenName}
-					cover={screen.screenImg}
-				/>
-			))}
-			<div
-				onClick={handleAddClick}
-				onMouseEnter={() => setHover(true)}
-				onMouseLeave={() => setHover(false)}
-				className="w-56 h-52 flex items-center justify-center cursor-pointer bg-slate-50 p-12 rounded-lg border border-slate-200 hover:shadow-lg"
-			>
-				<AddIcon fill={hover ? '#2b2b2b' : '#bababa'} />
-			</div>
-		</div>
+		<>
+			{!cards?.length ? (
+				<div className="w-full h-full flex justify-center items-center">
+					<LoadingIcon size={72} />
+				</div>
+			) : (
+				<div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 gap-y-8">
+					{cards?.map((screen: IScreens) => (
+						<ScreenCard
+							onClick={() => handleScreenClick(screen)}
+							onDeleteClick={() => handleScreenDeleteClick(screen._id)}
+							key={screen._id}
+							title={screen.screenName}
+							cover={screen.screenImg}
+						/>
+					))}
+					<div
+						onClick={handleAddClick}
+						onMouseEnter={() => setHover(true)}
+						onMouseLeave={() => setHover(false)}
+						className="w-56 h-52 flex items-center justify-center cursor-pointer bg-slate-50 p-12 rounded-lg border border-slate-200 hover:shadow-lg"
+					>
+						<AddIcon fill={hover ? '#2b2b2b' : '#bababa'} />
+					</div>
+				</div>
+			)}
+		</>
 	);
 }

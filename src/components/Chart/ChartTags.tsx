@@ -111,8 +111,6 @@ const ChartTags = () => {
 		let eventSource: EventSource | undefined;
 		const handleEventSourceMessage = (event: any) => {
 			const { info } = JSON.parse(event.data);
-			// console.log('info', info);
-
 			dispatch(setOptionData(info));
 		};
 
