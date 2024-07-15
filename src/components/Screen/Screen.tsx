@@ -41,6 +41,29 @@ const Screen = () => {
 		};
 	}, [ratio]);
 
+	// 鼠标移动到图表上时显示一些图标
+	useEffect(() => {
+		const panes = document.querySelectorAll('.panes') as NodeListOf<HTMLElement>;
+		panes.forEach((pane: HTMLElement) => {
+			const title = pane.querySelector('.titles') as HTMLElement;
+			const corner = pane.querySelector('.corners') as HTMLElement;
+			const edit = pane.querySelector('.editIcon') as HTMLElement;
+
+			pane.addEventListener('mouseover', () => handleMouseOver(title, corner, edit, 'block'));
+			pane.addEventListener('mouseleave', () => handleMouseOver(title, corner, edit, 'none'));
+		});
+		return () => {
+			panes.forEach((pane: HTMLElement) => {
+				const title = pane.querySelector('.titles') as HTMLElement;
+				const corner = pane.querySelector('.corners') as HTMLElement;
+				const edit = pane.querySelector('.editIcon') as HTMLElement;
+
+				pane.removeEventListener('mouseover', () => handleMouseOver(title, corner, edit, 'block'));
+				pane.removeEventListener('mouseleave', () => handleMouseOver(title, corner, edit, 'none'));
+			});
+		};
+	}, []);
+
 	// 全屏前后保持图表相对于大屏背景的寸尺和位置不变
 	useEffect(() => {
 		const panes = document.querySelectorAll('.panes') as NodeListOf<HTMLElement>;
@@ -57,13 +80,6 @@ const Screen = () => {
 			const preHeight = pane.offsetHeight;
 			prePosition.push([preXPercent, preYPercent]);
 			preSize.push([preWidth, preHeight]);
-
-			const title = pane.querySelector('.titles') as HTMLElement;
-			const corner = pane.querySelector('.corners') as HTMLElement;
-			const edit = pane.querySelector('.editIcon') as HTMLElement;
-
-			pane.addEventListener('mouseover', () => handleMouseOver(title, corner, edit, 'block'));
-			pane.addEventListener('mouseleave', () => handleMouseOver(title, corner, edit, 'none'));
 		});
 
 		const handleFullScreenChange = () => {
@@ -84,6 +100,7 @@ const Screen = () => {
 				pane.style.top = prePosition[index][1] * postFullScreenHeight + 'px';
 			});
 		};
+
 		if (fullScreen) {
 			document.addEventListener('fullscreenchange', handleFullScreenChange);
 			panes.forEach((pane: HTMLElement) => {
@@ -96,6 +113,13 @@ const Screen = () => {
 			return () => {
 				document.removeEventListener('fullscreenchange', handleFullScreenChange);
 			};
+		} else {
+			panes.forEach((pane: HTMLElement) => {
+				const title = pane.querySelector('.titles') as HTMLElement;
+				const corner = pane.querySelector('.corners') as HTMLElement;
+				const edit = pane.querySelector('.editIcon') as HTMLElement;
+				pane.addEventListener('mouseover', () => handleMouseOver(title, corner, edit, 'block'));
+			});
 		}
 	}, [fullScreen]);
 
@@ -110,79 +134,93 @@ const Screen = () => {
 			const edit = pane.querySelector('.editIcon') as HTMLElement;
 
 			// 两表发生重合时，点击其中一个增大其z，让其排在上面
-			pane.addEventListener('mousedown', () => {
-				z = z + 1;
+			const mouseDownHandler = () => {
+				z += 1;
 				pane.style.zIndex = z.toString();
-			});
+			};
 
 			// 让title和corner排在pane的更上面，使得能操作
-			pane.addEventListener('mouseenter', () => {
+			const mouseEnterHandler = () => {
 				title.style.zIndex = (z + 1000).toString();
 				corner.style.zIndex = (z + 1000).toString();
 				edit.style.zIndex = (z + 1000).toString();
-			});
+			};
 
-			pane.addEventListener('mouseover', () => handleMouseOver(title, corner, edit, 'block'));
-			pane.addEventListener('mouseleave', () => handleMouseOver(title, corner, edit, 'none'));
+			const mouseOverHandler = () => {
+				handleMouseOver(title, corner, edit, 'block');
+			};
 
-			// 操作title时
-			title.addEventListener('mousedown', (event) => {
+			const mouseLeaveHandler = () => {
+				handleMouseOver(title, corner, edit, 'none');
+			};
+
+			const titleMouseDownHandler = (event: MouseEvent) => {
 				pane.classList.add('is-dragging-pane');
+				const l = pane.offsetLeft;
+				const t = pane.offsetTop;
+				const startX = event.pageX;
+				const startY = event.pageY;
 
-				// 记录鼠标按下的时候位置信息
-				let l = pane.offsetLeft;
-				let t = pane.offsetTop;
-
-				let startX = event.pageX;
-				let startY = event.pageY;
-
-				// 鼠标移动时的事件
 				const drag = (event: MouseEvent) => {
 					event.preventDefault();
-
 					pane.style.left = l + (event.pageX - startX) + 'px';
 					pane.style.top = t + (event.pageY - startY) + 'px';
 				};
 
-				// 鼠标抬起时候的事件
-				const mouseup = () => {
+				const mouseUp = () => {
 					pane.classList.remove('is-dragging-pane');
 					dispatch(setGeometry({ type: 'left', value: pane.style.left, id: pane.id }));
 					dispatch(setGeometry({ type: 'top', value: pane.style.top, id: pane.id }));
 					document.removeEventListener('mousemove', drag);
-					document.removeEventListener('mouseup', mouseup);
+					document.removeEventListener('mouseup', mouseUp);
 				};
 
-				// 鼠标按下title的时候添加拖拽和鼠标抬起事件
 				document.addEventListener('mousemove', drag);
-				document.addEventListener('mouseup', mouseup);
-			});
+				document.addEventListener('mouseup', mouseUp);
+			};
 
-			// 操作corner时
-			corner.addEventListener('mousedown', (event) => {
-				let w = pane.clientWidth;
-				let h = pane.clientHeight;
-
-				let startX = event.pageX;
-				let startY = event.pageY;
+			const cornerMouseDownHandler = (event: MouseEvent) => {
+				const w = pane.clientWidth;
+				const h = pane.clientHeight;
+				const startX = event.pageX;
+				const startY = event.pageY;
 
 				const drag = (event: MouseEvent) => {
 					event.preventDefault();
-
 					pane.style.width = w + (event.pageX - startX) + 'px';
 					pane.style.height = h + (event.pageY - startY) + 'px';
 				};
 
-				const mouseup = () => {
+				const mouseUp = () => {
 					dispatch(setGeometry({ type: 'width', value: pane.style.width, id: pane.id }));
 					dispatch(setGeometry({ type: 'height', value: pane.style.height, id: pane.id }));
 					document.removeEventListener('mousemove', drag);
-					document.removeEventListener('mouseup', mouseup);
+					document.removeEventListener('mouseup', mouseUp);
 				};
 
 				document.addEventListener('mousemove', drag);
-				document.addEventListener('mouseup', mouseup);
-			});
+				document.addEventListener('mouseup', mouseUp);
+			};
+
+			pane.addEventListener('mousedown', mouseDownHandler);
+			pane.addEventListener('mouseenter', mouseEnterHandler);
+			pane.addEventListener('mouseover', mouseOverHandler);
+			pane.addEventListener('mouseleave', mouseLeaveHandler);
+			title.addEventListener('mousedown', titleMouseDownHandler);
+			corner.addEventListener('mousedown', cornerMouseDownHandler);
+
+			return () => {
+				panes.forEach((pane: HTMLElement) => {
+					pane.removeEventListener('mousedown', mouseDownHandler);
+					pane.removeEventListener('mouseenter', mouseEnterHandler);
+					pane.removeEventListener('mouseover', mouseOverHandler);
+					pane.removeEventListener('mouseleave', mouseLeaveHandler);
+					const title = pane.querySelector('.titles') as HTMLElement;
+					const corner = pane.querySelector('.corners') as HTMLElement;
+					title.removeEventListener('mousedown', titleMouseDownHandler);
+					corner.removeEventListener('mousedown', cornerMouseDownHandler);
+				});
+			};
 		});
 	}, [charts]);
 
