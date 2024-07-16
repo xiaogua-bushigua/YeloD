@@ -118,10 +118,12 @@ const screenSlice = createSlice({
 			state.charts.forEach((chart: newICharts) => {
 				if (chart.checked && chart.updateMode === 'dynamic') {
 					if (chart.chartType === 'line' || chart.chartType === 'bar') {
-						chart.option.xAxis[0].data = payload.filter(
+						const xData = (chart.option.xAxis[0].data = payload.filter(
 							(item: { data: any[]; tag: string; queryId: string }) =>
 								item.queryId === chart.option.xAxis[0].queryId
-						)[0].data;
+						));
+						if (xData.length) chart.option.xAxis[0].data = xData[0].data;
+
 						chart.option.series.forEach((se: any) => {
 							const data = payload.filter(
 								(item: { data: any[]; tag: string; queryId: string }) => item.queryId === se.queryId
