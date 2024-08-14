@@ -32,10 +32,6 @@ const QueryTable = () => {
 	const { toast } = useToast();
 	const headers = ['Database', 'Query', 'Collection/Table', 'Field', 'Query tag', 'Post-Processing', 'Operations'];
 	const operations = ['none', 'length', 'sum', 'odd', 'even', 'max', 'min', 'average', 'limit(7)', 'limit(30)'];
-	const dbDist = {
-		mongodb: 'MongoDB',
-		mysql: 'MySQL',
-	} as any;
 
 	// 获取所有查询语句信息，并设置到rows中
 	const fetchData = async () => {

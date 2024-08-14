@@ -1,4 +1,5 @@
 export const detectDatabaseType = (connectionString: string) => {
+  console.log('connectionString', connectionString)
 	if (
 		connectionString.includes('mysql://') ||
 		connectionString.includes('Server=') ||
@@ -22,6 +23,7 @@ export const detectDatabaseType = (connectionString: string) => {
 	) {
 		return 'Oracle';
 	} else if (connectionString.includes('mongodb://') || connectionString.includes('mongodb+srv://')) {
+    console.log('mongodb')
 		return 'MongoDB';
 	} else {
 		return 'Unknown Database';
