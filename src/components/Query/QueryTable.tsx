@@ -6,7 +6,6 @@ import {
 	SelectContent,
 	SelectGroup,
 	SelectItem,
-	SelectLabel,
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
@@ -22,6 +21,7 @@ import { useToast } from '@/components/ui/use-toast';
 import Dialog from '../Dialog';
 import { IQuery } from '@/lib/models';
 import { postProcessing } from '@/lib/post-processing';
+import { detectDatabaseType } from '@/lib/judgeDatabaseTypes';
 
 const QueryTable = () => {
 	const { user } = useAppSelector((state: RootState) => state.auth);
@@ -201,7 +201,7 @@ const QueryTable = () => {
 				{rows.map((row, index) => (
 					<TableRow key={row._id}>
 						<TableCell>
-							<span className="font-mono text-slate-800">{dbDist[row.uri.split('://')[0]]}</span>
+							<span className="font-mono text-slate-800">{detectDatabaseType(row.uri)}</span>
 						</TableCell>
 						<TableCell>
 							<span className="font-mono text-slate-800">{row.query}</span>
