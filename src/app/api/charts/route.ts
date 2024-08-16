@@ -61,6 +61,9 @@ export const POST = async (req: NextRequest) => {
 		const data = queries.queries.map(async (query_: IQuery) => {
 			const { uri, collectionName, query, field, tableName, _id, method } = query_;
 			if (collectionName) {
+				if (!field) {
+					return { array: [], _id };
+				}
 				const { db, client } = await dbConnectPublic(uri);
 				const collection = db.collection(collectionName!);
 				const ql = transferQuery(query);
@@ -81,6 +84,9 @@ export const POST = async (req: NextRequest) => {
 				array = postProcessing(array!, method);
 				return { array, _id };
 			} else {
+				if (!field) {
+					return { array: [], _id };
+				}
 				const dynamicDbConfig = {
 					datasources: {
 						db: {
@@ -89,9 +95,9 @@ export const POST = async (req: NextRequest) => {
 					},
 				};
 				const prisma = new PrismaClient(dynamicDbConfig);
-				let array = (await prisma.$queryRaw`SELECT * FROM ${Prisma.sql([tableName!])} ${Prisma.sql(
-					[query]
-				)}`) as any[];
+				let array = (await prisma.$queryRaw`SELECT * FROM ${Prisma.sql([tableName!])} ${Prisma.sql([
+					query,
+				])}`) as any[];
 				array = array?.map((arr) => arr[field as string]);
 				array = postProcessing(array!, method);
 				await prisma.$disconnect();

@@ -16,7 +16,7 @@ export default function Charts() {
 	const dispatch = useAppDispatch();
 	const { user } = useAppSelector((state: RootState) => state.auth);
 	const [hover, setHover] = useState(false);
-	const [cards, setCards] = useState<Array<ICharts>>();
+	const [cards, setCards] = useState<Array<ICharts>>([]);
 	const router = useRouter();
 	const { toast } = useToast();
 
@@ -87,7 +87,7 @@ export default function Charts() {
 	}, []);
 	return (
 		<>
-			{!cards?.length ? (
+			{cards.length ? (
 				<div className="w-full h-full flex justify-center items-center">
 					<LoadingIcon size={72} />
 				</div>
