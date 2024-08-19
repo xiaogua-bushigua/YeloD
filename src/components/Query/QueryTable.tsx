@@ -46,6 +46,7 @@ const QueryTable = () => {
 		}
 	};
 	const handleView = async (index: number) => {
+    setCode({});
 		const uri = rows[index].uri;
 		const method = rows[index].method;
 		const innerName = rows[index].collectionName || rows[index].tableName;
