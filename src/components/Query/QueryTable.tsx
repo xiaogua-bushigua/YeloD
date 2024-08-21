@@ -1,14 +1,7 @@
 'use client';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { transferQuery } from '@/lib/transferQuery';
 import { Input } from '@/components/ui/input';
 import { useEffect, useState } from 'react';
@@ -23,10 +16,13 @@ import { IQuery } from '@/lib/models';
 import { postProcessing } from '@/lib/post-processing';
 import { detectDatabaseType } from '@/lib/judgeDatabaseTypes';
 
+import LoadingIcon from '@/components/Icons/LoadingIcon';
+
 const QueryTable = () => {
 	const { user } = useAppSelector((state: RootState) => state.auth);
 	const [rows, setRows] = useState([] as IQuery[]);
 	const [code, setCode] = useState({} as any);
+	const [loading, setLoading] = useState(true);
 	const [tag, setTag] = useState('');
 	const [warningRow, setWarningRow] = useState([] as number[]);
 	const { toast } = useToast();
@@ -41,12 +37,13 @@ const QueryTable = () => {
 			});
 			const { queries } = await res.json();
 			setRows(queries.queries);
+			setLoading(false);
 		} catch (error) {
 			console.log('Error fetching queries:', error);
 		}
 	};
 	const handleView = async (index: number) => {
-    setCode({});
+		setCode({});
 		const uri = rows[index].uri;
 		const method = rows[index].method;
 		const innerName = rows[index].collectionName || rows[index].tableName;
@@ -185,100 +182,115 @@ const QueryTable = () => {
 	}, [code]);
 
 	return (
-		<Table className="bg-white rounded-md">
-			<TableHeader>
-				<TableRow>
-					{headers.map((header) => (
-						<TableHead key={header}>{header}</TableHead>
-					))}
-				</TableRow>
-			</TableHeader>
+		<>
+			{loading ? (
+				<div className="w-full h-full flex justify-center items-center">
+					<LoadingIcon size={72} />
+				</div>
+			) : (
+				<Table className="bg-white rounded-md">
+					<TableHeader>
+						<TableRow>
+							{headers.map((header) => (
+								<TableHead key={header}>{header}</TableHead>
+							))}
+						</TableRow>
+					</TableHeader>
 
-			<TableBody>
-				{rows.map((row, index) => (
-					<TableRow key={row._id}>
-						<TableCell>
-							<span className="font-mono text-slate-800">{detectDatabaseType(row.uri)}</span>
-						</TableCell>
-						<TableCell>
-							<span className="font-mono text-slate-800">{row.query}</span>
-						</TableCell>
-						<TableCell>
-							<span className="font-mono text-slate-800">{row.collectionName || row.tableName}</span>
-						</TableCell>
-						<TableCell>
-							<Input
-								type="text"
-								placeholder=""
-								className="focus:outline-none active:outline-none"
-								value={row.field || ''}
-								onChange={(e) => handleInputChange(index, 'field', e)}
-							/>
-						</TableCell>
-						<TableCell>
-							<Input
-								type="text"
-								placeholder=""
-								className={`${
-									warningRow.includes(index) ? 'border-red-700' : ''
-								} focus:outline-none active:outline-none`}
-								value={row.tag || ''}
-								onChange={(e) => handleInputChange(index, 'tag', e)}
-							/>
-						</TableCell>
-						<TableCell>
-							<Select value={row.method} onValueChange={(value) => handleMethodChange(index, value)}>
-								<SelectTrigger className="w-[140px] font-mono">
-									<SelectValue placeholder="Select a method" />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectGroup>
-										{operations.map((operation) => (
-											<SelectItem key={operation} value={operation} className="font-mono">
-												{operation}
-											</SelectItem>
-										))}
-									</SelectGroup>
-								</SelectContent>
-							</Select>
-						</TableCell>
-						<TableCell>
-							<div className="flex">
-								<Popover modal={true}>
-									<PopoverTrigger
-										onClick={() => handleView(index)}
-										className="mr-4 font-mono font-bold text-zinc-600 hover:text-zinc-900"
-									>
-										View
-									</PopoverTrigger>
-									<PopoverContent className="flex flex-col gap-2">
-										{tag && <span className="font-mono font-bold text-zinc-800">{tag}</span>}
-										<pre className="shadow-md border-2 border-t-slate-200 border-indigo-50 rounded-lg max-h-64">
-											<code className="language-js">{JSON.stringify(code, null, 2)}</code>
-										</pre>
-									</PopoverContent>
-								</Popover>
-								<span
-									onClick={() => handleSave(index)}
-									className="cursor-pointer font-mono font-bold text-violet-400 hover:text-violet-700"
-								>
-									Save
-								</span>
-								<Dialog
-									content="This action cannot be undone. This will permanently delete this query
-												and its tag."
-									action={() => handleDelete(index)}
-								>
-									<span className="ml-4 cursor-pointer font-mono font-bold text-pink-400 hover:text-pink-600">
-										Delete
+					<TableBody>
+						{rows.map((row, index) => (
+							<TableRow key={row._id}>
+								<TableCell>
+									<span className="font-mono text-slate-800">{detectDatabaseType(row.uri)}</span>
+								</TableCell>
+								<TableCell>
+									<span className="font-mono text-slate-800">{row.query}</span>
+								</TableCell>
+								<TableCell>
+									<span className="font-mono text-slate-800">
+										{row.collectionName || row.tableName}
 									</span>
-								</Dialog>
-							</div>
-						</TableCell>
-					</TableRow>
-				))}
-			</TableBody>
-		</Table>
+								</TableCell>
+								<TableCell>
+									<Input
+										type="text"
+										placeholder=""
+										className="focus:outline-none active:outline-none"
+										value={row.field || ''}
+										onChange={(e) => handleInputChange(index, 'field', e)}
+									/>
+								</TableCell>
+								<TableCell>
+									<Input
+										type="text"
+										placeholder=""
+										className={`${
+											warningRow.includes(index) ? 'border-red-700' : ''
+										} focus:outline-none active:outline-none`}
+										value={row.tag || ''}
+										onChange={(e) => handleInputChange(index, 'tag', e)}
+									/>
+								</TableCell>
+								<TableCell>
+									<Select
+										value={row.method}
+										onValueChange={(value) => handleMethodChange(index, value)}
+									>
+										<SelectTrigger className="w-[140px] font-mono">
+											<SelectValue placeholder="Select a method" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectGroup>
+												{operations.map((operation) => (
+													<SelectItem key={operation} value={operation} className="font-mono">
+														{operation}
+													</SelectItem>
+												))}
+											</SelectGroup>
+										</SelectContent>
+									</Select>
+								</TableCell>
+								<TableCell>
+									<div className="flex">
+										<Popover modal={true}>
+											<PopoverTrigger
+												onClick={() => handleView(index)}
+												className="mr-4 font-mono font-bold text-zinc-600 hover:text-zinc-900"
+											>
+												View
+											</PopoverTrigger>
+											<PopoverContent className="flex flex-col gap-2">
+												{tag && (
+													<span className="font-mono font-bold text-zinc-800">{tag}</span>
+												)}
+												<pre className="shadow-md border-2 border-t-slate-200 border-indigo-50 rounded-lg max-h-64">
+													<code className="language-js">{JSON.stringify(code, null, 2)}</code>
+												</pre>
+											</PopoverContent>
+										</Popover>
+										<span
+											onClick={() => handleSave(index)}
+											className="cursor-pointer font-mono font-bold text-violet-400 hover:text-violet-700"
+										>
+											Save
+										</span>
+										<Dialog
+											content="This action cannot be undone. This will permanently delete this query
+												and its tag."
+											action={() => handleDelete(index)}
+										>
+											<span className="ml-4 cursor-pointer font-mono font-bold text-pink-400 hover:text-pink-600">
+												Delete
+											</span>
+										</Dialog>
+									</div>
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			)}
+		</>
 	);
 };
 
