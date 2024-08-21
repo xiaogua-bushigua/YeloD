@@ -17,6 +17,7 @@ export default function Charts() {
 	const { user } = useAppSelector((state: RootState) => state.auth);
 	const [hover, setHover] = useState(false);
 	const [cards, setCards] = useState<Array<ICharts>>([]);
+  const [loading, setLoading] = useState(true);
 	const router = useRouter();
 	const { toast } = useToast();
 
@@ -66,6 +67,7 @@ export default function Charts() {
 			});
 			const { data } = await res.json();
 			setCards(data);
+      setLoading(false);
 		} catch (error) {
 			console.error('Error fetching data:', error);
 		}
@@ -87,7 +89,7 @@ export default function Charts() {
 	}, []);
 	return (
 		<>
-			{cards.length ? (
+			{loading ? (
 				<div className="w-full h-full flex justify-center items-center">
 					<LoadingIcon size={72} />
 				</div>

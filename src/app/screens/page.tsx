@@ -14,7 +14,8 @@ import LoadingIcon from '@/components/Icons/LoadingIcon';
 
 export default function Screens() {
 	const [hover, setHover] = useState(false);
-	const [cards, setCards] = useState<Array<IScreens>>();
+	const [cards, setCards] = useState<Array<IScreens>>([]);
+  const [loading, setLoading] = useState(true);
 	const { user } = useAppSelector((state: RootState) => state.auth);
 	const router = useRouter();
 	const { toast } = useToast();
@@ -73,6 +74,7 @@ export default function Screens() {
 				method: 'GET',
 			});
 			const { data } = await res.json();
+      setLoading(false);
 			setCards(data);
 		} catch (error) {
 			console.error('Error fetching screens data:', error);
@@ -112,13 +114,13 @@ export default function Screens() {
 
 	return (
 		<>
-			{!cards?.length ? (
+			{loading ? (
 				<div className="w-full h-full flex justify-center items-center">
 					<LoadingIcon size={72} />
 				</div>
 			) : (
 				<div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 gap-y-8">
-					{cards?.map((screen: IScreens) => (
+					{cards.map((screen: IScreens) => (
 						<ScreenCard
 							onClick={() => handleScreenClick(screen)}
 							onDeleteClick={() => handleScreenDeleteClick(screen._id)}

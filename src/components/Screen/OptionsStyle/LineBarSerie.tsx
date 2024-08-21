@@ -24,7 +24,7 @@ const LineBarSerie = ({
 	const { charts } = useAppSelector((state: RootState) => state.screen);
 	const serie = charts.filter((c) => c._id === chartId)[0].option.series[seriesIndex];
 	const dispatch = useAppDispatch();
-	const [color, setColor] = useColor(serie.lineStyle.color || scolor);
+	const [color, setColor] = useColor(serie.lineStyle?.color || scolor);
 	const [serieName, setSerieName] = useState(serie.name);
 	const [popoverOpen, setPopoverOpen] = useState(false);
 

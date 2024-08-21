@@ -22,7 +22,7 @@ const PieSerie = ({
 	chartType: string;
 }) => {
 	const dispatch = useAppDispatch();
-	const [color, setColor] = useColor(serie.itemStyle.color || scolor);
+	const [color, setColor] = useColor(serie.itemStyle?.color || scolor);
 	const [serieName, setSerieName] = useState(serie.name);
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
