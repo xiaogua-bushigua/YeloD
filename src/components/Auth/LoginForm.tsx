@@ -6,7 +6,6 @@ import Input from '@/components/Input';
 import { useFormState } from 'react-dom';
 import { signIn } from 'next-auth/react';
 import { IStringKeyValueObject } from '@/interfaces';
-import { useEffect, useState } from 'react';
 
 const formProps = [
 	{
@@ -14,12 +13,14 @@ const formProps = [
 		type: 'type',
 		name: 'username',
 		placeholder: 'Enter your full name',
+		value: 'yeloD',
 	},
 	{
 		title: 'Password',
 		type: 'password',
 		name: 'password',
 		placeholder: 'Enter your password',
+		value: '12345678',
 	},
 ];
 
@@ -53,6 +54,7 @@ const LoginForm = ({ isLogining, onChangeLogin }: { isLogining: boolean; onChang
 					name={item.name}
 					placeholder={item.placeholder}
 					className="bg-neutral-100 w-full"
+					value={item.value}
 				/>
 			))}
 			<Button text={isLogining ? 'Logging in...' : 'Login'} className="w-full bg-violet-500" />
