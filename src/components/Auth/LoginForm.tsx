@@ -6,6 +6,7 @@ import Input from '@/components/Input';
 import { useFormState } from 'react-dom';
 import { signIn } from 'next-auth/react';
 import { IStringKeyValueObject } from '@/interfaces';
+import { useState } from 'react';
 
 const formProps = [
 	{
@@ -25,9 +26,10 @@ const formProps = [
 ];
 
 const LoginForm = ({ isLogining, onChangeLogin }: { isLogining: boolean; onChangeLogin: () => void }) => {
+	const [loading, setLoading] = useState(false);
 	const handleLogin = async (preState: any, formData: FormData) => {
-		if (isLogining) return;
-		onChangeLogin();
+		if (loading) return;
+		setLoading(true);
 		const { username, password } = Object.fromEntries(formData) as IStringKeyValueObject;
 		if (!username || !password) return { error: 'Please complete the form' };
 		const res = await login(username, password);
@@ -57,7 +59,11 @@ const LoginForm = ({ isLogining, onChangeLogin }: { isLogining: boolean; onChang
 					value={item.value}
 				/>
 			))}
-			<Button text={isLogining ? 'Logging in...' : 'Login'} className="w-full bg-violet-500" />
+			<Button
+				text={isLogining ? 'Logging in...' : 'Login'}
+				onClick={onChangeLogin}
+				className="w-full bg-violet-500"
+			/>
 			<p className="font-mono mt-[-10px] text-red-700 h-6">{state?.error || ' '}</p>
 		</form>
 	);
