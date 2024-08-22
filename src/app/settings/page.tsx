@@ -18,9 +18,19 @@ export default function Settings() {
 	const { toast } = useToast();
 
 	const handleAdd = () => {
+		toast({
+			title: 'Suspend',
+			description: 'Custom login is not available.',
+		});
+		return;
 		setDbLinks((prev) => [...prev, '']);
 	};
 	const handleDel = (index: number) => {
+		toast({
+			title: 'Suspend',
+			description: 'Custom login is not available.',
+		});
+		return;
 		setDbLinks((prev) => {
 			const newLinks = [...prev];
 			newLinks.splice(index, 1);
@@ -28,6 +38,11 @@ export default function Settings() {
 		});
 	};
 	const handleSave = async () => {
+		toast({
+			title: 'Suspend',
+			description: 'Custom login is not available.',
+		});
+		return;
 		const lks: string[] = childRef.current.filter((child) => child).map((el) => el!.value);
 		dispatch(saveDbLinks(lks));
 		try {
@@ -42,8 +57,8 @@ export default function Settings() {
 				description,
 			});
 		} catch (error) {
-      console.error('Error saving links:', error);
-    }
+			console.error('Error saving links:', error);
+		}
 	};
 	return (
 		<>

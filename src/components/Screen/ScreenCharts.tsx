@@ -38,10 +38,12 @@ const ScreenCharts = React.memo(() => {
 	const handleEventSourceError = (eventSource: EventSource) => {
 		eventSource.close();
 	};
+
 	const handleEventSourceMessage = (event: any) => {
 		const { info } = JSON.parse(event.data);
 		dispatch(dynamicRefreshOptionData(info));
 	};
+
 	const setupEventSource = async (chart: newICharts) => {
 		let queryIds: string[] = chart.selectedTags
 			.filter((selectedTag) => !selectedTag.xAxis)
@@ -68,11 +70,12 @@ const ScreenCharts = React.memo(() => {
 				eventSource.addEventListener('message', handleEventSourceMessage);
 				eventSource.onerror = () => handleEventSourceError(eventSource);
 				eventSourcesRef.current.push(eventSource);
-			}, 2000);
+			}, 2000); // 进入页面两秒后开始动态渲染数据
 		} catch (error) {
 			console.log('Error setting up event source:', error);
 		}
 	};
+
 	useEffect(() => {
 		const intervals: NodeJS.Timeout[] = [];
 
@@ -112,7 +115,7 @@ const ScreenCharts = React.memo(() => {
 		});
 	};
 
-  useEffect(() => {}, [drawCloseFlag, dynamicInterval, staticInterval]);
+  // useEffect(() => {}, [drawCloseFlag, dynamicInterval, staticInterval]);
 
 	return (
 		<>
