@@ -5,7 +5,6 @@ import { getFieldData } from '@/lib/getFieldData';
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams.get('params')!;
   const queries = JSON.parse(params.replace(/mongodb srv/g, 'mongodb+srv')) as IQuery[];
-	// const queries = JSON.parse(request.nextUrl.searchParams.get('params')!) as IQuery[];
 	const interval = JSON.parse(request.nextUrl.searchParams.get('interval')!) as string;
 
 	let responseStream = new TransformStream();

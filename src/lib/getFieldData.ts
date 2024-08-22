@@ -3,6 +3,8 @@ import { transferQuery } from '@/lib/transferQuery';
 import { PrismaClient, Prisma } from '@prisma/client';
 import { postProcessing } from '@/lib/post-processing';
 
+let prisma: PrismaClient | null = null;
+
 export const getFieldData = async (
 	uri: string,
 	collectionName: string,
@@ -31,22 +33,28 @@ export const getFieldData = async (
 			client.close();
 			array = array?.map((arr) => arr[field]);
 		} else if (uri.includes('mysql')) {
-			const dynamicDbConfig = {
-				datasources: {
-					db: {
-						url: uri,
+			if (!prisma) {
+				const dynamicDbConfig = {
+					datasources: {
+						db: {
+							url: uri,
+						},
 					},
-				},
-			};
-			const prisma = new PrismaClient(dynamicDbConfig);
+				};
+				prisma = new PrismaClient(dynamicDbConfig);
+			}
 			array = (await prisma.$queryRaw`SELECT * FROM ${Prisma.sql([tableName!])} ${Prisma.sql([query])}`) as any[];
 			array = array.map((arr) => arr[field]);
-			await prisma.$disconnect();
 		}
 		array = postProcessing(array!, method);
 		return array;
 	} catch (error) {
 		console.log(error);
 		return [];
+	} finally {
+		if (prisma) {
+			await prisma.$disconnect();
+			prisma = null;
+		}
 	}
 };
