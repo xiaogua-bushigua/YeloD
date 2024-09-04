@@ -6,7 +6,7 @@
 
 ### Introduction
 
-**YeloD** is a project designed to display database data dynamically or statically, utilizing various charts to visualize the information effectively.
+**YeloD** is designed to display database data either dynamically or statically, using various charts to effectively visualize the information.
 
 This is my first project since learning Next.js and other relevant technologies. Currently, it is in the initial development stage, and there are still some issues that need to be addressed in future updates.
 
