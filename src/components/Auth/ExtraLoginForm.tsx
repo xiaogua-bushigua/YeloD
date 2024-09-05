@@ -10,7 +10,7 @@ const ExtraLoginForm = ({ isLogining, onChangeLogin }: { isLogining: boolean; on
 	const handleClickLogin = (type: string) => {
 		toast({
 			title: 'Suspend',
-			description: 'Custom login is not available.',
+			description: 'Custom login is not available for tourists.',
 		});
     return;
 		signIn(type, { callbackUrl: '/' });

@@ -20,7 +20,7 @@ export default function Settings() {
 	const handleAdd = () => {
 		toast({
 			title: 'Suspend',
-			description: 'Custom login is not available.',
+			description: 'Custom login is not available for tourists.',
 		});
 		return;
 		setDbLinks((prev) => [...prev, '']);
@@ -28,7 +28,7 @@ export default function Settings() {
 	const handleDel = (index: number) => {
 		toast({
 			title: 'Suspend',
-			description: 'Custom login is not available.',
+			description: 'Custom login is not available for tourists.',
 		});
 		return;
 		setDbLinks((prev) => {
@@ -40,7 +40,7 @@ export default function Settings() {
 	const handleSave = async () => {
 		toast({
 			title: 'Suspend',
-			description: 'Custom login is not available.',
+			description: 'Custom login is not available for tourists.',
 		});
 		return;
 		const lks: string[] = childRef.current.filter((child) => child).map((el) => el!.value);

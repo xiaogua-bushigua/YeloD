@@ -21,7 +21,7 @@ const Page = () => {
 	const handleTouristRegisterClick = () => {
 		toast({
 			title: 'Suspend',
-			description: 'Custom login is not available.',
+			description: 'Custom login is not available for tourists.',
 		});
 		return;
 	};
